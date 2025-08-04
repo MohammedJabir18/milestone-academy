@@ -1,0 +1,91 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 142 100% 39%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 142 55% 85%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 0 0% 15%;
+    --muted-foreground: 215.4 16.3% 70%;
+
+    --accent: 142 100% 39%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 0 0% 20%;
+    --input: 0 0% 15%;
+    --ring: 142 100% 39%;
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 9%;
+    --sidebar-foreground: 0 0% 94%;
+    --sidebar-primary: 142 100% 39%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 15%;
+    --sidebar-accent-foreground: 0 0% 94%;
+    --sidebar-border: 0 0% 18%;
+    --sidebar-ring: 142 100% 39%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-trading-dark text-foreground font-opensans;
+    background-color: #121212;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-montserrat font-bold;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-black/30 backdrop-blur-lg border border-white/10 shadow-md;
+  }
+  
+  .green-glow {
+    box-shadow: 0 0 15px 1px rgba(0, 200, 83, 0.4);
+  }
+  
+  .green-underline {
+    @apply relative;
+  }
+  
+  .green-underline::after {
+    content: '';
+    @apply absolute bottom-0 left-0 h-[2px] w-0 bg-trading-emerald transition-all duration-300;
+  }
+  
+  .green-underline:hover::after {
+    @apply w-full;
+  }
+  
+  .green-gradient-text {
+    @apply bg-gradient-to-r from-trading-emerald to-trading-lightMint text-transparent bg-clip-text;
+  }
+}
