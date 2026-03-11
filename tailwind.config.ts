@@ -53,6 +53,27 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				// Tweakcn semantic feedback colors
+				success: {
+					DEFAULT: 'hsl(var(--success))',
+					foreground: 'hsl(var(--success-foreground))'
+				},
+				warning: {
+					DEFAULT: 'hsl(var(--warning))',
+					foreground: 'hsl(var(--warning-foreground))'
+				},
+				info: {
+					DEFAULT: 'hsl(var(--info))',
+					foreground: 'hsl(var(--info-foreground))'
+				},
+				// Chart data-viz palette
+				chart: {
+					'1': 'hsl(var(--chart-1))',
+					'2': 'hsl(var(--chart-2))',
+					'3': 'hsl(var(--chart-3))',
+					'4': 'hsl(var(--chart-4))',
+					'5': 'hsl(var(--chart-5))'
+				},
 				// Trading academy specific colors
 				trading: {
 					dark: '#121212',
@@ -105,12 +126,38 @@ export default {
 					'50%': {
 						opacity: '0.7'
 					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-12px)' }
+				},
+				'float-delayed': {
+					'0%, 100%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'pulse-glow': {
+					'0%, 100%': { boxShadow: '0 0 15px 1px rgba(0, 200, 83, 0.3)' },
+					'50%': { boxShadow: '0 0 30px 4px rgba(0, 200, 83, 0.5)' }
+				},
+				'shimmer': {
+					'0%': { backgroundPosition: '-200% 0' },
+					'100%': { backgroundPosition: '200% 0' }
+				},
+				'gradient-shift': {
+					'0%': { backgroundPosition: '0% 50%' },
+					'50%': { backgroundPosition: '100% 50%' },
+					'100%': { backgroundPosition: '0% 50%' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
 				'accordion-up': 'accordion-up 0.2s ease-out',
-				'pulse-green': 'pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+				'pulse-green': 'pulse-green 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+				'float': 'float 4s ease-in-out infinite',
+				'float-delayed': 'float-delayed 5s ease-in-out 1s infinite',
+				'pulse-glow': 'pulse-glow 3s ease-in-out infinite',
+				'shimmer': 'shimmer 2s linear infinite',
+				'gradient-shift': 'gradient-shift 4s ease infinite'
 			}
 		}
 	},

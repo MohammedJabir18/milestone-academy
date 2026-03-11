@@ -1,0 +1,849 @@
+Architectural Blueprint and Generative 
+Prompt Specification for Milestone 
+Trading and Accounting Academy
+ 
+The modern landscape of digital platform engineering has fundamentally shifted with the 
+advent of artificial intelligence -assisted development, a methodology colloquially termed "vibe 
+coding".1 This paradigm transitions the developer from a manual syntax writer to a director of 
+machine execution, leveraging large language models to construct high -fidelity applications at 
+unprecedented velocities. 1 However, the successful deployment of a premium, "Awwwards -
+winning" digital product via generative tools like C ursor, Bolt.new, or Lovable requires 
+meticulous prompt engineering, rigorous architectural planning, and a highly structured set of 
+directives. 3 
+The objective of this comprehensive architectural report is to define the exact technical 
+specifications, aesthetic paradigms, motion choreography, copywriting, and high -converting 
+psychological triggers required to transform the Milestone Trading and Accounting Academy 
+website into a world -class digital platform. 5 The strategic integration of specific technologies —
+namely GreenSock Animation Platform (GSAP) for timeline animations, Lenis for smooth 
+scrolling, Spline for interactive 3D visualizations, 21st.dev for premium component sourcing, 
+and Shadcn UI (customized via Tweakcn) for foundational aesthetics—forms the  backbone of 
+this transformation. 8 
+Because generative coding tools are prone to hallucination and context degradation when 
+overwhelmed with singular, monolithic requests, best practices dictate that the architecture 
+be built iteratively, slicing complex ta sks into discrete, manageable prompts. 3 This report 
+culminates in a master set of extended, explanatory prompts designed directly for ingestion by 
+AI coding agents, alongside the complete copywriting manuscript for the platform.
+ 
+Thematic and Aesthetic Desi
+gn Language  
+The visual identity of an accounting and trading academy must project absolute credibility, 
+transparency, and technological superiority. 6 A design that elicits a "WOW" response—
+premium, clean, and high-tech—relies on a delicate balance of negative space, striking 
+typography, and a meticulously calibrated color palette. To achieve this, the design system 
+utilizes a modern light theme with specialized green accents, configured via the Tweakcn 
+styling engine.8 
+Color Psychology and Tweakcn Configura
+tion  
+In the financial technology (fintech) sector, green is universally associated with growth, wealth, 
+and positive market movement. 16 The light theme ensures approachability and readability, 
+contrasting heavily with the often dark, intimidating interface s of traditional institutional 
+trading platforms. By utilizing a light theme, the platform positions itself as transparent, 
+educational, and modern. 13 
+The following CSS variable configurations map the Tweakcn light green palette into the Shadcn 
+UI ecosystem, ensuring a cohesive and highly accessible user interface.15 
+ 
+CSS Variable 
+Hex Value / Composition  
+Psychological & 
+Functional Role  
+-- background  
+0 0% 98% (Off-White/Mint 
+tint) 
+Reduces eye strain 
+compared to pure white; 
+establishes a premium, 
+editorial canvas that feels 
+akin to high-end financial 
+reports.  
+-- foreground  
+150 50% 10% (Deep Forest 
+Green) 
+Replaces stark black for 
+typography, maintaining 
+high contrast while 
+softening t he aesthetic to 
+align with the overarching 
+green theme. 
+-- primary 
+152 76% 39% (Vibrant 
+Emerald) 
+Primary call-to-action 
+(CTA) color; draws 
+immediate attention to 
+conversion points, signaling 
+forward momentum and 
+financial success.20 
+-- primary-foreground  
+0 0% 100% (Pure White) 
+Ensures WCAG-compliant 
+contrast for text residing 
+within solid primary 
+buttons. 
+--secondary 
+152 20% 90% (Soft 
+Cyan/Green) 
+Used for secondary 
+sections, large structural 
+backgrounds, and hovering 
+states on interactive 
+elements to provide visual 
+feedback. 
+--accent 
+152 60% 50% (Light Mint) 
+Utilized for micro-
+interactions, active link 
+underlines, and data 
+visualization highlights 
+within the GSAP 
+animations. 
+--card 
+0 0% 100% (Pure White) 
+Ensures course modules 
+and financial data cards 
+pop against the slightly 
+tinted global background, 
+creating a subtle z-index 
+elevation. 
+--muted 
+210 20% 96% (Cool Slate) 
+Applied to disabled states, 
+structural borders, and 
+subtle layout dividers to 
+maintain a pristine, 
+uncluttered view. 
+--radius 
+1rem 
+Defines the curvature of 
+structural elements. A 
+generous border radius 
+softens the harsh edges of 
+financial data, making the 
+platform feel modern, 
+"sexy," and user-friendly. 
+Typography and Spatial Layout
+ 
+The typographic hierarchy must bridge the gap between rigorous financial data and modern, 
+accessible education. An Awwwards -winning site relies heavily on typography as a primary 
+design element, often utilizing kinetic motion to make the text itself a visu al centerpiece. 21 
+Typographic Element  
+Font Family Configuration
+ 
+Implementation Strategy
+ 
+Primary Headings (H1, H2)  
+Space Grotesk or Syncopate 
+A geometric, high -tech sans-
+serif to convey innovation, 
+numerical precision, and 
+modern technological 
+integration. Utilized heavily in 
+the hero section and large 
+section dividers. 
+Body Typography (p, span)  
+Inter or Roobert 
+A highly legible, humanist sans-
+serif optimized for screen 
+reading. Essential for extended 
+reading of complex curriculum 
+details and accounting 
+principles. 
+Data & Numerals  
+Space Mono or Inter 
+(Tabular) 
+Used specifically for trading 
+statistics, accounting ledgers, 
+and pricing tiers to ensure 
+decimal points and digits align 
+perfectly across vertical 
+columns. 
+The layout structure embraces the "editorial" layout trend dominating Awwwards -winning 
+sites.23 This involves generous negative space, asymmetrical grids, and clear visual hierarchies 
+that guide the eye naturally downward, preventing cognitive overload when presenting 
+complex financial curricula.13 
+Motion, Spatial, and Interactive Architecture
+ 
+The hallmark of an "Awwwards-winning" digital experience is the seamless integration of 
+motion, spatial 3D elements, and micro-interactions. 25 Animation must not be purely 
+decorative; it must serve to guide use r focus, explain complex concepts natively, and reward 
+interaction. 14 
+Fluid Navigation: Lenis Smooth Scrolling
+ 
+Native browser scrolling is often jarring, varying wildly in acceleration and deceleration across 
+different operating systems and pointing device s. Lenis provides a buttery-smooth, 
+lightweight scrolling experience that normalizes user interaction, forming the critical canvas for 
+all subsequent animations.9 
+The integration of Lenis requires wrapping the application in a global React context. To prev ent 
+performance degradation, the allowNestedScroll configuration should be used sparingly, 
+relying instead on data-lenis-prevent attributes for internal scrollable areas (such as long 
+curriculum lists inside an accounting course card). 12 
+Kinetic Choreograp
+hy: GSAP and ScrollTrigger  
+The GreenSock Animation Platform (GSAP) serves as the industry standard for professional-
+grade web animation. 28 For Milestone Academy, GSAP will orchestrate elements as they enter 
+the viewport, utilizing the highly performant Scr ollTrigger plugin.31 
+Crucially, Lenis and GSAP must be perfectly synchronized. The architecture requires updating 
+GSAP's native ticker with Lenis's requestAnimationFrame (raf) method, and explicitly disabling 
+GSAP's native lag smoothing. Failure to do this results in visual stuttering during complex 
+scroll-scrub animations.12 
+The following table outlines the specific GSAP animation patterns mandated for this platform:  
+ 
+Animation Pattern  
+Technical Implementation
+ 
+Psychological Purpose  
+Text Reveal (Hero 
+Section)  
+GSAP SplitText plugin. 
+Characters translated from 
+y: 100%, opacity: 0 to y: 0, 
+opacity: 1. Masked via 
+overflow: hidden. Stagger 
+set to 0.02s. 22 
+Creates immediate visual 
+captivation upon page load. 
+The staggered reveal feels 
+premium, mimicking high -
+end video production 
+titling. 
+Parallax Gliding Cards  
+Driven by ScrollTrigger with 
+scrub: 1. Accounting course 
+cards translate upward at 
+slightly different speeds on 
+the y-axis, overlapping 
+seamlessly.9 
+Transforms a mundane list 
+of courses into a dynamic, 
+interactive journey. Keeps 
+the user actively engaged 
+in the scroll mechanism. 
+Magnetic CTAs  
+Mousemove event listener 
+attached to a GSAP 
+quickTo tween. The button 
+translates on the x and y 
+axes relative to the cursor 
+position within a defined 
+bounding box. 21 
+Adds a tactile, "sexy" feel to 
+the interface. Magnetic 
+buttons physically draw the 
+user toward the conversion 
+point, increasing click-
+through rates.  
+Data Counter Increment
+ 
+GSAP tween animating the 
+innerHTML or a React state 
+value from 0 to the target 
+number over a 2s duration 
+with an expo.out easing 
+when scrolled into view. 
+Communicates scale and 
+success (e.g., student 
+count, win-rate). The kinetic 
+motion makes the statistic s 
+feel alive and continuously 
+growing. 24 
+Page Transitions  
+GSAP timeline manipulating 
+a full-screen SVG mask or 
+localized clip-path 
+transitions between the 
+main academy page and 
+detailed syllabus routes.35 
+Eliminates the jarring white-
+flash of native browser 
+routing. Maintains the 
+immersive "software" feel 
+rather than a static 
+webpage. 
+3D Data Visualization: Spline.design
+ 
+To achieve the desired "WOW" factor and convey high-tech financial authority, traditional flat 
+imagery and 2D vector illustrations are insufficient. 24 The architecture mandates the use of 
+Spline to embed interactive, real-time 3D models directly into the Document Object Model 
+(DOM).11 
+The hero section will feature a 3D interactive candlestick chart intertwined with a dynamic, 
+rotating coin or ledger model, representing the convergence of trading and corporate 
+accounting.38 Exported via Spline's React integration (@splinetool/react-spline), this model will 
+respond directly to mouse movement. As the user hovers, they can orbit the chart; as they 
+drag, they can rotate the ledger.40 This creates an immersive, gamified experience right at the 
+top of the funnel, instantly separating Milestone Academy from static competitors. 
+Premium Component Sourcing via 21st.dev
+ 
+Instead of building fundamental structural elements from scratch —which introduces 
+unnecessary risk of UI inconsistency—the architecture relies on the 21st.dev community 
+library. This repository provides Awwwards -tier, Tailwind-styled React components designed 
+by top industry professionals. 41 
+By utilizing Shadcn UI as the unstyled, accessible foundation (providing keyboard navigation, 
+ARIA attributes, and focus management), the 21st.dev components can be layered on top to 
+provide the visual flair.18 
+ 
+Component Category
+ 
+21st.dev Utilization 
+Strategy  
+Architectural Rationale
+ 
+Hero Sections  
+Sourcing from the 284 
+available high-conversion 
+hero templates. 43 
+Requires a split-layout hero: 
+left -aligned kinetic 
+typography, right -aligned 
+Spline 3D viewer. This 
+layout reduces cognitive 
+load by separating text 
+processing from visual 
+proc essing.44 
+Card Components  
+Sourcing from the 422 
+versatile card 
+components. 45 
+Used specifically for the 
+new Accounting Course 
+modules. Cards will feature 
+glassmorphism 
+(translucency and 
+background blur) and 
+hover-state expansion, 
+making dense data feel 
+lightweight.24 
+Data Visualization  
+Sourcing structured tables, 
+bento grids, and stat 
+arrays.42 
+To display course 
+comparison metrics 
+(Trading vs. Accounting) 
+cleanly. The bento grid 
+layout is highly trending and 
+allows for varied data types 
+to sit cohesively together.  
+Interactive Controls
+ 
+Utilizing DropdownMenus 
+and Tooltips built on Radix 
+UI primitives.42 
+To hide dense curriculum 
+data until the user actively 
+seeks it (progressive 
+disclosure), maintaining the 
+minimalist, clean, and 
+"decent" view requested.  
+Copywriting and Content Strategy
+ 
+A visually stunning site that fails to convert visitors into enrolled  students is an architectural 
+failure. The highest-converting landing pages follow strict psychological frameworks.
+47 The 
+copywriting for Milestone Academy has been engineered to adhere to these principles.  
+The UX copy strategy dictates a problem -first app roach. High-converting pages do not 
+immediately list features; they address the user's core frustration. 48 Furthermore, the platform 
+must embrace radical transparency. Fintech users are highly sensitive to trust. 13 The UI must 
+clearly display course outcom es without hiding them. Finally, the "One Goal" rule is enforced: 
+every section must funnel toward a single, primary Call to Action (CTA) —enrolling in the 
+academy.48 
+The Milestone Academy Content Manuscript
+ 
+This text must be injected directly into the generative prompts to populate the website during 
+the build phase. 
+1. Global Navigation:  
+● Logo Text:  Milestone Academy  
+● Links: Trading Mastery | Corporate Accounting | Success Stories | Curriculum 
+● CTA Button:  Apply Now 
+2. Hero Section:  
+● Eyebrow/Subheadline:  The Elite Financial Ecosystem 
+● Main Headline (H1):  Master the Markets. Command the Ledger. Without the Guesswork.  
+● Body Paragraph:  Join thousands of professionals mastering advanced trading strategies 
+and practical corporate accounting principles in a single, high -tech educational platform. 
+Stop relying on outdated theory and start building compounding wealth.  
+● Primary CTA Button:  Explore the Academy  
+● Secondary CTA Button:  View 3D Demo 
+3. Accounting Course Section (The New Addition):
+ 
+● Section Title (H2):  Next-Generation Accounting Intelligence.  
+● Subtitle:  From basic ledger fundamentals to automated corporate tax structuring. Our 
+new accounting modules are designed for absolute clarity.  
+● Card 1 Title:  01. Financial Statement Mastery. 
+● Card 1 Description: Decode balance sheets, income statements, and cash flow  like a 
+seasoned CFO. Understand the story behind the numbers. 
+● Card 2 Title:  02. Advanced Corporate Taxation. 
+● Card 2 Description: Navigate complex tax liabilities and legal structuring. Learn to optimize 
+corporate wealth legally and efficiently.  
+● Card 3 Tit le: 03. Algorithmic Bookkeeping.  
+● Card 3 Description: Leverage AI and modern software stacks to automate daily ledger 
+entries, reducing human error to zero.  
+● Card 4 Title:  04. Audit & Compliance Protocols. 
+● Card 4 Description: Prepare for institutional scrutiny. Build bulletproof financial systems 
+that withstand the most rigorous audits.  
+4. Trading Mastery Section (Data & Stats):
+ 
+● Section Title (H2):  Institutional Trading Strategies, Demystified. 
+● Subtitle:  Gain the edge that ret ail traders lack. Deep dive into liquidity, order flow, and 
+psychological market dynamics.  
+● Stat 1: 7,000+ (Label: Active Students) 
+● Stat 2:  94% (Label: Strategy Win-Rate) 
+● Stat 3:  24/7 (Label: Live Market Scanners) 
+● List Items:  Price Action Dynamics | Options Flow Analysis | Algorithmic Execution | Risk 
+Management Architecture.  
+5. Trust and Social Proof Section:  
+● Section Title (H2):  Proven by Results. 
+● Testimonial 1 (Avatar: Sarah J., Corporate Analyst):
+ "I struggled with traditional 
+accounting rules until Milestone broke it down visually. The combination of trading 
+psychology and accounting logic is unmatched."  
+● Testimonial 2 (Avatar: Marcus T., Independ
+ent Trader):  "The platform's interface is as 
+sharp as its curriculum. I went from blowing accounts to consistent, compounded growth 
+in 90 days." 
+● Testimonial 3 (Avatar: Elena R., Finance Director):
+ "We use Milestone's accounting 
+modules to train our junior staff. It is simply the most modern, effective financial 
+education available today." 
+6. Final Conversion Engine (Footer/CTA):
+ 
+● Massive Headline:  Stop Guessing. Start Compounding Your Knowledge Today. 
+● Final CTA Button:  Join Milestone Academy Now  
+● Footer Links:  Terms of Service | Privacy Policy | Regulatory Disclaimers | Contact Support. 
+The Master Generative Prompt Directives
+ 
+The following section constitutes the exhaustive, extended prompt architecture requested by 
+the user. Because vibe coding tools fail when given a single, massive prompt for an entire 
+complex website, this architecture is broken down into sequential "Prompt  Slices".3 
+These prompts contain every minute detail —sections, divs, Tailwind utility classes, GSAP 
+timelines, and hover interactions —required to generate an Awwwards -winning architecture.  
+Instructions for the Developer: Feed these prompts sequentially int o your AI coding assistant 
+(Cursor, Lovable, or Bolt.new). Ensure 'Agent Mode' is active to allow the AI to create files, 
+install dependencies, and execute terminal commands. 4 Do not skip a slice. 
+Prompt Slice 1: Initialization, Global Architecture, and 
+Tweakcn Theming  
+You are an elite, Awwwards-winning Front-End Architect and Vibe Coder. We are 
+building the "Milestone Trading & Accounting Academy" website. The platform 
+must be modern, highly interactive, premium, and designed to elicit a "WOW" 
+response. 
+Step 1: Project Initialization
+ 
+Initialize a Next.js (App Router) project with TypeScript and Tailwind CSS v4. 
+Execute the terminal commands to install the following dependencies 
+immediately: 
+● lucide-react (for premium iconography) 
+● gsap (for advanced timeline animations and ScrollTrigger) 
+● @studio-freight/react-lenis (for smooth scrolling) 
+● @splinetool/react-spline (for 3D interactive models) 
+● clsx and tailwind-merge (for Shadcn utility merging) 
+Step 2: Shadcn UI & Tweakcn Theming Configuration
+ 
+Initialize Shadcn UI. Set up the global app/globals.css file to implement a custom 
+"Light Green" premium theme based on Tweakcn styling. 
+Generate the CSS variables in the :root pseudo-class exactly as follows to create a 
+high-tech, clean look: 
+ 
+CSS 
+ 
+ 
+:root { 
+  -- background : 150 20% 98%; /* Off -white with a hint of mint */  
+  -- foreground: 150 50% 10%; /* Deep forest green for text */  
+  -- primary: 152 76% 39%; /* Vibrant Emerald */ 
+  -- primary-foreground: 0 0% 100%; 
+  -- secondary: 152 20% 90%; /* Soft mint */  
+  -- secondary-foreground: 150 50% 10%; 
+  -- accent: 152 60% 50%; 
+  -- accent -foreground: 0 0% 100%; 
+  -- card: 0 0% 100%; 
+  -- card-foreground: 150 50% 10%; 
+  -- muted: 210 20% 96%; 
+  -- muted -foreground: 150 20% 40%; 
+  -- border : 214 32% 91%; 
+  -- input: 214 32% 91%; 
+  -- ring: 152 76% 39%; 
+  -- radius: 1rem; /* Soft, premium curves */  
+} 
+ 
+Update tailwind.config.ts to map these CSS variables. Configure two font families: 
+a geometric sans-serif (e.g., 'Space Grotesk') for headings, and a humanist sans-
+serif (e.g., 'Inter') for body text. 
+Step 3: Global Smooth Scroll Context (Crucial)
+ 
+Create a components/SmoothScrollProvider.tsx component that wraps the 
+{children} in the layout.tsx file. Implement @studio-freight/react -lenis. 
+Crucially, create a useEffect hook inside this provider that synchronizes Lenis with 
+GSAP to prevent scroll jitter: 
+ 
+TypeScript 
+ 
+ 
+'use client'; 
+import  { ReactLenis, useLenis } from  '@studio-freight/react -lenis'; 
+import  gsap from  'gsap'; 
+import  { ScrollTrigger } from  'gsap/ScrollTrigger'; 
+import  { useEffect } from  'react'; 
+ 
+gsap.registerPlugin(ScrollTrigger); 
+ 
+export  default  function  SmoothScrollProvider ({ children }: { children: React.ReactNode }) { 
+  const lenis = useLenis({ scroll }) => { 
+    ScrollTrigger.update(); 
+  }); 
+  useEffect( () => { 
+    gsap.ticker.add( (time) => { 
+      lenis?.raf(time * 1000); 
+    }); 
+    gsap.ticker.lagSmoothing( 0); 
+    return  () => { 
+      gsap.ticker.remove( (time) => { lenis?.raf(time * 1000); }); 
+    }; 
+  }, [lenis]); 
+  return  <ReactLenis root >{children}</ReactLenis>; 
+} 
+ 
+Do not generate any UI pages yet. Just confirm when the architecture, CSS 
+variables, and Smooth Scroll Context are successfully implemented without errors.  
+Prompt Slice 2: The Hero Section (Kinetic Typography 
+& 3D Spline Integration)  
+Now, build the Hero Section (components/Hero.tsx) and place it in the 
+app/page.tsx root. This section must scream "Awwwards -winning" and utilize a 
+split-layout design. 
+Layout Structure (DOM & Tailwind):
+ 
+Create a <section> with id="hero" and classes relative w-full min-h-screen flex 
+items-center justify -center overflow -hidden bg-background.  
+Inside, create a master container div with container mx -auto px-6 grid grid-cols-1 
+lg:grid-cols-2 gap-12 items-center z-10. 
+Add an absolute ambient glow div in the backgr ound: absolute top -0 left -0 w-full 
+h-full bg-[radial-gradient(circle_at_top_left,hsl(var( --
+secondary)),transparent_50%)] opacity -70 pointer -events-none. 
+Left Column: Copywriting & GSAP Typography:
+ 
+Create a div for the left content.  
+● Subheadline span: "The Elite Financial Ecosystem". Classes: text
+-primary 
+uppercase tracking -[0.2em] text -sm font -bold mb-6 block overflow -hidden. 
+● Main H1 Headline: "Master the Markets. Command the Ledger. Without the 
+Guesswork." Classes: text-foreground text -5xl md:text-7xl font-heading font -
+extrabold leading -[1.1] mb-8 overflow -hidden. Wrap each word in a span with 
+a class of reveal-text and inline-block translate -y-[100%] opacity -0. 
+● Paragraph p: "Join thousands of professionals mastering advanced trading 
+strategies and practical corporate accounting principles in a single, high -tech 
+educational platform. Stop relying on outdated theory and start building 
+compounding wealth." Classes: text-muted -foreground text -lg md:text -xl 
+max-w-lg mb-10 reveal-fade opacity -0. 
+GSAP Animation Implementation:
+ 
+Write a useGSAP hook. Create a timeline that triggers on mount. 
+1. Animate the .reveal-text spans: y: 0, opacity: 1, duration: 1.2, ease: "expo.out", 
+stagger: 0.05. 
+2. Animate the .reveal-fade paragraph and subheadline: opacity: 1, y: 0, 
+duration: 1, ease: "power3.out", starting slightly before the text reveal ends ("-
+=0.5"). 
+Call to Action Buttons (21st.dev Premium Style):
+ 
+Create a flex container flex flex -wrap gap-4 reveal-fade opacity -0. 
+● Primary Button button: "Explore the Academy". Classes: px-8 py-4 bg-primary 
+text -primary-foreground rounded -full font -semibold transition -all duration-
+300 ease-in-out hover:scale-105 hover:shadow-
+[0_0_30px_rgba(16,185,129,0.5)] active:scale-95 flex items-center gap-2 
+group. Add a Lucide ArrowRight icon that translates right on hover: group -
+hover:translate -x-1 transition-transform.  
+● Secondary Button button: "View 3D Demo". Classes: px-8 py-4 bg-
+transparent border border -border text -foreground rounded -full font-
+semibold transition -all duration-300 hover:bg -secondary flex items-center 
+gap-2. Add a Lucide PlayCircle icon. 
+Right Column: Spline 3D Integration:
+ 
+Implement the @splinetool/react -spline component inside a div with w -full h-
+[500px] lg:h -[700px] relative reveal -fade opacity -0. 
+Load this Spline URL: 
+https://prod.spline.design/9951u9cumiw2Ehj8/scene.splinecode (This acts as our 
+interactive candlestick/le dger placeholder).  
+Add a continuous floating animation to this container using GSAP: gsap.to('.spline-
+container', { y: -20, yoyo: true, repeat: -1, duration: 4, ease: "sine.inOut" }). 
+Ensure the layout is mathematically perfect in its alignment.  
+Prompt Sl ice 3: The Accounting Course Section 
+(Gliding Cards & Micro -interactions)  
+Next, build the "Accounting Curriculum" section 
+(components/AccountingSection.tsx). This section must showcase the newly 
+added accounting courses using an advanced GSAP ScrollTrigger "Gliding Cards" 
+layout. 
+Section Container:  
+<section> with id="accounting" relative w-full py-32 bg-secondary/30. 
+Section Header:  
+Create a centered div with max -w-3xl mx-auto text -center mb -24 px-6. 
+● H2: "Next-Generation Accounting Intelligence." (text -4xl md:text-6xl font-
+heading font -bold text -foreground mb -6). 
+● Subtitle p: "From basic ledger fundamentals to automated corporate tax 
+structuring. Our new accounting modules are designed for absolute clarity." 
+(text-muted -foreground text -xl). 
+Animate this header to fade and slide up when it enters the viewport using 
+GSAP ScrollTrigger (start: "top 80%", y: 50, opacity: 0 -> y: 0, opacity: 1, 
+duration: 1, ease: "power4.out"). 
+The Gliding Cards Layout:  
+Create a container div with max -w-4xl mx-auto px-6 flex flex-col gap-12 relative. 
+We will render 4 cards. 
+Card UI Design (Glassmorphism & High -tech):  
+Map over an array of the 4 accounting courses provided in the content strategy. 
+For each course, create an <article> tag. 
+Classes for the article: course-card sticky top -32 w-full bg-card/80 backdrop -
+blur-xl border border -border rounded -[2rem] p-10 md:p-14 shadow-2xl shadow-
+primary/5 transition -colors duration -500 hover:border -primary/50 group 
+overflow -hidden. 
+Inside the article: 
+● A top highlight bar: absolute top -0 left -0 w-full h-1 bg-gradient -to-r from -
+primary to -accent opacity -0 group -hover:opacity -100 transition -opacity 
+duration -500. 
+● Header row: Flex container with the Module Number (e.g., "01") in a large, 
+muted, wireframe -style font (text -6xl font-heading font -extrabold text -
+muted -foreground/20 absolute right -10 top-10 pointer-events-none). 
+● Title h3: Module Title (text-3xl font-heading font -bold text -foreground mb -4 
+relative z-10). 
+● Description p: Module Description (text -muted -foreground text -lg max-w-xl 
+relative z-10 mb-8). 
+● Action Row: A flex container with a "View Syllabus" text link and a circular 
+arrow icon button. The icon button should have w -12 h-12 rounded-full bg-
+secondary flex items-center justify-center group-hover:bg-primary group-
+hover:text-primary-foreground transition-all duration-300. Inside, a Lucide 
+ArrowUpRight icon that rotates 45 degrees to face right on hover (group-
+hover:rotate-45). 
+GSAP ScrollTrigger Implementation:
+ 
+Write a useGSAP hook to orchestrate the gliding effect.  
+Select all .course-card elements. Loop through them and create a ScrollTrigger for 
+each. As the user scrolls, the cards should stack on top of each other. Because 
+they have sticky top -32, CSS handles the stacking. Use GSAP to animate an 
+internal scale effect on the previous cards as the new ones scroll over them (e.g., 
+when card 2 hits the sticky point, card 1 scales down to 0.95 and its opacity drops 
+to 0.5). 
+Use scrub: 1 to ensure it is tied perfectly to the Lenis scroll position. 
+Prompt Slice 4: Trading Curriculum & Data 
+Visualization (Interactive & Informative)
+ 
+Now build the "Trading Mastery" section (components/TradingSection.tsx). 
+Background Transition:  
+The <section> must start with bg-background. Create a GSAP ScrollTrigger that 
+animates the entire body or section background from --background to a dark, 
+immersive color (#0A1F16 - the foreground color) when this section reaches the 
+center of the viewport, effectively flipping the site to a dark mode temporarily for 
+dramatic effect. Text within this section must switch to white/light colors. 
+Content Structure (Bento Grid Style):
+ 
+Container max-w-7xl mx-auto px-6 py-32 grid grid-cols-1 lg:grid-cols-12 gap-8. 
+Left Side (Text & Sticky Nav - span 5 cols):  
+Create a div with lg:col-span-5 relative. Inside, a sticky container sticky top-32. 
+● H2: "Institutional Trading Strategies, Demystified." (text-5xl font-heading font-
+bold text-white mb-6). 
+● Subtitle: "Gain the edge that retail traders lack. Deep dive into liquidity, order 
+flow, and psychological market dynamics." (text -white/70 text -lg mb-10). 
+● A vertical list of topics: "Price Action Dynamics", "Options Flow Analysis", 
+"Algorithmic Execution", "Risk Management Architecture". Style these as large, 
+clickable links with a hover effect that reveals an arrow and changes text 
+color to -- primary. 
+Right Side (Data Visualization Bento Box 
+- span 7 cols):  
+Create a div with lg:col-span-7 grid grid-cols-1 md:grid-cols-2 gap-6. 
+Build 3 Stat Cards. 
+● Classes for Stat Cards: bg-white/5 backdrop -blur-md border border -
+white/10 rounded -3xl p-8 flex flex-col justify-between hover:bg -white/10 
+transition -colors duration -300. 
+Stat Card 1 (Full width, span 2 cols): 
+● Number: <span className="stat-number text -7xl font-heading font -bold 
+text -primary">0</span>+ 
+● Label: "Active Students" (text-white/60 uppercase tracking -widest text -sm 
+font -semibold). 
+Stat Card 2: 
+● Number: <span className="stat-number text -6xl font-heading font -bold 
+text -white">0</span>% 
+● Label: "Strategy Win-Rate" 
+Stat Card 3: 
+● Number: <span className="text-6xl font-heading font -bold text -
+white">24/7</span> 
+● Label: "Live Market Scanners" 
+Animated Counters:  
+Write a useGSAP hook targeting the .stat-number elements. When the Bento box 
+enters the viewport (start: "top 75%"), use a GSAP tween to animate the 
+innerHTML of these spans from 0 to 7000 (Card 1) and 0 to 94 (Card 2). Use snap: 
+{ innerHTML: 1 } to ensure they render as whole numbers, with a duration of 2.5s 
+and an ease: "power2.out". 
+Prompt Slice 5: Social Proof, Trust Badges, and Final 
+Conversion Engine  
+Finally, build the Trust & Conversion Section (components/CTASection.tsx) and the 
+Footer (components /Footer.tsx). 
+Trust / Social Proof Marquee:  
+<section> with py-24 overflow -hidden bg-background. 
+Add an H2 centered: "Proven by Results." (text-4xl font-heading font -bold text -
+foreground text -center mb -16). 
+Create an infinite horizontal marquee. Build a flex container containing the 3 
+testimonials provided in the content strategy.  
+Duplicate the set of 3 testimonials twice inside the flex container to allow for 
+seamless looping. 
+Apply a CSS animation or GSAP timeline that translates the container from x: 0 to 
+x: -50% continuously, repeating infinitely (repeat: -1, ease: "none", duration: 20). 
+Testimonial Card Design:  
+w-[400px] shrink -0 bg-secondary/50 border border -border rounded -2xl p-8 mx-
+4. 
+Include a Lucide Quote icon in the top left (text -primary/20 w -12 h-12). 
+The paragraph text (text -foreground/80 italic).  
+The Avatar row at the bottom: A circular div for the image (bg -primary/20), next to 
+the Name (font -bold) and Role (text-sm text-muted -foreground).  
+The Final CTA (The "One Goal" Rule):  
+Create a massive section: relative w-full py-40 flex flex-col items-center justify -
+center text -center bg -foreground rounded -t-[4rem] mt -24 overflow -hidden. 
+● Add a radial gradient glow behind the text using -- primary. 
+● Headline h2: "Stop Guessing. Start Compounding Your Knowledge Today." 
+(text-5xl md:text-7xl font-heading font -extrabold text -white max-w-4xl 
+leading-tight mb -12). 
+● Button: "Join Milestone Academy Now". Classes: px-12 py-6 bg-primary text -
+white rounded -full font -bold text -xl transition-all duration-300 hover:scale-
+105 hover:shadow-[0_0_50px_rgba(16,185,129,0.6)] active:scale-95. 
+● Add a GSAP timeline that pulses the button's scale slightly (scale: 1.02, yoyo: 
+true, repeat: -1, duration: 1.5, ease: "sine.inOut") to draw the eye indefinitely. 
+The Footer:  
+Inside the same dark section, below the CTA button, add a wide divider (w -full 
+max-w-7xl h-px bg-white/10 my-16). 
+Create a 4-column CSS grid (grid-cols-1 md:grid-cols-4 gap-8 max-w-7xl mx-auto 
+px-6 w-full text -left). 
+● Col 1: Brand Logo ("Milestone Academy" in white, bold) and a short subtext. 
+● Col 2, 3, 4: Link lists (Trading Links, Accounting Links, Legal/Socials). Links 
+should be text-white/50 text -sm hover:text-primary transition -colors. 
+Review the entire DOM hierarchy to ensure <div> nesting is semantic, accessibility 
+(aria-labels) is present on all buttons, and all GSAP ScrollTriggers are properly 
+unmounted in a return () => ctx.revert() cleanup function inside the useEffect 
+hooks to prevent React memory leaks. 
+Conclusion and Iterative Deployment Strategy
+ 
+The architectural blueprint detailed in this report transforms the conceptual desire for a 
+"WOW", premium, Awwwards-winning website into a strict, programmatic reality. By 
+combining the psychological precision of high-converting fintech copywriting with the 
+technological sophistication of GSAP kinetic motion, Lenis smooth scrolling, and Spline spatial 
+3D interactions, the Milestone Trading and Accounting Academy will project undisputed 
+authority and technological superiority.13 
+When utilizing generative AI to build this architecture, strict adherence to the sequential 
+prompt slices provided is mandatory. The AI must construct the underlying context (Tailwind 
+variables, Lenis providers) before attempting the complex kinetic typography and 3D 
+integration. Post-generation, the developer must conduct rigorous physical testing of the 
+scroll interactions on both low-end hardware and high-refresh-rate displays to ensure the 
+lagSmoothing and ScrollTrigger updates perform flawlessly across the hardware spectrum, 
+preventing the immersion-breaking stutter that plagues poorly optimized animated sites.12 The 
+resulting platform will not merely display educational content; it will serve as an immersive, 
+highly persuasive digital experience that inherently drives academy enrollments. 
+Works cited  
+1. The Vibe Coding Playbook - How to Start Building and Join the Top 1% of the New 
+AI Elite, accessed March 9, 2026, 
+https://www.reddit.com/r/ThinkingDeeplyAI/comments/1qzfoxp/the_vibe_coding
+_playbook_how_to_start_building/ 
+2. No 36. The Easiest Way to Get Started with Vibe Coding! | by Yan Liu | Bootcamp - 
+Medium, accessed March 9, 2026, https://medium.com/design-bootcamp/no-36-
+the-easiest-way-to-get-started-with-vibe-coding-39ac726fdaf8 
+3. How to Vibe Code: 11 AI-Assisted Coding Best Practices - Hexaware 
+Technologies, accessed March 9, 2026, https://hexaware.com/blogs/level-up-
+your-ai-workflow-11-vibe-coding-best-practices-for-real-world-builders/ 
+4. Become 10 x Vibe Coder. Awesome Vibe Coding guide, best practices, and tips 
+for efficient and controlled AI assisted coding. - GitHub, accessed March 9, 2026, 
+https://github.com/analyticalrohit/awesome-vibe-coding-guide 
+5. accessed January 1, 1970, https://github.com/MohammedJabir18/milestone-
+academy.git 
+6. 14 Best Premium Accounting WordPress Themes for 2025, accessed March 9, 
+2026, https://rstheme.com/14-best-premium-accounting-wordpress-themes-
+for-20 25/ 
+7. TAM Annual Report_En 24 - Tam Development, accessed March 9, 2026, 
+https://core.tam.sa/wp-content/uploads/2025/05/TAM-Annual-Report_En-
+24_.pdf 
+8. Beautiful themes for shadcn/ui — tweakcn | Theme Editor & Generator, accessed 
+March 9, 2026, https://tweakcn.com/ 
+9. Stunning Scroll Animations: GSAP, Lenis & Split Text Guide - YouTube, accessed 
+March 9, 2026, https://www.youtube.com/watch?v=kM2YwVSCyNQ 
+10. Landing-page-banner Components | 21st.dev - The first vibe-crafting tool, 
+accessed March 9, 2026, https://21st.dev/community/components/s/landing-
+page-banner 
+11. 3D Data Visualization - Spline, accessed March 9, 2026, 
+https://spline.design/solutions/3d-visualization 
+12. darkroomengineering/lenis: Smooth scroll at it should be - GitHub, accessed 
+March 9, 2026, https://github.com/darkroomengineering/lenis 
+13. Fintech Website Design Examples | Ramotion Agency, accessed March 9, 2026, 
+https://www.ramotion.com/blog/fintech-website-design-examples/ 
+14. The 6 best fintech website examples in 2026 - Blend B2B, accessed March 9, 
+2026, https://www.blendb2b.com/blog/best-fintech-website-examples 
+15. Light Green - tweakcn, accessed March 9, 2026, 
+https://tweakcn.com/themes/cmlhfpjhw000004l4f4ax3m7z 
+16. React Green Theme, accessed March 9, 2026, 
+https://www.shadcn.io/theme/green 
+17. 30 Best Fintech Website Design Examples of 2024 - Caffeine Marketing, 
+accessed March 9, 2026, https://www.caffeinemarketing.com/blog/best-fintech-
+website-design-examples 
+18. Theming - shadcn/ui, accessed March 9, 2026, 
+https://ui.shadcn.com/docs/theming  
+19. Tailwind CSS Colors | Complete Color Palette Reference - shadcn.io, accessed 
+March 9, 2026, https://www.shadcn.io/colors 
+20. Guide to Creating & Optimizing High-Converting Landing Pages - Neil Patel, 
+accessed March 9, 2026, https://neilpatel.com/blog/the-definitive-guide-to-
+creating-high-converting-landing-pages/ 
+21. Top Web Design Trends in 2025 - YouTube, accessed March 9, 2026, 
+https://www.youtube.com/watch?v=WhpYi6Qcu1A&vl=en-US 
+22. Awwward-winning animation techniques for websites | by Arjun Kumar | 
+Bootcamp - Medium, accessed March 9, 20 26, https://medium.com/design-
+bootcamp/awwward-winning-animation-techniques-for-websites-cb7c6b5a86ff 
+23. Top 10 Premium Architecture Website Designs in the Global Market - Medium, 
+accessed March 9, 2026, https://medium.com/@alphadesignglobal/top-10-
+premium-architecture-website-designs-in-the-global-market-9aac8a83cc22 
+24. Our 10 Favourite Landing Page Designs in Summer 2025 (and Why They Convert), 
+accessed March 9, 2026, https://www.orizon.co/blog/summer-our-10-favourite-
+landing-page-designs-in-summer-2025-and-why-they-convert 
+25. Culture & Education Websites - Awwwards, accessed March 9, 2026, 
+https://www.awwwards.com/websites/culture-education/ 
+26. Inspiration - Awwwards Blog - For Web Designers and Developers, accessed 
+March 9, 2026, https://www.awwwards.com/blog/design-trends-2025/ 
+27. Landing Page Design Trends 2025 - Outbrain, accessed March 9, 2026, 
+https://www.outbrain.com/blog/landing-page-design-trends/ 
+28. GSAP Scroll Animation Could Look Like a Pro | 2025 Tutorial - YouTube, accessed 
+March 9, 2026, https://www.youtube.com/watch?v=AEced0SBmYI 
+29. GSAP: Homepage, accessed March 9, 2026, https://gsap.com/ 
+30. GSAP Showcase, accessed March 9, 2026, https://gsap.com/showcase/ 
+31. Scroll | GSAP, accessed March 9, 20 26, https://gsap.com/scroll/ 
+32. Pattern(s) for synchronizing ScrollTrigger and Lenis in React/Next - GSAP, 
+accessed March 9, 20 26, https://gsap.com/community/forums/topic/40426-
+patterns-for-synchronizing-scrolltrigger-and-lenis-in-reactnext/ 
+33. WordPress Elementor Text Reveal Animation with GSAP – Tutorial 2025 - 
+YouTube, accessed March 9, 2026, 
+https://www.youtube.com/watch?v=gxpzIssk8-U 
+34. Top 32 Webflow Cloneables GSAP - FlowFav, accessed March 9, 2026, 
+https://www.flowfav.com/cloneable-js-libraries/build-stunning-websites-with-
+webflow-cloneables-and-gsap-integration 
+35. Transitions - Awwwards, accessed March 9, 2026, 
+https://www.awwwards.com/awwwards/collections/transitions/ 
+36. Page Transitions: Creative Examples, Resources and some Tips - Awwwards, 
+accessed March 9, 2026, https://www.awwwards.com/page-transitions-creative-
+examples-resources-and-some-tips.html 
+37. 24 Best Fintech Website Design Examples in 2025 - Webstacks, accessed March 
+9, 2026, https://www.webstacks.com/blog/fintech-websites 
+38. Spline - 3D Design tool in the browser with real-time collaboration, accessed 
+March 9, 2026, https://spline.design/ 
+39. Candlestick Chart 3D Models & Renders - Envato, accessed March 9, 2026, 
+https://elements.envato.com/3d/candlestick+chart 
+40. 3D Design tool in the browser with real-time collaboration - Spline, accessed 
+March 9, 2026, https://spline.design/3d-design 
+41. Discover community-made UI components - 21st Dev, accessed March 9, 2026, 
+https://21st.dev/community/components 
+42. 21st.dev | All Shadcn, accessed March 9, 2026, 
+https://allshadcn.com/components/21stdev/ 
+43. Hero Components - 21st Dev, accessed March 9, 2026, 
+https://21st.dev/community/components/s/hero 
+44. premium-saas-design | Skills Marketp... - LobeHub, accessed March 9, 2026, 
+https://lobehub.com/nl/skills/hermeticormus-libreuiux-claude-code-premium-
+saas-design 
+45. Card-component Components | 21st.dev - The first vibe-crafting tool, accessed 
+March 9, 2026, https://21st.dev/community/components/s/card-component 
+46. Card Components - 21st Dev, accessed March 9, 2026, 
+https://21st.dev/community/components/s/card 
+47. 10+ High Converting Landing Page Examples That Inspire You - The Knowledge 
+Academy, accessed March 9, 2026, 
+https://www.theknowledgeacademy.com/blog/high-converting-landing-page/ 
+48. I studied 300+ of the highest-converting landing pages ever made. Here's what 
+they all had in common - Reddit, accessed March 9, 2026, 
+https://www.reddit.com/r/SaaS/comments/1r73lwu/i_studied_300_of_the_highes
+tconverting_landing/ 
+49. 15 high-converting landing page examples (+ why they work) - Unbounce, 
+accessed March 9, 2026, https://unbounce.com/landing-page-examples/high-
+converting-landing-pages/ 
+50. Create a 3d scrolling animation with GSAP and Veo 3 - Builder.io, accessed March 
+9, 2026, https://www.builder.io/blog/3d-gsap 

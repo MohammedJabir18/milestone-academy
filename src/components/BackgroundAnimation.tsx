@@ -1,285 +1,171 @@
-
 import React, { useEffect, useRef } from 'react';
 
+/**
+ * A performant canvas-based background animation with:
+ * - Floating particles
+ * - Subtle grid lines
+ * - Candlestick chart ghosts
+ * - Sine-wave market curves
+ * All drawn at very low opacity so they don't compete with content.
+ */
 const BackgroundAnimation = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  
+
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    
-    // Set canvas size to match window
-    const resizeCanvas = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+
+    let animationId: number;
+    let width = 0;
+    let height = 0;
+
+    const resize = () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
     };
-    
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    
-    // Particle system
-    class Particle {
-      x: number;
-      y: number;
-      size: number;
-      speedX: number;
-      speedY: number;
-      color: string;
-      
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 3 + 1;
-        this.speedX = (Math.random() - 0.5) * 0.5;
-        this.speedY = (Math.random() - 0.5) * 0.5;
-        this.color = `rgba(0, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 50) + 30}, ${Math.random() * 0.1 + 0.05})`;
-      }
-      
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        
-        // Bounce off edges
-        if (this.x > canvas.width || this.x < 0) {
-          this.speedX *= -1;
-        }
-        
-        if (this.y > canvas.height || this.y < 0) {
-          this.speedY *= -1;
-        }
-      }
-      
-      draw() {
-        ctx.fillStyle = this.color;
+    resize();
+    window.addEventListener('resize', resize);
+
+    // ─── Particles ───────────────────────────────────
+    const PARTICLE_COUNT = 80;
+    const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      r: Math.random() * 2.5 + 0.5,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      g: Math.floor(Math.random() * 80) + 170, // green channel 170-250
+      a: Math.random() * 0.06 + 0.02,
+    }));
+
+    // ─── Grid lines ──────────────────────────────────
+    const GRID_COUNT = 8;
+    const gridLines = Array.from({ length: GRID_COUNT * 2 }, (_, i) => ({
+      vertical: i < GRID_COUNT,
+      pos: Math.random() * (i < GRID_COUNT ? width : height),
+      speed: Math.random() * 0.15 + 0.05,
+      opacity: Math.random() * 0.04 + 0.01,
+    }));
+
+    // ─── Candlesticks ────────────────────────────────
+    const CANDLE_COUNT = 12;
+    const candles = Array.from({ length: CANDLE_COUNT }, () => ({
+      x: Math.random() * width,
+      y: Math.random() * height,
+      w: Math.random() * 8 + 3,
+      h: Math.random() * 35 + 12,
+      green: Math.random() > 0.5,
+      a: Math.random() * 0.06 + 0.03,
+      speed: Math.random() * 0.35 + 0.08,
+    }));
+
+    // ─── Waves ───────────────────────────────────────
+    const WAVE_COUNT = 4;
+    const waves = Array.from({ length: WAVE_COUNT }, (_, i) => ({
+      yBase: height * ((i + 1) / (WAVE_COUNT + 1)),
+      amp: Math.random() * 18 + 10,
+      freq: Math.random() * 0.008 + 0.004,
+      speed: Math.random() * 0.0004 + 0.0001,
+      g: Math.floor(Math.random() * 80) + 170,
+      a: Math.random() * 0.06 + 0.02,
+    }));
+
+    // ─── Render loop ─────────────────────────────────
+    const draw = (t: number) => {
+      // Background gradient
+      const grad = ctx.createLinearGradient(0, 0, 0, height);
+      grad.addColorStop(0, '#0a0a0a');
+      grad.addColorStop(1, '#0f0f12');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Waves
+      for (const w of waves) {
+        ctx.strokeStyle = `rgba(0,${w.g},60,${w.a})`;
+        ctx.lineWidth = 1.5;
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        for (let x = 0; x <= width; x += 4) {
+          const y = w.yBase + Math.sin(x * w.freq + t * w.speed) * w.amp;
+          x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+      }
+
+      // Grid
+      for (const g of gridLines) {
+        ctx.strokeStyle = `rgba(0,200,83,${g.opacity})`;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath();
+        if (g.vertical) {
+          g.pos += g.speed;
+          if (g.pos > width) g.pos = 0;
+          ctx.moveTo(g.pos, 0);
+          ctx.lineTo(g.pos, height);
+        } else {
+          g.pos += g.speed;
+          if (g.pos > height) g.pos = 0;
+          ctx.moveTo(0, g.pos);
+          ctx.lineTo(width, g.pos);
+        }
+        ctx.stroke();
+      }
+
+      // Particles
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x > width || p.x < 0) p.vx *= -1;
+        if (p.y > height || p.y < 0) p.vy *= -1;
+        ctx.fillStyle = `rgba(0,${p.g},50,${p.a})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
-    }
-    
-    // Create grid lines
-    class GridLine {
-      x: number;
-      y: number;
-      length: number;
-      vertical: boolean;
-      color: string;
-      opacity: number;
-      speed: number;
-      
-      constructor(vertical: boolean) {
-        this.vertical = vertical;
-        if (vertical) {
-          this.x = Math.random() * canvas.width;
-          this.y = 0;
-          this.length = canvas.height;
-        } else {
-          this.x = 0;
-          this.y = Math.random() * canvas.height;
-          this.length = canvas.width;
+
+      // Candlesticks
+      for (const c of candles) {
+        c.y -= c.speed;
+        c.a -= 0.00035;
+        if (c.y < -c.h || c.a <= 0) {
+          c.y = height + c.h;
+          c.x = Math.random() * width;
+          c.green = Math.random() > 0.5;
+          c.h = Math.random() * 35 + 12;
+          c.a = Math.random() * 0.06 + 0.03;
         }
-        this.color = '#00C853';
-        this.opacity = Math.random() * 0.07 + 0.01;
-        this.speed = Math.random() * 0.2 + 0.1;
-      }
-      
-      update() {
-        if (this.vertical) {
-          this.x += this.speed;
-          if (this.x > canvas.width) {
-            this.x = 0;
-            this.opacity = Math.random() * 0.07 + 0.01;
-          }
-        } else {
-          this.y += this.speed;
-          if (this.y > canvas.height) {
-            this.y = 0;
-            this.opacity = Math.random() * 0.07 + 0.01;
-          }
-        }
-      }
-      
-      draw() {
-        ctx.strokeStyle = `rgba(0, 200, 83, ${this.opacity})`;
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        if (this.vertical) {
-          ctx.moveTo(this.x, 0);
-          ctx.lineTo(this.x, this.length);
-        } else {
-          ctx.moveTo(0, this.y);
-          ctx.lineTo(this.length, this.y);
-        }
-        ctx.stroke();
-      }
-    }
-    
-    // Create candlestick pattern
-    class Candlestick {
-      x: number;
-      y: number;
-      width: number;
-      height: number;
-      isGreen: boolean;
-      opacity: number;
-      speed: number;
-      
-      constructor() {
-        this.width = Math.random() * 10 + 3;
-        this.height = Math.random() * 40 + 10;
-        this.x = Math.random() * (canvas.width - this.width);
-        this.y = Math.random() * (canvas.height - this.height);
-        this.isGreen = Math.random() > 0.5;
-        this.opacity = Math.random() * 0.1 + 0.05;
-        this.speed = Math.random() * 0.5 + 0.1;
-      }
-      
-      update() {
-        this.y -= this.speed;
-        this.opacity -= 0.0005;
-        
-        if (this.y < -this.height || this.opacity <= 0) {
-          this.y = canvas.height;
-          this.x = Math.random() * (canvas.width - this.width);
-          this.isGreen = Math.random() > 0.5;
-          this.height = Math.random() * 40 + 10;
-          this.opacity = Math.random() * 0.1 + 0.05;
-        }
-      }
-      
-      draw() {
-        const color = this.isGreen ? `rgba(0, 200, 83, ${this.opacity})` : `rgba(255, 70, 70, ${this.opacity})`;
+        const color = c.green
+          ? `rgba(0,200,83,${c.a})`
+          : `rgba(255,70,70,${c.a * 0.7})`;
         ctx.fillStyle = color;
-        ctx.fillRect(this.x, this.y, this.width, this.height);
-        
-        // Wick
-        const wickX = this.x + this.width / 2;
+        ctx.fillRect(c.x, c.y, c.w, c.h);
+        // wick
         ctx.strokeStyle = color;
-        ctx.lineWidth = 1;
+        ctx.lineWidth = 0.8;
+        const wx = c.x + c.w / 2;
         ctx.beginPath();
-        ctx.moveTo(wickX, this.y - this.height * 0.3);
-        ctx.lineTo(wickX, this.y + this.height + this.height * 0.3);
+        ctx.moveTo(wx, c.y - c.h * 0.25);
+        ctx.lineTo(wx, c.y + c.h * 1.25);
         ctx.stroke();
       }
-    }
-    
-    // Create wave animation
-    class Wave {
-      points: { x: number, y: number }[];
-      amplitude: number;
-      frequency: number;
-      speed: number;
-      color: string;
-      
-      constructor(yPosition: number) {
-        this.points = [];
-        this.amplitude = Math.random() * 20 + 10;
-        this.frequency = Math.random() * 0.01 + 0.005;
-        this.speed = Math.random() * 0.05 + 0.01;
-        this.color = `rgba(0, ${Math.floor(Math.random() * 100) + 150}, ${Math.floor(Math.random() * 50) + 30}, ${Math.random() * 0.1 + 0.02})`;
-        
-        // Initialize points
-        for (let x = 0; x <= canvas.width; x += 5) {
-          this.points.push({
-            x,
-            y: yPosition + Math.sin(x * this.frequency) * this.amplitude
-          });
-        }
-      }
-      
-      update() {
-        this.points.forEach(point => {
-          point.y = point.y + Math.sin(point.x * this.frequency + Date.now() * this.speed) * 0.1;
-        });
-      }
-      
-      draw() {
-        ctx.strokeStyle = this.color;
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        this.points.forEach((point, index) => {
-          if (index === 0) {
-            ctx.moveTo(point.x, point.y);
-          } else {
-            ctx.lineTo(point.x, point.y);
-          }
-        });
-        ctx.stroke();
-      }
-    }
-    
-    // Initialize particles, grid lines, candlesticks, and waves
-    const particles: Particle[] = [];
-    for (let i = 0; i < 100; i++) {
-      particles.push(new Particle());
-    }
-    
-    const gridLines: GridLine[] = [];
-    for (let i = 0; i < 10; i++) {
-      gridLines.push(new GridLine(true));
-      gridLines.push(new GridLine(false));
-    }
-    
-    const candlesticks: Candlestick[] = [];
-    for (let i = 0; i < 15; i++) {
-      candlesticks.push(new Candlestick());
-    }
-    
-    const waves: Wave[] = [];
-    for (let i = 1; i <= 5; i++) {
-      waves.push(new Wave(canvas.height * (i / 6)));
-    }
-    
-    // Animation loop
-    const animate = () => {
-      // Create gradient background
-      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      gradient.addColorStop(0, '#0D0D0D');
-      gradient.addColorStop(1, '#121212');
-      ctx.fillStyle = gradient;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      // Update and draw waves
-      waves.forEach(wave => {
-        wave.update();
-        wave.draw();
-      });
-      
-      // Update and draw grid lines
-      gridLines.forEach(line => {
-        line.update();
-        line.draw();
-      });
-      
-      // Update and draw particles
-      particles.forEach(particle => {
-        particle.update();
-        particle.draw();
-      });
-      
-      // Update and draw candlesticks
-      candlesticks.forEach(candlestick => {
-        candlestick.update();
-        candlestick.draw();
-      });
-      
-      requestAnimationFrame(animate);
+
+      animationId = requestAnimationFrame(draw);
     };
-    
-    animate();
-    
+
+    animationId = requestAnimationFrame(draw);
+
     return () => {
-      window.removeEventListener('resize', resizeCanvas);
+      cancelAnimationFrame(animationId);
+      window.removeEventListener('resize', resize);
     };
   }, []);
-  
+
   return (
-    <canvas 
-      ref={canvasRef} 
-      className="fixed top-0 left-0 w-full h-full pointer-events-none z-0"
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 w-full h-full pointer-events-none z-0"
+      aria-hidden="true"
     />
   );
 };

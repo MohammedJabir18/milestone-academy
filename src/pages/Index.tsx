@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import HeroSection from '@/components/HeroSection';
@@ -13,6 +13,7 @@ import NewsSection from '@/components/NewsSection';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 import { Analytics } from "@vercel/analytics/react"
+import { useScrollReveal, useStaggerReveal } from '@/hooks/useScrollReveal';
 
 const testimonials = [
   {
@@ -39,6 +40,12 @@ const testimonials = [
 ];
 
 const Index = () => {
+  const testimonialsHeadingRef = useRef<HTMLDivElement>(null);
+  const testimonialsGridRef = useRef<HTMLDivElement>(null);
+
+  useScrollReveal(testimonialsHeadingRef, { y: 30 });
+  useStaggerReveal(testimonialsGridRef, '.testimonial-item', { y: 40, stagger: 0.12 });
+
   return (
     <div className="min-h-screen bg-trading-dark">
       <Navbar />
@@ -46,7 +53,7 @@ const Index = () => {
       {/* Hero Section */}
       <HeroSection />
       
-      {/* About Us Section - Moved to be right after Hero */}
+      {/* About Us Section */}
       <AboutSection />
       
       {/* Programs Section */}
@@ -65,21 +72,28 @@ const Index = () => {
       </div>
       
       {/* Testimonials Section */}
-      <section id="testimonials" className="py-20 relative z-10">
+      <section id="testimonials" className="py-24 relative z-10">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 text-white">Success <span className="text-trading-emerald">Stories</span></h2>
-            <p className="text-gray-300 text-lg">Hear from our students who have transformed their trading and financial future with our academy.</p>
+          <div ref={testimonialsHeadingRef} className="text-center max-w-3xl mx-auto mb-14">
+            <span className="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest uppercase rounded-full bg-trading-emerald/10 text-trading-emerald border border-trading-emerald/20">
+              Testimonials
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold mb-4 text-white">
+              Success <span className="bg-gradient-to-r from-trading-emerald to-trading-lightMint bg-clip-text text-transparent">Stories</span>
+            </h2>
+            <p className="text-gray-400 text-lg">Hear from our students who have transformed their trading and financial future with our academy.</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 stagger-list">
+          <div ref={testimonialsGridRef} className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
-              <TestimonialCard key={index} {...testimonial} />
+              <div key={index} className="testimonial-item">
+                <TestimonialCard {...testimonial} />
+              </div>
             ))}
           </div>
           
           <div className="text-center mt-12">
-            <Button className="gradient-button glow-on-hover">
+            <Button className="bg-transparent border border-trading-emerald/40 text-trading-emerald hover:bg-trading-emerald/10 rounded-full px-8 py-3">
               View All Testimonials <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </div>

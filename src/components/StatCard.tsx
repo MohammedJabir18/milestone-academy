@@ -21,19 +21,25 @@ const StatCard: React.FC<StatCardProps> = ({
   iconClassName,
 }) => {
   return (
-    <div className={cn(
-      "glass-card p-6 rounded-lg flex flex-col h-full relative overflow-hidden group",
-      className
-    )}>
-      <div className={cn(
-        "absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 h-24 w-24 rounded-full bg-trading-emerald/10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110",
-        iconClassName
-      )}>
-        <Icon className="h-8 w-8 text-trading-emerald opacity-50" />
+    <div
+      className={cn(
+        'relative rounded-2xl p-6 flex flex-col h-full overflow-hidden group bg-white/[0.03] border border-white/10 backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-trading-emerald/20 hover:shadow-lg hover:shadow-trading-emerald/5',
+        className
+      )}
+    >
+      {/* icon circle */}
+      <div
+        className={cn(
+          'absolute -top-3 -right-3 h-20 w-20 rounded-full bg-trading-emerald/5 flex items-center justify-center transition-transform duration-500 group-hover:scale-125',
+          iconClassName
+        )}
+      >
+        <Icon className="h-7 w-7 text-trading-emerald/40" />
       </div>
-      <div className="mb-2 text-gray-400">{title}</div>
-      <div className="text-3xl font-bold mb-2 text-white">{value}</div>
-      <div className="text-sm text-gray-400 mt-auto">{description}</div>
+
+      <div className="text-xs font-medium uppercase tracking-wider text-gray-500 mb-3">{title}</div>
+      <div className="text-3xl font-bold mb-2 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">{value}</div>
+      <div className="text-sm text-gray-500 mt-auto leading-relaxed">{description}</div>
     </div>
   );
 };
