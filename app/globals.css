@@ -1,0 +1,85 @@
+@import "tailwindcss";
+@config "../tailwind.config.ts";
+
+:root {
+  /* Backgrounds */
+  --bg-primary: #F7F9F4;          /* Off-white with subtle green tint */
+  --bg-secondary: #EDEFEA;        /* Light sage surface */
+  --bg-card: #FFFFFF;             /* Pure white cards */
+  --bg-dark: #0D1A0E;             /* Deep forest dark (for dark sections) */
+  --bg-dark-card: #162018;        /* Dark card backgrounds */
+
+  /* Green Spectrum */
+  --green-50: #F0F7F0;
+  --green-100: #D4EDD4;
+  --green-200: #A8D8A8;
+  --green-300: #6DBF6D;
+  --green-400: #3DA83D;
+  --green-500: #22C55E;           /* Primary brand green (Tailwind green-500) */
+  --green-600: #16A34A;           /* Deeper action green */
+  --green-700: #15803D;
+  --green-800: #166534;
+  --green-900: #0D4A26;
+
+  /* Accent */
+  --accent-gold: #D4AF37;         /* Premium gold for badges, stars */
+  --accent-mint: #A8F5C2;         /* Soft mint glow */
+  --accent-neon: #39FF14;         /* Neon green for data/numbers (use sparingly) */
+
+  /* Typography */
+  --text-primary: #0D1A0E;        /* Near black with green soul */
+  --text-secondary: #3D5A3E;      /* Muted forest green */
+  --text-muted: #7A9B7C;          /* Soft sage text */
+  --text-inverse: #F7F9F4;        /* Light text on dark bg */
+
+  /* Borders & Lines */
+  --border-light: #D4E8D4;        /* Subtle green-tinted border */
+  --border-medium: #A8C8A8;
+
+  /* Shadows */
+  --shadow-green: 0 4px 40px rgba(34, 197, 94, 0.12);
+  --shadow-card: 0 2px 20px rgba(13, 26, 14, 0.08);
+  --shadow-lift: 0 20px 60px rgba(13, 26, 14, 0.15);
+
+  /* Gradients */
+  --gradient-hero: linear-gradient(135deg, #F7F9F4 0%, #E8F5E9 50%, #F0FFF4 100%);
+  --gradient-green: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
+  --gradient-dark: linear-gradient(180deg, #0D1A0E 0%, #162018 100%);
+  --gradient-glow: radial-gradient(ellipse at center, rgba(34,197,94,0.15) 0%, transparent 70%);
+
+  /* Spacing */
+  --section-padding: 120px 0;
+  --container-max: 1280px;
+
+  /* Border Radius */
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --radius-xl: 40px;
+  --radius-pill: 100px;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Performance layer hints */
+.gsap-heading,
+.gsap-heading *,
+.stat-card,
+.course-card,
+.usp-card,
+.trading-header > *,
+.placement-stat,
+.hero-label,
+.hero-headline,
+.hero-sub,
+.hero-cta,
+.social-proof,
+.hero-3d,
+.badge-1,
+.badge-2,
+.badge-3 {
+  will-change: transform, opacity;
+}
