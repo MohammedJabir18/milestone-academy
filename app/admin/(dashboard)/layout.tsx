@@ -15,7 +15,8 @@ import {
   Star,
   BellRing,
   Phone,
-  ClipboardList
+  ClipboardList,
+  Globe
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -95,6 +96,12 @@ export default async function AdminDashboardLayout({
           </div>
 
           <div className="flex items-center gap-6">
+            <Link href="/">
+              <Button variant="ghost" className="font-bold text-stone-600 hover:text-stone-900 rounded-xl px-4 hover:bg-stone-50">
+                <Globe size={18} className="mr-2" /> View Site
+              </Button>
+            </Link>
+            <div className="h-4 w-[1px] bg-stone-200" />
             <button className="relative text-stone-400 hover:text-stone-900 transition-colors">
               <Bell size={22} />
               {(leadsCount || 0) > 0 && (
