@@ -131,7 +131,7 @@ export function DataTable<T>({
                 >
                   <div className={`flex items-center gap-1 ${col.className?.includes('text-right') ? 'justify-end' : ''}`}>
                     {col.header}
-                    {sortConfig?.key === col.accessorKey && (
+                    {sortConfig && sortConfig.key === col.accessorKey && (
                       <span className="text-[10px] text-neutral-400">
                         {sortConfig.direction === "asc" ? "▲" : "▼"}
                       </span>
