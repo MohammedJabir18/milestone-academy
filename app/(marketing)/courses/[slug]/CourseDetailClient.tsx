@@ -13,7 +13,8 @@ import {
   FileText, 
   Award,
   ChevronDown,
-  ArrowRight
+  ArrowRight,
+  TrendingUp
 } from "lucide-react";
 import * as Accordion from "@radix-ui/react-accordion";
 import gsap from "gsap";
@@ -22,7 +23,13 @@ import CourseCard from "@/components/ui/CourseCard";
 import { TransitionLink as Link } from "@/components/global/PageTransition";
 
 export default function CourseDetailClient({ course }: { course: Course }) {
-  const Icon = course.icon;
+  const iconMap: Record<string, React.ElementType> = {
+    BookOpen,
+    FileText,
+    TrendingUp,
+    Award
+  };
+  const Icon = iconMap[course.icon] || BookOpen;
   const headerRef = useRef<HTMLDivElement>(null);
   
   // Quick dynamic random instructor matching for prototypes
