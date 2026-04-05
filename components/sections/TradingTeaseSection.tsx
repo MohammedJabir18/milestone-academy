@@ -77,18 +77,18 @@ export default function TradingTeaseSection() {
           <div className="flex items-center gap-3 mb-6">
             <div className="w-8 h-[1px] bg-[var(--green-600)]" />
             <span className="font-mono text-[13px] text-[var(--green-700)] uppercase tracking-widest font-bold">
-              Our Sister Brand
+              ALSO AT MILESTONE
             </span>
             <div className="w-8 h-[1px] bg-[var(--green-600)]" />
           </div>
           
           <h2 className="gsap-heading font-serif text-[42px] md:text-[56px] text-[var(--text-primary)] leading-[1.05] mb-6 tracking-tight">
-            Also Explore: <br/>
-            Milestone <span className="italic text-[var(--green-600)]">Trading</span> Academy
+            Where It All <br/>
+            Began — <span className="italic text-[var(--green-600)]">Trading</span>.
           </h2>
           
           <p className="font-sans text-[17px] md:text-[19px] text-[var(--text-secondary)] leading-relaxed">
-            Where our journey began. Professional stock market trading, technical analysis, and investment mastery programs — trusted by 10,000+ traders across India.
+            Milestone began as a trading academy and has trained 10,000+ traders across India. Our professional trading programs continue to run alongside our accounting courses — One academy, complete financial education.
           </p>
         </div>
 
@@ -106,12 +106,12 @@ export default function TradingTeaseSection() {
               {/* Fake Browser Chrome Navbar */}
               <div className="h-10 w-full bg-[#161f1c] border-b border-white/10 flex items-center px-4 gap-2 shrink-0 relative z-20">
                  <div className="flex gap-1.5 shrink-0">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-400/80" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/80" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-400/80" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#FF5F56]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#FFBD2E]" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-[#27C93F]" />
                  </div>
                  <div className="mx-auto w-[60%] lg:w-[45%] h-6 bg-white/5 border border-white/10 rounded-md flex items-center justify-center font-mono text-[10px] text-white/30 tracking-widest hidden sm:flex">
-                    trading.milestone.com
+                    trading.milestone.academy
                  </div>
               </div>
               
@@ -124,18 +124,18 @@ export default function TradingTeaseSection() {
                  
                  {/* Center Brand */}
                  <div className="absolute top-[35%] left-1/2 -translate-x-1/2 -translate-y-[35%] flex flex-col items-center">
-                    <TrendingUp size={48} className="text-[var(--green-500)] mb-4" />
+                    <TrendingUp size={48} className="text-[#22C55E] mb-4" />
                     <span className="font-serif text-[32px] md:text-[40px] text-white tracking-tight whitespace-nowrap">Master the Markets.</span>
                     <span className="font-sans text-[13px] text-white/40 tracking-[0.2em] uppercase mt-2">Zero to Hero Trading Pipeline</span>
                  </div>
                  
                  {/* Fake Candlesticks Abstractly Placed */}
-                 <div className="absolute bottom-0 left-0 w-full h-[100px] flex items-end justify-between px-6 opacity-30 gap-1 pb-4">
-                    {[100, 40, 60, 120, 80, 50, 70, 110, 130, 90, 60, 40, 80, 100].map((h, i) => (
-                      <div key={i} className={`w-[8px] rounded-t-sm flex flex-col justify-end items-center relative ${i % 3 === 0 ? 'bg-red-500' : 'bg-green-500'}`} style={{ height: `${Math.max(20, Math.random() * h)}%` }}>
+                 <div className="absolute bottom-0 left-0 w-full h-[120px] flex items-end justify-between px-6 opacity-40 gap-1.5 pb-2">
+                    {[100, 40, 60, 120, 80, 50, 70, 110, 130, 90, 60, 40, 80, 100, 140, 110].map((h, i) => (
+                      <div key={i} className={`w-[6px] rounded-sm flex flex-col justify-end items-center relative transition-all duration-500 ${i % 3 === 0 ? 'bg-[#EF4444]' : 'bg-[#22C55E]'}`} style={{ height: `${Math.max(20, Math.random() * h)}%` }}>
                          {/* Candlestick Wick */}
-                         <div className={`absolute top-0 -translate-y-full w-[1px] h-[15px] ${i % 3 === 0 ? 'bg-red-500' : 'bg-green-500'}`} />
-                         <div className={`absolute bottom-0 translate-y-full w-[1px] h-[15px] ${i % 3 === 0 ? 'bg-red-500' : 'bg-green-500'}`} />
+                         <div className={`absolute top-0 -translate-y-full w-[1.5px] h-[12px] ${i % 3 === 0 ? 'bg-[#EF4444]' : 'bg-[#22C55E]'}`} />
+                         <div className={`absolute bottom-0 translate-y-full w-[1.5px] h-[12px] ${i % 3 === 0 ? 'bg-[#EF4444]' : 'bg-[#22C55E]'}`} />
                       </div>
                     ))}
                  </div>
@@ -143,35 +143,38 @@ export default function TradingTeaseSection() {
             </div>
 
             {/* Right Box: Content & Action */}
-            <div className="w-full lg:w-[45%] p-8 md:p-10 flex flex-col justify-center bg-white relative">
+            <div className="w-full lg:w-[45%] p-8 md:p-12 flex flex-col justify-center bg-white relative">
               
               <div className="mb-8">
-                <span className="bg-[var(--green-50)] text-[var(--green-700)] px-3 py-1 font-mono text-[11px] uppercase tracking-widest font-bold rounded mb-4 inline-block border border-[var(--border-medium)]">Separate Institute</span>
-                <h3 className="font-sans font-bold text-[24px] text-[var(--text-primary)] leading-snug mb-3">
-                  Join the Ultimate Financial Super-ecosystem
+                <span className="bg-[var(--green-50)] text-[var(--green-700)] px-3 py-1 font-mono text-[11px] uppercase tracking-widest font-bold rounded mb-4 inline-block border border-[var(--border-medium)]">
+                  ONE ACADEMY • MULTIPLE PATHS
+                </span>
+                <h3 className="font-sans font-bold text-[26px] text-[var(--text-primary)] leading-tight mb-4">
+                  Legacy in Trading — Excellence in Accounting.
                 </h3>
-                <p className="font-sans text-[15px] text-[var(--text-secondary)] leading-relaxed">
-                  While our Accounting Academy builds your corporate career, our Trading Institute empowers you to multiply that capital through precise price action strategies.
+                <p className="font-sans text-[16px] text-[var(--text-secondary)] leading-relaxed">
+                  Join the 10,000+ traders who have mastered the markets with us since 2019. Whether it's corporate accounting or active trading, we build professionals.
                 </p>
               </div>
 
               {/* Data Row */}
-              <div className="flex flex-col gap-4 mb-8">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[var(--green-50)] flex items-center justify-center shrink-0">
-                    <Users size={18} className="text-[var(--green-600)]" />
+              <div className="flex flex-col gap-5 mb-10">
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-full bg-[var(--green-50)] flex items-center justify-center shrink-0">
+                    <Users size={20} className="text-[var(--green-600)]" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-sans font-extrabold text-[var(--text-primary)]">10,000+ Active Traders</span>
+                    <span className="font-sans font-extrabold text-[var(--text-primary)]">10,000+ Traders Trained</span>
+                    <span className="font-sans text-[13px] text-[var(--text-secondary)] italic">India's most practical academy</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[var(--green-50)] flex items-center justify-center shrink-0">
-                    <BookOpen size={18} className="text-[var(--green-600)]" />
+                <div className="flex items-center gap-4">
+                  <div className="w-11 h-11 rounded-full bg-[var(--green-50)] flex items-center justify-center shrink-0">
+                    <BookOpen size={20} className="text-[var(--green-600)]" />
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-sans font-extrabold text-[var(--text-primary)]">15+ Advanced Curriculums</span>
-                    <span className="font-sans text-[13px] text-[var(--text-secondary)]">Stock • Crypto • Forex</span>
+                    <span className="font-sans font-extrabold text-[var(--text-primary)]">8+ Detailed Curriculums</span>
+                    <span className="font-sans text-[13px] text-[var(--text-secondary)]">Stock • Options • Technicals</span>
                   </div>
                 </div>
               </div>
@@ -181,9 +184,9 @@ export default function TradingTeaseSection() {
                 href="https://milestone-trading-academy.vercel.app/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="w-full py-4 rounded-xl flex items-center justify-center gap-2 font-sans font-bold text-[15px] transition-all duration-300 border-2 border-[var(--green-500)] text-[var(--green-600)] bg-transparent hover:bg-[var(--green-500)] hover:text-white"
+                className="magnetic group w-full py-[18px] rounded-xl flex items-center justify-center gap-2 font-sans font-bold text-[16px] transition-all duration-300 border-2 border-[var(--green-500)] text-[var(--green-600)] bg-transparent hover:bg-[var(--green-500)] hover:text-white"
               >
-                Explore Trading Programs <ArrowUpRight size={18} />
+                Explore Trading Programs <ArrowUpRight size={18} className="group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
               </a>
 
             </div>

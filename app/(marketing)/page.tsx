@@ -27,17 +27,17 @@ export default function Home() {
       <LoadingScreen />
       
       {/* Sections Array */}
-      <div className="w-full flex flex-col items-center overflow-x-hidden">
+      <div className="w-full flex flex-col items-center">
         <HeroSection />
         <MarqueeBand />
         <StatsSection />
         <CoursesSection />
+        <TradingTeaseSection />
         <WhyUsSection />
         <CurriculumSection />
         <TestimonialsSection />
         <PlacementSection />
         <CtaSection />
-        <TradingTeaseSection />
       </div>
     </>
   );

@@ -2,14 +2,14 @@
 @config "../tailwind.config.ts";
 
 :root {
-  /* Backgrounds */
+  /* BACKGROUNDS */
   --bg-primary: #F7F9F4;          /* Off-white with subtle green tint */
   --bg-secondary: #EDEFEA;        /* Light sage surface */
   --bg-card: #FFFFFF;             /* Pure white cards */
   --bg-dark: #0D1A0E;             /* Deep forest dark (for dark sections) */
   --bg-dark-card: #162018;        /* Dark card backgrounds */
 
-  /* Green Spectrum */
+  /* GREEN SPECTRUM */
   --green-50: #F0F7F0;
   --green-100: #D4EDD4;
   --green-200: #A8D8A8;
@@ -21,42 +21,111 @@
   --green-800: #166534;
   --green-900: #0D4A26;
 
-  /* Accent */
+  /* ACCENT */
   --accent-gold: #D4AF37;         /* Premium gold for badges, stars */
   --accent-mint: #A8F5C2;         /* Soft mint glow */
   --accent-neon: #39FF14;         /* Neon green for data/numbers (use sparingly) */
 
-  /* Typography */
+  /* TYPOGRAPHY */
   --text-primary: #0D1A0E;        /* Near black with green soul */
   --text-secondary: #3D5A3E;      /* Muted forest green */
   --text-muted: #7A9B7C;          /* Soft sage text */
   --text-inverse: #F7F9F4;        /* Light text on dark bg */
 
-  /* Borders & Lines */
+  /* BORDERS & LINES */
   --border-light: #D4E8D4;        /* Subtle green-tinted border */
   --border-medium: #A8C8A8;
 
-  /* Shadows */
+  /* SHADOWS */
   --shadow-green: 0 4px 40px rgba(34, 197, 94, 0.12);
   --shadow-card: 0 2px 20px rgba(13, 26, 14, 0.08);
   --shadow-lift: 0 20px 60px rgba(13, 26, 14, 0.15);
 
-  /* Gradients */
+  /* GRADIENTS */
   --gradient-hero: linear-gradient(135deg, #F7F9F4 0%, #E8F5E9 50%, #F0FFF4 100%);
   --gradient-green: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
   --gradient-dark: linear-gradient(180deg, #0D1A0E 0%, #162018 100%);
   --gradient-glow: radial-gradient(ellipse at center, rgba(34,197,94,0.15) 0%, transparent 70%);
 
-  /* Spacing */
+  /* SPACING */
   --section-padding: 120px 0;
   --container-max: 1280px;
 
-  /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 40px;
-  --radius-pill: 100px;
+  /* BORDER RADIUS */
+  --r-sm: 8px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 40px;
+  --r-pill: 100px;
+
+
+  /* === SHADCN BASE VARIABLES (MAPPED) === */
+  --background: 100 10% 98.5%;    /* Matches #F7F9F4 roughly */
+  --foreground: 130 30% 8%;       /* Matches #0D1A0E */
+  --card: 0 0% 100%;
+  --card-foreground: 130 30% 8%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 130 30% 8%;
+  --primary: 142 71% 45%;         /* Matches #22C55E (green-500) */
+  --primary-foreground: 100 10% 98.5%;
+  --secondary: 100 13% 93%;       /* Matches #EDEFEA */
+  --secondary-foreground: 130 20% 25%;
+  --muted: 100 13% 93%;
+  --muted-foreground: 130 15% 55%;
+  --accent: 142 70% 95%;          /* Matches green-100 tint */
+  --accent-foreground: 142 71% 45%;
+  --destructive: 0 84.2% 60.2%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 120 20% 88%;          /* Matches border-light */
+  --input: 120 20% 88%;
+  --ring: 142 71% 45%;
+  --radius: 1rem;                 /* 16px matches --r-md */
+}
+
+.dark {
+  --background: 130 30% 8%;
+  --foreground: 100 10% 98.5%;
+  --card: 130 18% 12%;
+  --card-foreground: 100 10% 98.5%;
+  --popover: 130 18% 12%;
+  --popover-foreground: 100 10% 98.5%;
+  --primary: 142 71% 45%;
+  --primary-foreground: 130 30% 8%;
+  --secondary: 130 18% 15%;
+  --secondary-foreground: 100 10% 98.5%;
+  --muted: 130 18% 15%;
+  --muted-foreground: 130 10% 65%;
+  --accent: 130 18% 15%;
+  --accent-foreground: 100 10% 98.5%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 130 18% 15%;
+  --input: 130 18% 15%;
+  --ring: 142 71% 45%;
+}
+
+/* scroll-behavior is intentionally NOT set on html.
+   Lenis handles smooth scrolling via GSAP RAF.
+   Setting scroll-behavior: smooth causes double-interpolation jitter. */
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 body {
@@ -64,22 +133,13 @@ body {
   color: var(--text-primary);
 }
 
-/* Performance layer hints */
-.gsap-heading,
-.gsap-heading *,
-.stat-card,
-.course-card,
-.usp-card,
-.trading-header > *,
-.placement-stat,
-.hero-label,
-.hero-headline,
-.hero-sub,
-.hero-cta,
-.social-proof,
-.hero-3d,
-.badge-1,
-.badge-2,
-.badge-3 {
-  will-change: transform, opacity;
-}
+/* 
+ * will-change removed from static selectors.
+ * GSAP automatically promotes elements to their own compositor layer
+ * when animating transform/opacity. Declaring will-change permanently
+ * on dozens of elements wastes GPU memory and causes scroll jank.
+ * If you need it on a specific element, apply it inline via GSAP:
+ *   gsap.set(el, { willChange: "transform, opacity" });
+ *   // ... animate ...
+ *   gsap.set(el, { willChange: "auto" });  // release after animation
+ */

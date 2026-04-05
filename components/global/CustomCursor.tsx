@@ -1,176 +1,178 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
+import { usePathname } from "next/navigation";
 
 export default function CustomCursor() {
+  const [isFinePointer, setIsFinePointer] = useState(false);
   const dotRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
-  const textLabelRef = useRef<HTMLSpanElement>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Check if device supports hover (bypasses touch devices)
-    if (window.matchMedia("(pointer: coarse)").matches || 'ontouchstart' in window) {
-      if (dotRef.current) dotRef.current.style.display = 'none';
-      if (ringRef.current) ringRef.current.style.display = 'none';
-      return;
-    }
+    // Only render/animate on non-touch (fine pointer) devices
+    const mql = window.matchMedia("(pointer: fine)");
+    setIsFinePointer(mql.matches);
     
-    const dot = dotRef.current;
-    const ring = ringRef.current;
-    if (!dot || !ring) return;
-
-    // Set initial position off-screen so it doesn't flash at 0,0
-    gsap.set(dot, { x: -100, y: -100 });
-    gsap.set(ring, { x: -100, y: -100 });
-
-    // GSAP quickTo is the most performant way to move cursor elements, lerping position instantly 
-    const xDot = gsap.quickTo(dot, "x", { duration: 0.05, ease: "none" });
-    const yDot = gsap.quickTo(dot, "y", { duration: 0.05, ease: "none" });
-    
-    // 0.08 lag factor translates to ~0.3s quickTo delay making it buttery smooth
-    const xRing = gsap.quickTo(ring, "x", { duration: 0.3, ease: "power3.out" });
-    const yRing = gsap.quickTo(ring, "y", { duration: 0.3, ease: "power3.out" });
-
-    let currentHoverState = "default";
-
-    const onMouseMove = (e: MouseEvent) => {
-      // Small 10px dot
-      xDot(e.clientX - 5);
-      yDot(e.clientY - 5);
-      
-      // 36px ring
-      xRing(e.clientX - 18);
-      yRing(e.clientY - 18);
-      
-      // Handle magnetic button attraction calculation smoothly
-      const target = e.target as HTMLElement;
-      if (target) {
-         // Fallback onto closest .magnetic class wrapper
-         const magElement = target.closest('.magnetic') as HTMLElement;
-         if (magElement) {
-            const rect = magElement.getBoundingClientRect();
-            // Calculate distance away from exact center of the element to pull cursor slightly
-            const x = (e.clientX - rect.left - rect.width / 2) * 0.35;
-            const y = (e.clientY - rect.top - rect.height / 2) * 0.35;
-            gsap.to(magElement, { x, y, duration: 0.4, ease: "power2.out" });
-         }
-      }
-    };
-
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      if (!target) return;
-      
-      // Determine what the cursor is hovering
-      const isClickable = !!target.closest('a, button, [role="button"], .clickable, .magnetic');
-      const isDrag = !!target.closest('.drag-element');
-      const isText = !!target.closest('h1, h2, h3, h4, h5, h6, p, span, li');
-      
-      let newState = "default";
-      if (isDrag) newState = "drag";
-      else if (isClickable) newState = "button";
-      else if (isText) newState = "text";
-      
-      if (currentHoverState !== newState) {
-        currentHoverState = newState;
-        
-        // Morph the cursor according to the hovered zone
-        switch (newState) {
-          case 'drag':
-            gsap.to(ring, { 
-              width: 64, height: 64, 
-              marginLeft: -14, marginTop: -14, // Scale from 36 -> 64 requires a manual transform offset
-              backgroundColor: 'rgba(34, 197, 94, 0.95)', 
-              borderColor: 'transparent',
-              borderRadius: '50%',
-              duration: 0.3, ease: "power2.out"
-            });
-            gsap.to(dot, { scale: 0, duration: 0.2 });
-            if (textLabelRef.current) gsap.to(textLabelRef.current, { opacity: 1, textContent: "DRAG", duration: 0.2 });
-            break;
-            
-          case 'button':
-            gsap.to(ring, { 
-              width: 60, height: 60, 
-              marginLeft: -12, marginTop: -12, // Scale 36 -> 60
-              backgroundColor: 'transparent', 
-              borderColor: 'rgba(34, 197, 94, 0.2)',
-              borderRadius: '50%',
-              duration: 0.3, ease: "power2.out" 
-            });
-            gsap.to(dot, { scale: 0, duration: 0.2 });
-            if (textLabelRef.current) gsap.to(textLabelRef.current, { opacity: 0, duration: 0.1 });
-            break;
-            
-          case 'text':
-            gsap.to(ring, { 
-              width: 2, height: 28, 
-              marginLeft: 17, marginTop: 4, // Flatten to caret width
-              backgroundColor: 'var(--green-500)', 
-              borderColor: 'transparent',
-              borderRadius: '0%',
-              duration: 0.2, ease: "power2.out"
-            });
-            gsap.to(dot, { scale: 0, duration: 0.2 });
-            if (textLabelRef.current) gsap.to(textLabelRef.current, { opacity: 0, duration: 0.1 });
-            break;
-            
-          default:
-            gsap.to(ring, { 
-              width: 36, height: 36, 
-              marginLeft: 0, marginTop: 0,
-              backgroundColor: 'transparent', 
-              borderColor: 'rgba(34, 197, 94, 0.3)', 
-              borderRadius: '50%',
-              duration: 0.3, ease: "power2.out" 
-            });
-            gsap.to(dot, { scale: 1, duration: 0.2 });
-            if (textLabelRef.current) gsap.to(textLabelRef.current, { opacity: 0, duration: 0.1 });
-            break;
-        }
-      }
-    };
-    
-    // Magnetic revert on un-hover
-    const handleMouseOut = (e: MouseEvent) => {
-       const target = e.target as HTMLElement;
-       if (!target) return;
-       const magElement = target.closest('.magnetic') as HTMLElement;
-       if (magElement) {
-          gsap.to(magElement, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.5)" });
-       }
-    };
-    
-    // Mount events globally without attaching individually to DOM elements
-    window.addEventListener("mousemove", onMouseMove);
-    document.addEventListener("mouseover", handleMouseOver);
-    document.addEventListener("mouseout", handleMouseOut);
-    
-    return () => {
-      window.removeEventListener("mousemove", onMouseMove);
-      document.removeEventListener("mouseover", handleMouseOver);
-      document.removeEventListener("mouseout", handleMouseOut);
-    };
+    const handler = (e: MediaQueryListEvent) => setIsFinePointer(e.matches);
+    mql.addEventListener("change", handler);
+    return () => mql.removeEventListener("change", handler);
   }, []);
+
+  useEffect(() => {
+    if (!isFinePointer) return;
+
+    const ctx = gsap.context(() => {
+      const mouse = { x: 0, y: 0 };
+      const ring = { x: 0, y: 0 };
+      let hasMoved = false;
+
+      // Base centering offsets
+      gsap.set([dotRef.current, ringRef.current], { xPercent: -50, yPercent: -50 });
+
+      // Fast DOM setters
+      const xSetDot = gsap.quickSetter(dotRef.current, "x", "px");
+      const ySetDot = gsap.quickSetter(dotRef.current, "y", "px");
+      const xSetRing = gsap.quickSetter(ringRef.current, "x", "px");
+      const ySetRing = gsap.quickSetter(ringRef.current, "y", "px");
+
+      let activeMagnetic: Element | null = null;
+      let currentHoverState = "default";
+
+      const onMouseMove = (e: MouseEvent) => {
+        mouse.x = e.clientX;
+        mouse.y = e.clientY;
+
+        if (!hasMoved) {
+           hasMoved = true;
+           ring.x = mouse.x;
+           ring.y = mouse.y;
+           gsap.to(dotRef.current, { opacity: 1, duration: 0.3 });
+           handleHoverState(e);
+        }
+
+        xSetDot(mouse.x);
+        ySetDot(mouse.y);
+
+        // Magnetic elements logic
+        const target = e.target as Element;
+        if (!target || typeof target.closest !== "function") return;
+        
+        const magnetic = target.closest(".magnetic");
+        
+        if (magnetic) {
+           if (activeMagnetic !== magnetic) {
+              if (activeMagnetic) {
+                 gsap.to(activeMagnetic, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.5)", overwrite: "auto" });
+              }
+              activeMagnetic = magnetic;
+           }
+           const rect = magnetic.getBoundingClientRect();
+           const centerX = rect.left + rect.width / 2;
+           const centerY = rect.top + rect.height / 2;
+           
+           gsap.to(magnetic, {
+              x: (mouse.x - centerX) * 0.35,
+              y: (mouse.y - centerY) * 0.35,
+              duration: 0.1,
+              ease: "power2.out",
+              overwrite: "auto"
+           });
+        } else if (activeMagnetic) {
+           gsap.to(activeMagnetic, { x: 0, y: 0, duration: 0.8, ease: "elastic.out(1, 0.5)", overwrite: "auto" });
+           activeMagnetic = null;
+        }
+      };
+
+      const handleHoverState = (e: MouseEvent | Event) => {
+         const target = e.target as Element;
+         if (!target || typeof target.closest !== "function") return;
+         
+         const isClickable = target.closest("a, button, .magnetic");
+         const isText = target.closest("p, h1, h2, h3, h4, h5, h6, span, label");
+         
+         if (isClickable) {
+            if (currentHoverState !== "clickable") {
+               currentHoverState = "clickable";
+               gsap.to(ringRef.current, { 
+                  width: 60, height: 60, borderRadius: "50%", 
+                  opacity: 1, borderWidth: "1.5px", backgroundColor: "transparent", 
+                  duration: 0.3, overwrite: "auto" 
+               });
+               gsap.to(dotRef.current, { opacity: 0, duration: 0.3, overwrite: "auto" });
+            }
+         } else if (isText) {
+            if (currentHoverState !== "text") {
+               currentHoverState = "text";
+               gsap.to(ringRef.current, { 
+                  width: 40, height: 4, borderRadius: "2px", 
+                  opacity: 0.5, borderWidth: "0px", backgroundColor: "var(--green-500)", 
+                  duration: 0.3, overwrite: "auto" 
+               });
+               gsap.to(dotRef.current, { opacity: 1, duration: 0.3, overwrite: "auto" });
+            }
+         } else {
+            if (currentHoverState !== "default") {
+               currentHoverState = "default";
+               gsap.to(ringRef.current, { 
+                  width: 36, height: 36, borderRadius: "50%", 
+                  opacity: 0.3, borderWidth: "1.5px", backgroundColor: "transparent", 
+                  duration: 0.3, overwrite: "auto" 
+               });
+               gsap.to(dotRef.current, { opacity: 1, duration: 0.3, overwrite: "auto" });
+            }
+         }
+      };
+
+      // Failsafe hide cursor when leaving viewport
+      const onMouseOut = (e: MouseEvent) => {
+         if (!e.relatedTarget) {
+            hasMoved = false;
+            gsap.to([dotRef.current, ringRef.current], { opacity: 0, duration: 0.3 });
+         }
+      };
+
+      // Ticker for smooth ring follow (lerp logic)
+      const ticker = () => {
+         if (!hasMoved) return;
+         const dt = gsap.ticker.deltaRatio();
+         ring.x += (mouse.x - ring.x) * 0.2 * dt;
+         ring.y += (mouse.y - ring.y) * 0.2 * dt;
+         xSetRing(ring.x);
+         ySetRing(ring.y);
+      };
+
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseover", handleHoverState);
+      window.addEventListener("mouseout", onMouseOut);
+      gsap.ticker.add(ticker);
+
+      return () => {
+         window.removeEventListener("mousemove", onMouseMove);
+         window.removeEventListener("mouseover", handleHoverState);
+         window.removeEventListener("mouseout", onMouseOut);
+         gsap.ticker.remove(ticker);
+         if (activeMagnetic) {
+             gsap.set(activeMagnetic, { x: 0, y: 0 }); // reset layout
+         }
+      };
+    });
+
+    return () => ctx.revert();
+  }, [isFinePointer, pathname]);
+
+  if (!isFinePointer) return null;
 
   return (
     <>
-      {/* 36px custom dynamic outer ring */}
-      <div 
-        ref={ringRef} 
-        className="fixed top-0 left-0 w-[36px] h-[36px] rounded-full border-[1.5px] border-[rgba(34,197,94,0.3)] pointer-events-none z-[99999] flex items-center justify-center transform-gpu will-change-transform max-md:hidden mix-blend-difference"
-      >
-        <span 
-          ref={textLabelRef} 
-          className="text-white text-[10px] uppercase font-mono tracking-widest opacity-0 select-none pb-0.5"
-        >
-        </span>
-      </div>
-      {/* 10px centered inner cursor dot */}
       <div 
         ref={dotRef} 
-        className="fixed top-0 left-0 w-[10px] h-[10px] bg-[var(--green-500)] mix-blend-difference rounded-full pointer-events-none z-[99999] transform-gpu will-change-transform max-md:hidden"
+        className="fixed top-0 left-0 w-[10px] h-[10px] bg-[var(--green-500)] rounded-full pointer-events-none mix-blend-difference z-[9998] opacity-0"
+      />
+      <div 
+        ref={ringRef} 
+        className="fixed top-0 left-0 w-[36px] h-[36px] border-[1.5px] border-[var(--green-500)] rounded-full pointer-events-none z-[9998] opacity-0 box-border"
       />
     </>
   );

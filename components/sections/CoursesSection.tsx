@@ -1,23 +1,55 @@
-"use client";
-
 import { useState, useRef, useEffect } from "react";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
-import { courses, type CourseCategory } from "@/lib/courses";
+import { type Course } from "@/lib/courses";
+import { createClient } from "@/lib/supabase/client";
 import CourseCard from "@/components/ui/CourseCard";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 
 const categories = ["All", "Accounting", "Taxation", "Compliance", "Advanced"];
 
 export default function CoursesSection() {
   const [activeTab, setActiveTab] = useState<string>("All");
+  const [dbCourses, setDbCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
+  
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function fetchCourses() {
+      try {
+        const { data, error } = await supabase
+          .from("courses")
+          .select("*")
+          .order("sort_order", { ascending: true });
+
+        if (error) throw error;
+        
+        // Map snake_case from Supabase to camelCase for the Course interface
+        const mappedData = (data || []).map((course: any) => ({
+          ...course,
+          badgeColor: course.badge_color,
+          originalPrice: course.original_price,
+          whoIsItFor: course.who_is_it_for,
+        }));
+
+        setDbCourses(mappedData);
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchCourses();
+  }, []);
 
   const filteredCourses = activeTab === "All" 
-    ? courses 
-    : courses.filter(c => c.category === activeTab);
+    ? dbCourses 
+    : dbCourses.filter(c => c.category.toLowerCase() === activeTab.toLowerCase());
 
   // Entrance animation for the section header components
   useEffect(() => {
@@ -40,7 +72,7 @@ export default function CoursesSection() {
 
   // Grid filtering cross-fade animation
   useEffect(() => {
-    if (!gridRef.current) return;
+    if (!gridRef.current || isLoading) return;
     const cards = Array.from(gridRef.current.children) as HTMLElement[];
     
     // Clear out GSAP styles rapidly to avoid lingering conflicts
@@ -57,7 +89,7 @@ export default function CoursesSection() {
       ease: "power3.out",
       clearProps: "all" // Important so it doesn't break hover effects
     });
-  }, [activeTab]);
+  }, [activeTab, isLoading]);
 
   return (
     <section ref={sectionRef} id="courses" className="w-full py-24 md:py-32 bg-[var(--bg-primary)] relative z-10 overflow-hidden">
@@ -109,13 +141,17 @@ export default function CoursesSection() {
           ref={gridRef} 
           className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-20 min-h-[500px]"
         >
-          {filteredCourses.map(course => (
+          {isLoading ? (
+             <div className="col-span-full h-[400px] flex items-center justify-center">
+                <Loader2 size={40} className="animate-spin text-[var(--green-500)] opacity-20" />
+             </div>
+          ) : filteredCourses.map(course => (
             <div key={course.id} className="w-full flex"> 
               <CourseCard course={course} />
             </div>
           ))}
           
-          {filteredCourses.length === 0 && (
+          {!isLoading && filteredCourses.length === 0 && (
             <div className="col-span-full py-20 flex flex-col items-center justify-center opacity-50">
                <span className="font-mono tracking-widest text-[var(--text-secondary)]">NO EXPERIENCES FOUND</span>
             </div>
@@ -127,7 +163,7 @@ export default function CoursesSection() {
           href="/courses"
           className="courses-header-anim magnetic clickable group flex items-center gap-3 bg-transparent border-2 border-[var(--border-medium)] text-[var(--text-primary)] font-sans font-bold text-[16px] px-[40px] py-[22px] rounded-full transition-all duration-300 hover:border-[var(--green-500)] hover:text-[var(--green-600)] hover:bg-[var(--green-50)]"
         >
-          View All 12 Programs 
+          View All {dbCourses.length > 0 ? dbCourses.length : "12"} Programs 
           <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
         </Link>
         
@@ -135,3 +171,4 @@ export default function CoursesSection() {
     </section>
   );
 }
+

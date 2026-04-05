@@ -11,22 +11,9 @@ export default function Footer() {
   const colRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
-    if (!footerRef.current) return;
-    
-    gsap.fromTo(colRefs.current, 
-      { y: 40, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: "top 85%", // Trigger right as it comes into view 
-        }
-      }
-    );
+    // Optional: Only log here or remove animation to ensure footer is always safely visible.
+    // We removed the opacity: 0 GSAP wrapper here to prevent the 'invisible footer block'
+    // effect when scrolltriggers calculate wrong heights on soft navigation.
   }, []);
 
   return (
@@ -112,6 +99,7 @@ export default function Footer() {
                 { name: "Placements", path: "/#placements" },
                 { name: "Blog", path: "/#blog" },
                 { name: "Contact", path: "/contact" },
+                { name: "Admin Login", path: "/admin" },
               ].map((link) => (
                 <Link 
                   key={link.name} 

@@ -1,54 +1,50 @@
-"use client";
+import React from "react";
 
-// Define the core topics to be endlessly looped
-const topics = [
-  "TALLY PRIME", "GST FILING", "INCOME TAX", "SAP FICO", "UAE VAT", 
-  "GULF ACCOUNTING", "QUICKBOOKS", "PEACHTREE", "ADVANCED EXCEL", 
-  "PAYROLL MANAGEMENT", "CA FOUNDATION", "CMA FOUNDATION", "PRACTICAL TRAINING"
+const TOPICS = [
+  "Manual Accounting", "Tally Prime", "GST Filing", "UAE VAT", "Corporate Tax",
+  "Zoho Books", "Power BI", "Excel Mastery", "Income Tax", "QuickBooks",
+  "Payroll Management", "Financial Reporting", "Stock Trading", "Technical Analysis",
+  "Options Trading", "Portfolio Management"
 ];
 
 export default function MarqueeBand() {
   return (
-    <div className="w-full h-[60px] bg-[var(--bg-dark)] flex items-center overflow-hidden relative z-10 select-none">
+    <div className="group relative flex h-[56px] w-full cursor-default overflow-hidden whitespace-nowrap bg-[var(--bg-dark)]">
+      <style suppressHydrationWarning>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 40s linear infinite;
+        }
+        .group:hover .animate-marquee {
+          animation-play-state: paused;
+        }
+      `}</style>
       
-      {/* Background border layers */}
-      <div className="absolute top-0 inset-x-0 h-[1px] bg-white/10" />
-      <div className="absolute bottom-0 inset-x-0 h-[1px] bg-[var(--green-500)]/20" />
-
-      {/* Marquee Track: width max to prevent wrapping while container overflows. Add pause on hover. */}
-      {/* Our animate-marquee moves from 0 to -50% translateX identically replacing list 1 with list 2 */}
-      <div className="flex w-max animate-marquee hover:[animation-play-state:paused] items-center cursor-default">
-        
-        {/* Set 1 */}
-        <div className="flex items-center">
-          {topics.map((word, i) => (
-            <div key={`set1-${i}`} className="flex items-center shrink-0">
-              <span className="text-[var(--accent-mint)] font-mono font-medium tracking-widest text-[13px] md:text-[14px] whitespace-nowrap transition-colors hover:text-white">
-                {word}
-              </span>
-              <span className="text-white/20 px-8 text-[12px]">✦</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Set 2 (Exact visual replica of Set 1 to loop linearly) */}
-        <div className="flex items-center">
-          {topics.map((word, i) => (
-            <div key={`set2-${i}`} className="flex items-center shrink-0">
-              <span className="text-[var(--accent-mint)] font-mono font-medium tracking-widest text-[13px] md:text-[14px] whitespace-nowrap transition-colors hover:text-white">
-                {word}
-              </span>
-              <span className="text-white/20 px-8 text-[12px]">✦</span>
-            </div>
-          ))}
-        </div>
-        
+      {/* 
+        We render two identical sets as direct children of a single flex container.
+        Using gap-8 creates perfect spacing. translateX(-50%) will shift it exactly 
+        by the length of one set, creating a flawless seamless loop.
+      */}
+      <div className="animate-marquee flex w-max items-center gap-8 pl-8 pr-8">
+        {[1, 2].map((groupIndex) => (
+          <React.Fragment key={groupIndex}>
+            {TOPICS.map((topic, i) => (
+              <React.Fragment key={`${groupIndex}-${i}`}>
+                <span 
+                  className="uppercase tracking-[0.1em] text-[var(--accent-mint)]"
+                  style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "12px" }}
+                >
+                  {topic}
+                </span>
+                <span className="text-[var(--green-600)]">✦</span>
+              </React.Fragment>
+            ))}
+          </React.Fragment>
+        ))}
       </div>
-      
-      {/* Edge Gradients for seamless fading illusion */}
-      <div className="absolute top-0 bottom-0 left-0 w-16 md:w-32 bg-gradient-to-r from-[var(--bg-dark)] to-transparent pointer-events-none" />
-      <div className="absolute top-0 bottom-0 right-0 w-16 md:w-32 bg-gradient-to-l from-[var(--bg-dark)] to-transparent pointer-events-none" />
-      
     </div>
   );
 }

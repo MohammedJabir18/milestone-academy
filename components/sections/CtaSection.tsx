@@ -4,15 +4,16 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, CheckCircle2, Phone, Mail, MapPin } from "lucide-react";
-import { courses } from "@/lib/courses";
+import { Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import toast from "react-hot-toast";
 
-// Strict validation matrix using Zod
+// Schema for form validation
 const formSchema = z.object({
   fullName: z.string().min(2, "Name must be at least 2 characters"),
   phone: z.string().regex(/^[+\-0-9\s]{10,16}$/, "Please enter a valid phone number"),
   email: z.string().email("Please enter a valid email address"),
-  course: z.string().min(1, "Please select a program of interest"),
+  course: z.string().min(1, "Please select an option"),
   message: z.string().optional()
 });
 
@@ -21,6 +22,7 @@ type FormData = z.infer<typeof formSchema>;
 export default function CtaSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const supabase = createClient();
 
   const { 
     register, 
@@ -34,173 +36,189 @@ export default function CtaSection() {
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
     
-    // Simulate robust network call latency
-    await new Promise(resolve => setTimeout(resolve, 1800));
-    console.log("Form successfully captured:", data);
-    
-    setIsSubmitting(false);
-    setIsSuccess(true);
-    
-    // Reset state after success read mode
-    setTimeout(() => {
-      setIsSuccess(false);
+    try {
+      // 1. Insert into Supabase enrollments table
+      const { error: submitError } = await supabase
+        .from("enrollments")
+        .insert([{
+          name: data.fullName,
+          phone: data.phone,
+          email: data.email,
+          course_name: data.course, // using course_name string for this dropdown
+          message: data.message || "",
+          status: "new"
+        }]);
+
+      if (submitError) throw submitError;
+
+      // 2. Send email notification via /api/contact route
+      try {
+        await fetch("/api/contact", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+      } catch (emailError) {
+        // Silently ignore email failures so it doesn't break user experience,
+        // since it's already saved to the database.
+        console.error("Email notification failed:", emailError);
+      }
+
+      // 3. Show react-hot-toast success toast
+      toast.success("Details submitted successfully!");
+      
+      // 4. Update UI to success state
+      setIsSuccess(true);
+      
+      // 5. Reset form
       reset();
-    }, 5000);
+      
+      // Auto-hide success after 5 seconds to allow other submissions
+      setTimeout(() => setIsSuccess(false), 5000);
+    } catch (err: any) {
+      console.error("Submission failed:", err);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <section id="contact" className="w-full py-24 md:py-32 bg-[var(--bg-dark)] relative overflow-hidden z-10">
+    <section id="contact" className="w-full py-[120px] bg-[var(--bg-dark)] relative overflow-hidden">
       
-      {/* Immersive mesh & orb background layer */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        
-        {/* Animated Orbs */}
-        <div className="absolute -top-[10%] -left-[10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(34,197,94,0.12)_0%,transparent_70%)] blur-[80px] md:blur-[120px] animate-pulse" style={{ animationDuration: '6s' }} />
-        <div className="absolute -bottom-[10%] -right-[10%] w-[400px] md:w-[600px] h-[400px] md:h-[600px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(34,197,94,0.08)_0%,transparent_70%)] blur-[80px] md:blur-[120px] animate-pulse" style={{ animationDuration: '8s', animationDirection: 'reverse' }} />
-        
-        {/* Deep texture overlay */}
-        <div className="absolute inset-0 bg-black/20" />
-      </div>
-
-      <div className="relative z-10 max-w-[800px] mx-auto px-6 flex flex-col items-center">
+      {/* Decorative elements */}
+      <div className="absolute top-[-100px] left-[-150px] w-[500px] h-[500px] bg-[var(--green-500)]/8 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-[var(--green-500)]/6 blur-[80px] rounded-full pointer-events-none" />
+      
+      <div className="relative z-10 max-w-[860px] mx-auto px-6 flex flex-col items-center">
         
         {/* Header Block */}
-        <div className="text-center mb-12 flex flex-col items-center">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-6 h-[1px] bg-[var(--accent-mint)]" />
-            <span className="font-mono text-[12px] text-[var(--accent-mint)] uppercase tracking-widest font-semibold flex-1">
-              Start Your Journey
-            </span>
-            <div className="w-6 h-[1px] bg-[var(--accent-mint)]" />
-          </div>
-          
-          <h2 className="gsap-heading font-serif text-[48px] md:text-[72px] text-white leading-[1.05] mb-6 tracking-tight">
-            Ready to Become a <br/>
-            <span className="italic text-[var(--green-500)] tracking-normal pr-2">Certified</span> Finance Expert?
+        <div className="text-center">
+          <span className="font-mono text-[13px] text-[var(--accent-mint)] uppercase tracking-[0.15em] font-bold mb-4 block">
+            Start Your Journey
+          </span>
+          <h2 className="font-serif text-[68px] text-[var(--text-inverse)] leading-[1.05] mb-4">
+            Ready to Become a<br/>
+            Certified Finance Expert?
           </h2>
-          
-          <p className="font-sans text-[17px] md:text-[18px] text-white/70 leading-relaxed max-w-[560px]">
-            Join 4,800+ students who chose Milestone Academy — and never looked back. Cohorts are filling fast.
+          <p className="font-sans text-[18px] text-[var(--text-inverse)]/70 max-w-xl mx-auto">
+            Fill out the form below and our career counsellors will get back to you with the perfect roadmap for your goals.
           </p>
         </div>
 
         {/* Glassmorphic Intake Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="w-full bg-white/[0.04] backdrop-blur-[16px] border border-white/[0.08] shadow-[0_20px_60px_rgba(0,0,0,0.4)] rounded-[24px] p-6 sm:p-8 md:p-12 flex flex-col gap-6 relative overflow-hidden">
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col gap-2">
+        <div className="w-full mt-12 bg-[var(--bg-dark-glass)] backdrop-blur-md border border-white/10 rounded-[24px] p-8 md:p-12">
+          <form onSubmit={handleSubmit(onSubmit)} className="w-full grid grid-cols-1 md:grid-cols-2 gap-5">
+            
+            {/* Name */}
+            <div className="flex flex-col gap-1.5 md:col-span-1">
               <input 
                 {...register("fullName")}
                 type="text" 
-                placeholder="Your Full Name"
-                className="w-full bg-white/[0.03] border border-white/[0.1] rounded-[12px] px-5 py-[14px] text-white font-sans text-[15px] placeholder:text-white/30 focus:outline-none focus:border-[var(--green-500)] focus:ring-[3px] focus:ring-[var(--green-500)]/20 transition-all duration-300"
+                placeholder="Full Name"
+                className="w-full bg-[rgba(255,255,255,0.06)] border border-white/12 rounded-xl px-5 py-3.5 text-[var(--text-inverse)] font-sans text-[14px] placeholder:text-[var(--text-inverse)]/40 focus:outline-none focus:border-[var(--green-500)] focus:ring-2 focus:ring-[var(--green-500)]/20 transition-all duration-250 disabled:opacity-50"
                 disabled={isSubmitting || isSuccess}
               />
-              {errors.fullName && <span className="font-sans text-xs text-red-400 pl-2">{errors.fullName.message}</span>}
+              {errors.fullName && <span className="font-sans text-xs text-red-400 px-1">{errors.fullName.message}</span>}
             </div>
             
-            <div className="flex flex-col gap-2">
+            {/* Phone */}
+            <div className="flex flex-col gap-1.5 md:col-span-1">
               <input 
                 {...register("phone")}
                 type="tel" 
-                placeholder="+91 XXXXX XXXXX"
-                className="w-full bg-white/[0.03] border border-white/[0.1] rounded-[12px] px-5 py-[14px] text-white font-sans text-[15px] placeholder:text-white/30 focus:outline-none focus:border-[var(--green-500)] focus:ring-[3px] focus:ring-[var(--green-500)]/20 transition-all duration-300"
+                placeholder="Phone Number"
+                className="w-full bg-[rgba(255,255,255,0.06)] border border-white/12 rounded-xl px-5 py-3.5 text-[var(--text-inverse)] font-sans text-[14px] placeholder:text-[var(--text-inverse)]/40 focus:outline-none focus:border-[var(--green-500)] focus:ring-2 focus:ring-[var(--green-500)]/20 transition-all duration-250 disabled:opacity-50"
                 disabled={isSubmitting || isSuccess}
               />
-              {errors.phone && <span className="font-sans text-xs text-red-400 pl-2">{errors.phone.message}</span>}
+              {errors.phone && <span className="font-sans text-xs text-red-400 px-1">{errors.phone.message}</span>}
             </div>
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <input 
-              {...register("email")}
-              type="email" 
-              placeholder="Primary Email Address"
-              className="w-full bg-white/[0.03] border border-white/[0.1] rounded-[12px] px-5 py-[14px] text-white font-sans text-[15px] placeholder:text-white/30 focus:outline-none focus:border-[var(--green-500)] focus:ring-[3px] focus:ring-[var(--green-500)]/20 transition-all duration-300"
-              disabled={isSubmitting || isSuccess}
-            />
-            {errors.email && <span className="font-sans text-xs text-red-400 pl-2">{errors.email.message}</span>}
-          </div>
-
-          <div className="flex flex-col gap-2 relative">
-            <select 
-              {...register("course")}
-              className="w-full bg-white/[0.03] border border-white/[0.1] rounded-[12px] px-5 py-[14px] text-white font-sans text-[15px] focus:outline-none focus:border-[var(--green-500)] focus:ring-[3px] focus:ring-[var(--green-500)]/20 transition-all duration-300 appearance-none cursor-pointer [&>option]:text-black"
-              disabled={isSubmitting || isSuccess}
-              defaultValue=""
-            >
-              <option value="" disabled className="text-gray-500">Select a Program of Interest</option>
-              {courses.map(c => (
-                <option key={c.id} value={c.slug}>{c.title}</option>
-              ))}
-            </select>
-            {/* Custom chevron to fix default dark-mode appearance-none dropdowns */}
-            <div className="absolute right-5 top-[18px] pointer-events-none opacity-40">
-              <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 1.5L6 6.5L11 1.5"/></svg>
+            {/* Email */}
+            <div className="flex flex-col gap-1.5 col-span-1 md:col-span-2">
+              <input 
+                {...register("email")}
+                type="email" 
+                placeholder="Email Address"
+                className="w-full bg-[rgba(255,255,255,0.06)] border border-white/12 rounded-xl px-5 py-3.5 text-[var(--text-inverse)] font-sans text-[14px] placeholder:text-[var(--text-inverse)]/40 focus:outline-none focus:border-[var(--green-500)] focus:ring-2 focus:ring-[var(--green-500)]/20 transition-all duration-250 disabled:opacity-50"
+                disabled={isSubmitting || isSuccess}
+              />
+              {errors.email && <span className="font-sans text-xs text-red-400 px-1">{errors.email.message}</span>}
             </div>
-            {errors.course && <span className="font-sans text-xs text-red-400 pl-2">{errors.course.message}</span>}
-          </div>
 
-          <div className="flex flex-col gap-2">
-            <textarea 
-              {...register("message")}
-              rows={3}
-              placeholder="Any specific questions? (Optional)"
-              className="w-full bg-white/[0.03] border border-white/[0.1] rounded-[12px] px-5 py-[14px] text-white font-sans text-[15px] placeholder:text-white/30 focus:outline-none focus:border-[var(--green-500)] focus:ring-[3px] focus:ring-[var(--green-500)]/20 transition-all duration-300 resize-none"
-              disabled={isSubmitting || isSuccess}
-            />
-          </div>
+            {/* Course Dropdown */}
+            <div className="flex flex-col gap-1.5 col-span-1 md:col-span-2 relative">
+              <select 
+                {...register("course")}
+                className="w-full bg-[rgba(255,255,255,0.06)] border border-white/12 rounded-xl px-5 py-3.5 text-[var(--text-inverse)] font-sans text-[14px] focus:outline-none focus:border-[var(--green-500)] focus:ring-2 focus:ring-[var(--green-500)]/20 transition-all duration-250 appearance-none disabled:opacity-50 cursor-pointer [&>option]:text-black"
+                disabled={isSubmitting || isSuccess}
+                defaultValue=""
+              >
+                <option value="" disabled className="text-gray-500">Program of Interest</option>
+                <option value="Basic Package">Basic Package</option>
+                <option value="Short-Term Tax & Software Package">Short-Term Tax & Software Package</option>
+                <option value="Intermediate Package">Intermediate Package</option>
+                <option value="Comprehensive Package">Comprehensive Package</option>
+                <option value="Trading Course">Trading Course</option>
+                <option value="Not Sure Yet">Not Sure Yet</option>
+              </select>
+              {/* Custom select arrow overlay */}
+              <div className="absolute right-5 top-[18px] pointer-events-none opacity-50 text-[var(--text-inverse)]">
+                <svg width="12" height="8" viewBox="0 0 12 8" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 1.5L6 6.5L11 1.5"/></svg>
+              </div>
+              {errors.course && <span className="font-sans text-xs text-red-400 px-1">{errors.course.message}</span>}
+            </div>
 
-          <button 
-            type="submit" 
-            disabled={isSubmitting || isSuccess}
-            className={`magnetic clickable w-full h-[56px] rounded-[12px] flex items-center justify-center font-sans font-bold text-[16px] transition-all duration-400 mt-2 relative overflow-hidden ${
-              isSuccess 
-                ? "bg-[var(--green-500)] text-white" 
-                : "bg-[var(--gradient-green)] text-white hover:-translate-y-1 hover:shadow-[var(--shadow-green)] group"
-            }`}
-          >
-            {/* Dark background loading layer */}
-            {isSubmitting && (
-              <span className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                <Loader2 className="animate-spin text-white" />
-              </span>
-            )}
-            
-            {/* Success rendering */}
-            {isSuccess && !isSubmitting && (
-              <span className="flex items-center gap-2">
-                <CheckCircle2 size={20} className="animate-bounce" />
-                Session Booked! We'll call shortly.
-              </span>
-            )}
-            
-            {/* Default Rendering */}
-            {!isSubmitting && !isSuccess && (
-               <span className="relative z-10 flex items-center justify-center gap-1 group-hover:scale-105 transition-transform duration-300">
-                 Book Free Counselling Session
-               </span>
-            )}
-            
-            {/* Subtle gloss overlay */}
-            <div className="absolute top-0 inset-x-0 h-1/2 bg-gradient-to-b from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
-        </form>
+            {/* Message */}
+            <div className="flex flex-col gap-1.5 col-span-1 md:col-span-2">
+              <textarea 
+                {...register("message")}
+                rows={3}
+                placeholder="Any specific questions? (Optional)"
+                className="w-full bg-[rgba(255,255,255,0.06)] border border-white/12 rounded-xl px-5 py-3.5 text-[var(--text-inverse)] font-sans text-[14px] placeholder:text-[var(--text-inverse)]/40 focus:outline-none focus:border-[var(--green-500)] focus:ring-2 focus:ring-[var(--green-500)]/20 transition-all duration-250 resize-none disabled:opacity-50"
+                disabled={isSubmitting || isSuccess}
+              />
+            </div>
 
-        {/* Alternate Contact Links */}
-        <div className="mt-14 w-full flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 opacity-80">
-          <a href="tel:+919876543210" className="flex items-center gap-2.5 text-white font-sans text-[15px] transition-colors hover:text-[var(--green-400)]">
-             <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[var(--green-500)]"><Phone size={16} /></div>
-             +91 98765 43210
-          </a>
-          <a href="mailto:admissions@milestone.academy" className="flex items-center gap-2.5 text-white font-sans text-[15px] transition-colors hover:text-[var(--green-400)]">
-             <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[var(--green-500)]"><Mail size={16} /></div>
-             admissions@milestone.academy
-          </a>
-          <div className="flex items-center gap-2.5 text-white font-sans text-[15px]">
-             <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[var(--green-500)]"><MapPin size={16} /></div>
-             Calicut • Malappuram • Online
-          </div>
+            {/* Submit Button */}
+            <div className="col-span-1 md:col-span-2 mt-1">
+              <button 
+                type="submit" 
+                disabled={isSubmitting || isSuccess}
+                className={`w-full h-[54px] rounded-xl flex items-center justify-center font-sans font-semibold text-[16px] transition-all duration-300 relative overflow-hidden group ${
+                  isSuccess 
+                    ? "bg-[var(--green-500)] text-white scale-[1.02] animate-in" 
+                    : "bg-[var(--gradient-green)] text-white hover:shadow-[var(--shadow-green)] disabled:opacity-60 disabled:cursor-not-allowed"
+                }`}
+              >
+                {isSubmitting && (
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="animate-spin" size={18} />
+                    Sending...
+                  </span>
+                )}
+                
+                {isSuccess && !isSubmitting && (
+                  <span className="flex items-center gap-2 font-bold transform">
+                    ✓ We'll Call You Within 2 Hours!
+                  </span>
+                )}
+                
+                {!isSubmitting && !isSuccess && (
+                  <span className="flex items-center gap-2 group-hover:scale-105 transition-transform duration-300">
+                    Book Free Counselling Session →
+                  </span>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Below Form Links */}
+        <div className="mt-8 flex flex-wrap justify-center gap-8 text-[var(--text-inverse)]/60 font-sans text-[13px]">
+          <a href="tel:+919876543210" className="hover:text-[var(--text-inverse)] transition-colors">📞 +91 98765 43210</a>
+          <a href="mailto:admissions@milestone.academy" className="hover:text-[var(--text-inverse)] transition-colors">📧 admissions@milestone.academy</a>
+          <span>📍 Calicut | Malappuram | Thrissur | Online</span>
         </div>
 
       </div>

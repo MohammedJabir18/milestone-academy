@@ -8,15 +8,18 @@ gsap.registerPlugin(ScrollTrigger);
 
 export function LenisProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    // Disable smooth-scrolling physics on mobile touch interfaces to allow iOS/Android hardware-momentum precedence
-    if (window.innerWidth < 768) return;
+    // Disable Lenis on touch devices
+    if (typeof window !== "undefined" && ('ontouchstart' in window || navigator.maxTouchPoints > 0)) {
+      return;
+    }
 
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: "vertical",
       smoothWheel: true,
-      wheelMultiplier: 0.8,
+      syncTouch: true,
+      touchMultiplier: 2,
     } as any);
 
     lenis.on("scroll", ScrollTrigger.update);

@@ -1,242 +1,224 @@
-import {
-  BarChart3,
-  FileText,
-  Receipt,
-  BookOpen,
-  Users,
-  TrendingUp,
-  ShieldCheck,
-  Cpu,
-  Landmark,
-  Banknote,
-  Monitor,
-  Award,
-  type LucideIcon,
-} from "lucide-react";
-
-export type CourseCategory = "Accounting" | "Taxation" | "Compliance" | "Advanced";
+export interface CourseModule {
+  title: string;
+  topics: string[];
+}
 
 export interface Course {
   id: string;
-  title: string;
   slug: string;
-  badge: string | null;
-  icon: LucideIcon;
-  level: string;
+  title: string;
+  tagline: string;
+  badge: string;
+  badgeColor: "green" | "gold" | "blue" | "red" | string;
   duration: string;
-  price: number;
-  originalPrice: number;
-  rating: number;
-  reviewCount: number;
-  description: string;
+  price: number | null;
+  originalPrice: number | null;
+  emi: string | null;
+  level: string;
+  category: "accounting" | "taxation" | "advanced" | "trading" | string;
+  icon: string;
   gradient: string;
+  rating: number;
+  reviews: number;
+  enrolled: number;
   topics: string[];
-  category: CourseCategory;
+  highlights: string[];
+  description: string;
+  whoIsItFor: string;
+  modules: CourseModule[];
 }
 
-export const courses: Course[] = [
+export const COURSES: Course[] = [
   {
-    id: "c1",
-    title: "Tally Prime Complete Mastery",
-    slug: "tally-prime-complete-mastery",
+    id: "basic-package",
+    slug: "basic-package",
+    title: "Basic Package",
+    tagline: "Your first step into professional accounting",
+    badge: "STARTER",
+    badgeColor: "green",
+    duration: "3 Months",
+    price: 30000,
+    originalPrice: 38000,
+    emi: "₹10,000/month",
+    level: "Beginner",
+    category: "accounting",
+    icon: "BookOpen",
+    gradient: "linear-gradient(135deg, #2D9E44, #4ADE80)",
+    rating: 4.8,
+    reviews: 142,
+    enrolled: 1240,
+    topics: [
+      "Manual Accounting",
+      "Tally Prime",
+      "Microsoft Word",
+      "Microsoft Excel",
+      "Microsoft PowerPoint",
+      "Trading Fundamentals"
+    ],
+    highlights: [
+      "Hands-on Tally Prime practice",
+      "Real-world accounting entries",
+      "MS Office for finance professionals",
+      "Introduction to trading concepts",
+      "Course completion certificate"
+    ],
+    description: "Build your accounting foundation from scratch. Master manual bookkeeping, Tally Prime, MS Office tools, and get an introduction to trading — everything a fresh accounting professional needs.",
+    whoIsItFor: "Freshers, students, and career-changers entering the accounting profession",
+    modules: [
+      { title: "Manual Accounting Fundamentals", topics: ["Accounting concepts", "Double-entry system", "Trial balance", "Journal & ledger", "Financial statements"] },
+      { title: "Tally Prime Mastery", topics: ["Company setup", "Voucher entries", "Bank reconciliation", "Inventory basics", "Reports & MIS"] },
+      { title: "MS Office for Finance", topics: ["Excel formulas for accounts", "Word for business letters", "PowerPoint presentations"] },
+      { title: "Trading Introduction", topics: ["Stock market basics", "Reading charts", "Trading terminology"] }
+    ]
+  },
+  {
+    id: "short-term-tax",
+    slug: "short-term-tax-software-package",
+    title: "Short-Term Tax & Software Package",
+    tagline: "Master UAE & Indian taxation fast",
+    badge: "FAST-TRACK",
+    badgeColor: "gold",
+    duration: "2 Months",
+    price: 37000,
+    originalPrice: 46000,
+    emi: "₹18,500/month",
+    level: "Intermediate",
+    category: "taxation",
+    icon: "FileText",
+    gradient: "linear-gradient(135deg, #1A5C28, #2D9E44)",
+    rating: 4.9,
+    reviews: 98,
+    enrolled: 876,
+    topics: [
+      "Manual Accounting",
+      "Tally Prime",
+      "Zoho Books",
+      "UAE VAT & VAT Filing",
+      "UAE Corporate Tax & Filing",
+      "Trading"
+    ],
+    highlights: [
+      "UAE VAT filing on FTA portal",
+      "UAE Corporate Tax compliance",
+      "Zoho Books cloud accounting",
+      "Dual India & UAE expertise",
+      "High-demand Gulf job skills"
+    ],
+    description: "Designed for professionals targeting Gulf/UAE markets. Master UAE VAT, Corporate Tax filing, Zoho Books, and Tally — become the go-to accounting expert for Indian businesses operating in the UAE.",
+    whoIsItFor: "Accounting professionals targeting UAE/Gulf job market, expats, and finance teams of India-UAE businesses",
+    modules: [
+      { title: "Manual Accounting", topics: ["Fundamentals refresher", "UAE business accounting standards"] },
+      { title: "Tally Prime for UAE", topics: ["UAE company setup", "Multi-currency entries", "VAT-enabled vouchers"] },
+      { title: "Zoho Books", topics: ["Cloud accounting setup", "Invoicing & payments", "Bank feeds", "Reports"] },
+      { title: "UAE VAT", topics: ["VAT registration", "Tax invoice requirements", "VAT return filing on FTA portal", "Input tax credit"] },
+      { title: "UAE Corporate Tax", topics: ["CT registration", "Taxable income computation", "CT return filing", "Free zone exemptions"] },
+      { title: "Trading", topics: ["UAE market overview", "Trading concepts"] }
+    ]
+  },
+  {
+    id: "intermediate-package",
+    slug: "intermediate-package",
+    title: "Intermediate Package",
+    tagline: "Complete accounting + GST + analytics mastery",
     badge: "BESTSELLER",
-    icon: BarChart3,
-    level: "Beginner → Expert",
-    duration: "3 Months",
-    price: 7499,
-    originalPrice: 12000,
-    rating: 4.9,
-    reviewCount: 142,
-    description: "From basic vouchers to advanced inventory management — become the Tally expert every company is searching for.",
-    gradient: "linear-gradient(135deg, #16A34A, #22C55E)",
-    topics: ["Voucher Entry", "Bank Reconciliation", "GST in Tally", "Payroll", "Inventory", "Reports"],
-    category: "Accounting",
-  },
-  {
-    id: "c2",
-    title: "GST Filing & Compliance Expert",
-    slug: "gst-filing-compliance-expert",
-    badge: "HOT",
-    icon: FileText,
-    level: "Intermediate",
-    duration: "6 Weeks",
-    price: 5999,
-    originalPrice: 8999,
-    rating: 4.8,
-    reviewCount: 98,
-    description: "Navigate India's GST labyrinth with confidence. File GSTR-1, GSTR-3B, handle ITC claims, and crush audits.",
-    gradient: "linear-gradient(135deg, #0D4A26, #16A34A)",
-    topics: ["GST Registration", "GSTR-1 & 3B Filing", "ITC Computation", "E-Way Bill", "GST Audits", "Annual Returns"],
-    category: "Taxation",
-  },
-  {
-    id: "c3",
-    title: "Income Tax & ITR Filing Pro",
-    slug: "income-tax-itr-filing-pro",
-    badge: "NEW",
-    icon: Receipt,
-    level: "Beginner",
-    duration: "8 Weeks",
-    price: 4999,
-    originalPrice: 8000,
-    rating: 4.9,
-    reviewCount: 64,
-    description: "Master income tax computation, deductions under 80C-80U, and file ITR forms 1 through 7 with zero errors.",
-    gradient: "linear-gradient(135deg, #166534, #22C55E)",
-    topics: ["Tax Slabs & Computation", "80C-80U Deductions", "ITR-1 to ITR-7", "TDS Returns", "Advance Tax", "Tax Planning"],
-    category: "Taxation",
-  },
-  {
-    id: "c4",
-    title: "Financial Accounting & Reporting",
-    slug: "financial-accounting-reporting",
-    badge: null,
-    icon: BookOpen,
-    level: "Intermediate",
-    duration: "4 Months",
-    price: 9999,
-    originalPrice: 15000,
-    rating: 4.7,
-    reviewCount: 112,
-    description: "Build and read Profit & Loss, Balance Sheet, Cash Flow Statements like a seasoned finance professional.",
-    gradient: "linear-gradient(135deg, #15803D, #4ADE80)",
-    topics: ["Journal Entries", "Ledgers", "Trial Balance", "P&L Statements", "Balance Sheets", "Cash Flow Analysis"],
-    category: "Accounting",
-  },
-  {
-    id: "c5",
-    title: "Payroll & HR Compliance",
-    slug: "payroll-hr-compliance",
-    badge: null,
-    icon: Users,
-    level: "Beginner",
-    duration: "4 Weeks",
-    price: 3499,
-    originalPrice: 5500,
-    rating: 4.8,
-    reviewCount: 85,
-    description: "Process salaries, PF, ESI, TDS deductions, generate pay slips, and stay 100% compliant with labour laws.",
-    gradient: "linear-gradient(135deg, #052E16, #166534)",
-    topics: ["Salary Structuring", "PF & ESI Calculation", "TDS on Salary", "Professional Tax", "Payroll Software", "Labour Laws"],
-    category: "Compliance",
-  },
-  {
-    id: "c6",
-    title: "Cost Accounting & Management",
-    slug: "cost-accounting-management",
-    badge: "ADVANCED",
-    icon: TrendingUp,
-    level: "Advanced",
-    duration: "3 Months",
-    price: 8999,
-    originalPrice: 14000,
-    rating: 4.9,
-    reviewCount: 52,
-    description: "Job costing, process costing, marginal costing — the analytical framework that drives C-suite decisions.",
-    gradient: "linear-gradient(135deg, #0D4A26, #15803D)",
-    topics: ["Job & Batch Costing", "Process Costing", "Marginal Costing", "Standard Costing", "Budgetary Control", "Variance Analysis"],
-    category: "Advanced",
-  },
-  {
-    id: "c7",
-    title: "Audit & Internal Control Mastery",
-    slug: "audit-internal-control-mastery",
-    badge: "PROFESSIONAL",
-    icon: ShieldCheck,
-    level: "Advanced",
-    duration: "6 Weeks",
-    price: 6499,
-    originalPrice: 10500,
-    rating: 4.8,
-    reviewCount: 77,
-    description: "Design audit programs, execute internal audits, identify control gaps, and present board-ready audit reports.",
-    gradient: "linear-gradient(135deg, #14532D, #22C55E)",
-    topics: ["Audit Planning", "Internal Controls", "Vouching & Verification", "Statutory Audit", "Audit Reports", "Risk Assessment"],
-    category: "Advanced",
-  },
-  {
-    id: "c8",
-    title: "SAP FICO for Finance Professionals",
-    slug: "sap-fico-finance-professionals",
-    badge: "ENTERPRISE",
-    icon: Cpu,
-    level: "Advanced",
+    badgeColor: "green",
     duration: "5 Months",
-    price: 14999,
-    originalPrice: 22000,
+    price: 45000,
+    originalPrice: 58000,
+    emi: "₹9,000/month",
+    level: "Intermediate → Advanced",
+    category: "accounting",
+    icon: "TrendingUp",
+    gradient: "linear-gradient(135deg, #0A2810, #2D9E44)",
     rating: 4.9,
-    reviewCount: 204,
-    description: "The most in-demand ERP skill in corporate finance. Configure GL, AP, AR, Asset Accounting in SAP.",
-    gradient: "linear-gradient(135deg, #052E16, #0D4A26)",
-    topics: ["SAP Architecture", "General Ledger", "Accounts Payable", "Accounts Receivable", "Asset Accounting", "Bank Accounting"],
-    category: "Advanced",
+    reviews: 215,
+    enrolled: 1820,
+    topics: [
+      "Manual Accounting",
+      "Tally Prime",
+      "GST & Filing",
+      "Microsoft Word",
+      "Microsoft Excel (Advanced)",
+      "Microsoft PowerPoint",
+      "Zoho Books",
+      "Power BI",
+      "Trading"
+    ],
+    highlights: [
+      "Live GST return filing (GSTR-1, GSTR-3B)",
+      "Power BI dashboards for finance",
+      "Advanced Excel (pivot tables, VLOOKUP, macros)",
+      "Zoho Books + Tally dual expertise",
+      "Most comprehensive package",
+      "Placement assistance included"
+    ],
+    description: "The most comprehensive accounting program at Milestone. From manual bookkeeping to GST filing, from Tally to Zoho, from Excel to Power BI dashboards — graduate as a complete, job-ready finance professional.",
+    whoIsItFor: "Professionals seeking complete accounting mastery, those targeting corporate finance roles, and anyone wanting a thorough skillset",
+    modules: [
+      { title: "Manual Accounting", topics: ["Complete accounting cycle", "Financial statements", "Ratio analysis"] },
+      { title: "Tally Prime (Advanced)", topics: ["Advanced inventory", "Payroll", "TDS in Tally", "Multi-branch", "GST in Tally"] },
+      { title: "GST Mastery", topics: ["GST registration", "HSN/SAC codes", "GSTR-1 filing", "GSTR-3B filing", "ITC reconciliation", "Annual return"] },
+      { title: "MS Office Advanced", topics: ["Excel: VLOOKUP, HLOOKUP, pivot tables, macros, conditional formatting", "Word & PowerPoint for finance"] },
+      { title: "Zoho Books", topics: ["Complete cloud accounting", "Automation workflows", "Financial reports"] },
+      { title: "Power BI", topics: ["Data import & modeling", "DAX formulas", "Finance dashboards", "Interactive reports"] },
+      { title: "Trading", topics: ["Technical analysis basics", "Chart reading", "Risk management"] }
+    ]
   },
   {
-    id: "c9",
-    title: "MCA & ROC Filing Compliance",
-    slug: "mca-roc-filing-compliance",
-    badge: null,
-    icon: Landmark,
-    level: "Intermediate",
-    duration: "4 Weeks",
-    price: 3999,
-    originalPrice: 6500,
-    rating: 4.7,
-    reviewCount: 43,
-    description: "Annual returns, AOC-4, MGT-7, DIN management — handle all MCA21 portal filings with precision.",
-    gradient: "linear-gradient(135deg, #166534, #16A34A)",
-    topics: ["Company Incorporation", "DIN & DSC Setup", "AOC-4 & MGT-7", "Board Resolutions", "Annual Returns", "XBRL Filing"],
-    category: "Compliance",
-  },
-  {
-    id: "c10",
-    title: "Banking & Finance Operations",
-    slug: "banking-finance-operations",
-    badge: "NEW",
-    icon: Banknote,
-    level: "Beginner",
-    duration: "3 Months",
-    price: 6999,
-    originalPrice: 11000,
-    rating: 4.8,
-    reviewCount: 56,
-    description: "Credit appraisal, MSME lending, NPA management, KYC/AML compliance for banking sector careers.",
-    gradient: "linear-gradient(135deg, #0D4A26, #22C55E)",
-    topics: ["Retail Banking", "Corporate Lending", "KYC & AML Rules", "NPA Management", "Trade Finance", "Credit Appraisal"],
-    category: "Accounting",
-  },
-  {
-    id: "c11",
-    title: "QuickBooks & Zoho Books",
-    slug: "quickbooks-zoho-books",
-    badge: null,
-    icon: Monitor,
-    level: "Beginner",
-    duration: "3 Weeks",
-    price: 2999,
-    originalPrice: 4500,
-    rating: 4.6,
-    reviewCount: 88,
-    description: "Cloud accounting for freelancers, startups, and SMEs. Master both platforms and offer a premium service.",
-    gradient: "linear-gradient(135deg, #15803D, #22C55E)",
-    topics: ["QuickBooks Setup", "Zoho Books Invoicing", "Expense Tracking", "Bank Sync", "Multi-currency", "Financial Reporting"],
-    category: "Accounting",
-  },
-  {
-    id: "c12",
-    title: "CA Foundation Accelerator",
-    slug: "ca-foundation-accelerator",
-    badge: "POPULAR",
-    icon: Award,
-    level: "Beginner",
-    duration: "6 Months",
-    price: 11999,
-    originalPrice: 18000,
-    rating: 4.9,
-    reviewCount: 315,
-    description: "Bridge between graduation and CA exams. Accounting principles, law basics, quantitative aptitude, economics.",
-    gradient: "linear-gradient(135deg, #052E16, #16A34A)",
-    topics: ["Accounting Principles", "Business Laws", "Quantitative Aptitude", "Business Economics", "Mock Exams", "Study Planning"],
-    category: "Accounting",
+    id: "comprehensive-package",
+    slug: "comprehensive-package",
+    title: "Comprehensive Package",
+    tagline: "The ultimate accounting & finance mastery program",
+    badge: "ULTIMATE",
+    badgeColor: "gold",
+    duration: "7 Months",
+    price: null,
+    originalPrice: null,
+    emi: null,
+    level: "All Levels → Expert",
+    category: "advanced",
+    icon: "Award",
+    gradient: "linear-gradient(135deg, #0A1A0B, #1A5C28)",
+    rating: 5.0,
+    reviews: 67,
+    enrolled: 520,
+    topics: [
+      "Manual Accounting",
+      "Tally Prime",
+      "GST & Filing",
+      "UAE VAT & Filing",
+      "UAE Corporate Tax & Filing",
+      "Microsoft Excel (Advanced)",
+      "Power BI",
+      "Microsoft PowerPoint",
+      "Zoho Books",
+      "QuickBooks (QB)",
+      "Microsoft Word",
+      "Trading"
+    ],
+    highlights: [
+      "Everything in all other packages",
+      "UAE + India dual taxation expertise",
+      "QuickBooks + Zoho + Tally triple proficiency",
+      "Power BI advanced dashboards",
+      "Maximum career opportunities",
+      "Priority placement assistance",
+      "Dedicated mentor support"
+    ],
+    description: "The pinnacle of accounting education. Master every tool, every tax system, every software used in modern finance — across India and UAE. This is the program for those who want to be the best.",
+    whoIsItFor: "Ambitious professionals aiming for senior finance roles, those targeting India + UAE markets, aspiring CFOs and finance managers",
+    modules: [
+      { title: "Complete Manual Accounting", topics: ["Advanced bookkeeping", "IFRS & IndAS basics", "Audit trail"] },
+      { title: "Tally Prime Expert", topics: ["All Tally features", "Customization", "Advanced reporting"] },
+      { title: "Indian GST Complete", topics: ["All GSTR forms", "E-invoicing", "E-way bill", "GST audit"] },
+      { title: "UAE Taxation Complete", topics: ["VAT registration to filing", "Corporate tax end-to-end", "FTA portal mastery"] },
+      { title: "Advanced Excel + Power BI", topics: ["Financial modeling", "Power Query", "Advanced DAX", "Executive dashboards"] },
+      { title: "Triple Software: Zoho + QB + Tally", topics: ["Zoho Books advanced", "QuickBooks Desktop & Online", "Cross-platform workflow"] },
+      { title: "MS Office Complete", topics: ["Excel, Word, PowerPoint for finance professionals"] },
+      { title: "Trading Complete", topics: ["Full trading course", "Portfolio management", "Investment analysis"] }
+    ]
   }
 ];
+
+// Alias for backward compatibility with existing component imports
+export const courses = COURSES;

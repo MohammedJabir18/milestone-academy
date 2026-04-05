@@ -1,1073 +1,1000 @@
-## 🧠 MASTER PROMPT — PASTE THIS INTO CLAUDE CODE
+# MILESTONE ACADEMY — MASTER CLAUDE.md
+## Awwwards-Winning Website — Full Project Memory
+## Last Updated: Always read this before every session.
+
+---
+
+## 🎯 PROJECT OVERVIEW
+
+- **Brand:** Milestone Academy
+- **Brand Story:** Milestone started as a premier trading academy. Now expanded to include professional accounting & finance courses under the same brand. NOT a sister brand — ONE unified academy.
+- **Website Goal:** A jaw-dropping, Awwwards-winning, WOW-level website for accounting courses, with trading courses also highlighted as part of the same academy.
+- **Live Reference:** https://milestone-trading-academy.vercel.app/
+- **Stack Status:** [Update this as you build — e.g., "Hero done, Stats in progress"]
+
+---
+
+## 🏗 BUILD STATUS TRACKER
 
 ```
-You are an elite full-stack developer and award-winning UI/UX designer. Build a complete, production-ready, Awwwards-winning website for "Milestone Academy" — a premium accounting & finance courses platform.
-
-This website must be jaw-dropping, magazine-quality, and "WOW"-inducing. Every pixel must be intentional. Every animation must feel premium. Every section must convert visitors into students. The design must be editorial-luxury meets high-tech fintech — think Bloomberg Terminal meets Apple.com meets Stripe.com. Build with immense pride, craft, and obsession over detail.
+- [ ] Phase 1: Foundation (packages, globals, Lenis, data)
+- [ ] Phase 2: Global Shell (LoadingScreen, Cursor, Navbar, Footer)
+- [ ] Phase 3: Hero + Marquee + Stats
+- [ ] Phase 4: Courses + WhyUs + Curriculum
+- [ ] Phase 5: Testimonials + Placement + CTA + Trading Section
+- [ ] Phase 6: Pages (/courses, /about, /contact, /course/[slug])
+- [ ] Phase 7: Admin Panel (Full CMS)
+- [ ] Phase 8: Polish, Responsive, SEO, Deploy
+```
 
 ---
 
 ## 🛠 TECH STACK — USE EXACTLY THESE
 
-Framework: Next.js 14+ (App Router, TypeScript)
-Styling: Tailwind CSS v3 + CSS custom properties
-Animations: GSAP 3 (ScrollTrigger, SplitText, Flip, DrawSVG plugins)
-Smooth Scroll: Lenis (https://lenis.darkroom.engineering/) — silky-smooth scroll across all pages
-3D Elements: @splinetool/react-spline — Spline 3D scenes embedded as hero and section accents
-Component Library: shadcn/ui (radix-ui primitives) for accessible base components
-Icons: Lucide React + React Icons
-Fonts: 
-  - Display: "Instrument Serif" (Google Fonts) — for headings, hero text, editorial pull-quotes
-  - Sans: "Neue Haas Grotesk Display" via "Haas Grot" fallback: "Syne" (Google Fonts) — for body, nav, labels
-  - Mono: "JetBrains Mono" — for numbers, stats, code-style accents
-3D/Canvas: Three.js (for animated number counters and background mesh)
-State: Zustand (for nav state, modal state)
-Forms: React Hook Form + Zod validation
+```
+Framework:        Next.js 14+ (App Router, TypeScript strict mode)
+Styling:          Tailwind CSS v3 + CSS custom properties in globals.css
+Animations:       GSAP 3 (ScrollTrigger, SplitText, Flip, DrawSVG)
+Smooth Scroll:    Lenis (@studio-freight/lenis) — connect to GSAP RAF
+3D Elements:      @splinetool/react-spline — Spline scenes in hero
+Components:       shadcn/ui (radix-ui primitives)
+Icons:            Lucide React + React Icons
+Fonts:            Instrument Serif (Google) + Syne (Google) + JetBrains Mono (Google)
+State:            Zustand (nav, modal, admin UI state)
+Forms:            React Hook Form + Zod
+Backend/DB:       Supabase (PostgreSQL + Auth + Storage + Realtime)
+Admin Auth:       Supabase Auth with RLS (Row Level Security)
+ORM:              Supabase JS client (no extra ORM needed)
+Image Storage:    Supabase Storage for logo, course images, avatars
+Email:            Resend (for enrollment inquiry notifications)
+```
 
-Install these packages:
-npm install gsap @studio-freight/lenis @splinetool/react-spline framer-motion lucide-react react-icons zustand react-hook-form zod @hookform/resolvers clsx tailwind-merge class-variance-authority @radix-ui/react-dialog @radix-ui/react-accordion @radix-ui/react-tabs @radix-ui/react-tooltip next-themes
+### Install Command:
+```bash
+npm install gsap @studio-freight/lenis @splinetool/react-spline \
+  framer-motion lucide-react react-icons zustand react-hook-form zod \
+  @hookform/resolvers clsx tailwind-merge class-variance-authority \
+  @radix-ui/react-dialog @radix-ui/react-accordion @radix-ui/react-tabs \
+  @radix-ui/react-tooltip @radix-ui/react-select @radix-ui/react-switch \
+  @radix-ui/react-alert-dialog @radix-ui/react-dropdown-menu \
+  split-type next-themes @supabase/supabase-js @supabase/auth-helpers-nextjs \
+  resend react-hot-toast react-quill date-fns recharts
+```
 
 ---
 
-## 🎨 DESIGN SYSTEM — IMPLEMENT IN globals.css AND tailwind.config.ts
+## 🎨 DESIGN SYSTEM
 
-### Color Palette (Light Theme with Green Soul):
+### Color Palette — CSS Variables in globals.css:
+```css
 :root {
-  /* Backgrounds */
-  --bg-primary: #F7F9F4;          /* Off-white with subtle green tint */
-  --bg-secondary: #EDEFEA;        /* Light sage surface */
-  --bg-card: #FFFFFF;             /* Pure white cards */
-  --bg-dark: #0D1A0E;             /* Deep forest dark (for dark sections) */
-  --bg-dark-card: #162018;        /* Dark card backgrounds */
+  /* === BACKGROUNDS === */
+  --bg-primary:    #F7F9F4;   /* Off-white with green tint — main page bg */
+  --bg-secondary:  #EDEFEA;   /* Subtle sage — alternate sections */
+  --bg-card:       #FFFFFF;   /* Pure white cards */
+  --bg-dark:       #0A1A0B;   /* Deep forest dark — dark sections */
+  --bg-dark-card:  #132015;   /* Dark card bg */
+  --bg-dark-glass: rgba(255,255,255,0.05); /* Glassmorphic on dark */
 
-  /* Green Spectrum */
-  --green-50: #F0F7F0;
-  --green-100: #D4EDD4;
-  --green-200: #A8D8A8;
-  --green-300: #6DBF6D;
-  --green-400: #3DA83D;
-  --green-500: #22C55E;           /* Primary brand green (Tailwind green-500) */
-  --green-600: #16A34A;           /* Deeper action green */
-  --green-700: #15803D;
-  --green-800: #166534;
-  --green-900: #0D4A26;
+  /* === GREEN SPECTRUM === */
+  --green-50:   #F0F7F0;
+  --green-100:  #D4EDD4;
+  --green-200:  #A8D8A8;
+  --green-300:  #6DBF6D;
+  --green-400:  #3DA83D;
+  --green-500:  #2D9E44;   /* Primary brand green — matches logo */
+  --green-600:  #237A35;   /* Deeper action green */
+  --green-700:  #1A5C28;
+  --green-800:  #124019;
+  --green-900:  #0A2810;
 
-  /* Accent */
-  --accent-gold: #D4AF37;         /* Premium gold for badges, stars */
-  --accent-mint: #A8F5C2;         /* Soft mint glow */
-  --accent-neon: #39FF14;         /* Neon green for data/numbers (use sparingly) */
+  /* === ACCENT === */
+  --accent-gold:  #D4AF37;  /* Premium gold for badges */
+  --accent-mint:  #A8F5C2;  /* Soft mint for marquee/data text */
+  --accent-neon:  #39FF14;  /* Neon green — use on counters/stats sparingly */
 
-  /* Typography */
-  --text-primary: #0D1A0E;        /* Near black with green soul */
-  --text-secondary: #3D5A3E;      /* Muted forest green */
-  --text-muted: #7A9B7C;          /* Soft sage text */
-  --text-inverse: #F7F9F4;        /* Light text on dark bg */
+  /* === TYPOGRAPHY === */
+  --text-primary:   #0A1A0B;  /* Near-black with green soul */
+  --text-secondary: #3A5C3C;  /* Muted forest green */
+  --text-muted:     #7A9B7C;  /* Soft sage text */
+  --text-inverse:   #F7F9F4;  /* Light text on dark bg */
 
-  /* Borders & Lines */
-  --border-light: #D4E8D4;        /* Subtle green-tinted border */
+  /* === BORDERS === */
+  --border-light:  #D4E8D4;
   --border-medium: #A8C8A8;
 
-  /* Shadows */
-  --shadow-green: 0 4px 40px rgba(34, 197, 94, 0.12);
-  --shadow-card: 0 2px 20px rgba(13, 26, 14, 0.08);
-  --shadow-lift: 0 20px 60px rgba(13, 26, 14, 0.15);
-
-  /* Gradients */
-  --gradient-hero: linear-gradient(135deg, #F7F9F4 0%, #E8F5E9 50%, #F0FFF4 100%);
-  --gradient-green: linear-gradient(135deg, #22C55E 0%, #16A34A 100%);
-  --gradient-dark: linear-gradient(180deg, #0D1A0E 0%, #162018 100%);
-  --gradient-glow: radial-gradient(ellipse at center, rgba(34,197,94,0.15) 0%, transparent 70%);
-
-  /* Spacing */
-  --section-padding: 120px 0;
-  --container-max: 1280px;
-
-  /* Border Radius */
-  --radius-sm: 8px;
-  --radius-md: 16px;
-  --radius-lg: 24px;
-  --radius-xl: 40px;
-  --radius-pill: 100px;
-}
-
-### Typography Scale:
-- Hero headline: 96px / Instrument Serif / font-weight 400 (italic variant for accent words)
-- Section headline: 64px / Instrument Serif
-- Sub-headline: 40px / Syne Bold
-- Body large: 20px / Syne Regular
-- Body: 16px / Syne Regular
-- Label/Caption: 12px / JetBrains Mono / letter-spacing: 0.15em / uppercase
-- Number/Stat: 72px / JetBrains Mono Bold
-
----
-
-## 🏗 WEBSITE ARCHITECTURE
-
-### Pages:
-1. `/` — Home (Main landing page — 10 sections)
-2. `/courses` — All Courses listing page
-3. `/courses/[slug]` — Individual course detail page
-4. `/about` — About Milestone Academy
-5. `/contact` — Contact / Enroll Now
-
-### Global Components:
-- `<Navbar />` — Glassmorphic sticky nav
-- `<Footer />` — Rich dark footer
-- `<CustomCursor />` — Custom magnetic cursor
-- `<PageTransition />` — GSAP-powered page transition overlay
-- `<LenisProvider />` — Smooth scroll wrapper
-- `<LoadingScreen />` — Animated intro loader
-
----
-
-## 📄 PAGE 1: HOME PAGE — ALL 10 SECTIONS IN DETAIL
-
----
-
-### SECTION 0: LOADING SCREEN
-
-Component: `<LoadingScreen />`
-
-Visual:
-- Full-screen overlay: background var(--bg-dark)
-- Center: Milestone "M" logo mark (SVG) draws itself using GSAP DrawSVG
-- Below logo: Text "MILESTONE ACADEMY" types letter by letter using GSAP SplitText
-- Bottom: thin green progress bar (--green-500) fills left to right (0% → 100%)
-- Progress numbers count from 00 to 100 in JetBrains Mono
-- Duration: 2.4 seconds
-- Exit animation: The whole screen splits in two halves (top and bottom panels) and slide away off screen (like a stage curtain), revealing the hero behind
-
-GSAP Code Approach:
-```js
-const tl = gsap.timeline();
-tl.from(".logo-svg path", { drawSVG: "0%", duration: 1, stagger: 0.1, ease: "power2.inOut" })
-  .to(".progress-bar", { width: "100%", duration: 1.5, ease: "power1.inOut" }, 0)
-  .to(".counter", { textContent: 100, duration: 1.5, snap: { textContent: 1 }, ease: "power1.inOut" }, 0)
-  .to([".panel-top", ".panel-bottom"], { yPercent: (i) => i === 0 ? -100 : 100, duration: 0.8, ease: "power3.inOut", onComplete: () => setLoaded(true) });
-```
-
----
-
-### SECTION 1: HERO SECTION
-
-Component: `<HeroSection />`
-
-Layout: Full viewport (100vh minimum), two-column grid (55% text / 45% 3D)
-
-Background:
-- var(--gradient-hero) as base
-- Subtle noise texture overlay (SVG filter or CSS grain) at 3% opacity
-- Animated floating particles: 20 tiny green dots (3px) that drift slowly using GSAP random motion
-- Large radial glow: var(--gradient-glow) centered on the 3D element side
-
-Left Column — Content:
-```
-[LABEL]  ── in JetBrains Mono 12px uppercase green-600, with a 1px green line before it
-"INDIA'S PREMIER ACCOUNTING ACADEMY"
-
-[HEADLINE] — Instrument Serif 96px, line-height 1.05
-"Master the
-Language of
-*Business*"
-(*Business* = italic, green-500 colored, slightly larger)
-
-[SUBHEADLINE] — Syne 20px, text-secondary, max-width 480px, margin-top 24px
-"From Tally to Taxation, GST to Financial Reporting — 
-Milestone Academy transforms ambitious professionals 
-into certified financial experts trusted by 1,200+ companies."
-
-[CTA BUTTONS] — margin-top 48px, flex gap-16px
-  Primary CTA: "Explore Courses →"
-    - Background: var(--gradient-green)
-    - Text: white, Syne SemiBold 16px
-    - Padding: 18px 36px
-    - Border-radius: var(--radius-pill)
-    - Hover: scale(1.04), box-shadow var(--shadow-green), translateY(-2px)
-    - Magnetic hover effect (cursor proximity repulsion using mouse tracking)
-    - Ripple animation on click (CSS radial gradient expanding ring)
-
-  Secondary CTA: "Watch Demo ▶"
-    - Background: transparent
-    - Border: 1.5px solid var(--border-medium)
-    - Text: text-primary, Syne SemiBold 16px
-    - Padding: 18px 36px
-    - Border-radius: var(--radius-pill)
-    - Hover: border-color green-500, text green-600, background green-50
-    - Play icon pulse animation (rings expanding from icon)
-
-[SOCIAL PROOF ROW] — margin-top 56px, flex align-center gap-32px
-  Left: Avatar stack (5 student face circles, 40px, -8px overlap, border white 2px)
-  Text: "4,800+ Students Enrolled"  (Syne SemiBold 14px, text-primary)
-  Divider: 1px vertical line (border-light, height 24px)
-  Rating: ★★★★★ (gold stars) "4.9/5 Rating" (Syne 14px, text-secondary)
-```
-
-Right Column — 3D / Visual:
-- Embed `<Spline scene="https://prod.spline.design/YOUR_SCENE/scene.splinecode" />`
-- Use a Spline scene showing: a rotating 3D book/ledger with glowing green data lines, or a 3D bar chart with animated growth, or abstract 3D geometric shape in green palette
-- Fallback if Spline unavailable: CSS 3D card stack with floating accounting icons (calculator, charts, certificates) using GSAP floating animation
-- Floating badge cards (glassmorphic, blur 12px):
-  Card 1 (top-right): "📊 GST Certification" — Syne 13px — animate: float up-down 3s ease infinite
-  Card 2 (bottom-left): "🏆 Tally Expert Program" — animate: float delayed 1.5s
-  Card 3 (top-left, smaller): "✅ Industry Recognized" — animate: float delayed 0.8s
-
-Entrance Animations (triggered on load, after loading screen):
-```js
-// Staggered reveal
-gsap.from(".hero-label", { y: 30, opacity: 0, duration: 0.6, ease: "power3.out", delay: 0.2 });
-gsap.from(".hero-headline .line", { y: 80, opacity: 0, duration: 0.9, stagger: 0.12, ease: "power4.out", delay: 0.4 });
-gsap.from(".hero-sub", { y: 40, opacity: 0, duration: 0.8, delay: 0.85, ease: "power3.out" });
-gsap.from(".hero-cta", { y: 30, opacity: 0, duration: 0.7, stagger: 0.1, delay: 1, ease: "power3.out" });
-gsap.from(".social-proof", { y: 20, opacity: 0, duration: 0.6, delay: 1.3 });
-gsap.from(".hero-3d", { x: 80, opacity: 0, duration: 1.2, delay: 0.6, ease: "power4.out" });
-```
-
-Scroll-triggered parallax on hero:
-```js
-gsap.to(".hero-headline", { yPercent: -25, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1 }});
-gsap.to(".hero-3d", { yPercent: 15, ease: "none", scrollTrigger: { trigger: ".hero", start: "top top", end: "bottom top", scrub: 1.5 }});
-```
-
----
-
-### SECTION 2: MARQUEE / TICKER STRIP
-
-Component: `<MarqueeBand />`
-
-Visual:
-- Full-width band: background var(--bg-dark), height 60px
-- Infinite horizontal marquee (CSS animation + JS for pause on hover)
-- Content repeats seamlessly:
-  `📊 GST Expert  ✦  Tally Prime Certified  ✦  Income Tax Specialist  ✦  Financial Accounting  ✦  Payroll Management  ✦  Audit & Compliance  ✦  Cost Accounting  ✦  Balance Sheet Mastery  ✦  MCA Filing  ✦  SAP Finance  ✦`
-- Text: JetBrains Mono 13px, color: --accent-mint (soft mint green)
-- Separators: green-600 diamonds ✦
-- Speed: 35s per loop (CSS animation: marquee 35s linear infinite)
-- On hover entire band: animation-play-state: paused + subtle brightness increase
-
----
-
-### SECTION 3: NUMBERS / STATS SECTION
-
-Component: `<StatsSection />`
-
-Layout: Full-width, dark background (var(--bg-dark)), padding 80px 0
-Grid: 4 columns on desktop, 2 on tablet, 1 on mobile
-
-Background effects:
-- Subtle green grid lines (1px, 5% opacity) creating graph-paper feel
-- Radial green glow behind each stat
-
-4 Stat Cards (dark glassmorphic cards: bg rgba(255,255,255,0.04), border 1px rgba(255,255,255,0.08), backdrop-blur 10px, border-radius 24px, padding 48px 32px):
-
-Card 1:
-  Number: "4,800+"  (JetBrains Mono 72px, --green-400)
-  Label: "Students Enrolled"  (Syne 16px, text-inverse/60%)
-  Icon: graduation cap SVG (top-right corner, 24px, green-600)
-  Description: "Across Kerala & beyond"  (JetBrains Mono 12px, text-muted)
-
-Card 2:
-  Number: "96%"
-  Label: "Placement Rate"
-  Icon: briefcase SVG
-  Description: "Within 3 months of completion"
-
-Card 3:
-  Number: "12+"
-  Label: "Expert Courses"
-  Icon: book-open SVG
-  Description: "From basics to advanced"
-
-Card 4:
-  Number: "1,200+"
-  Label: "Hiring Companies"
-  Icon: building-2 SVG
-  Description: "Trust our certifications"
-
-Animations:
-- ScrollTrigger: when section enters viewport, numbers count up from 0 using GSAP:
-```js
-gsap.from(".stat-number", {
-  textContent: 0,
-  duration: 2,
-  ease: "power2.out",
-  snap: { textContent: 1 },
-  scrollTrigger: { trigger: ".stats-section", start: "top 75%" }
-});
-```
-- Cards: stagger fade-up on scroll (y: 60 → 0, opacity 0 → 1, stagger 0.15s)
-- Hover on card: translateY(-8px), shadow var(--shadow-green), border-color green-500/30
-- Green glow pulse animation (CSS @keyframes: box-shadow scales from 0 to 20px green glow and back, 3s infinite, each card with different delay)
-
----
-
-### SECTION 4: COURSES SECTION
-
-Component: `<CoursesSection />`
-
-Header:
-```
-[LABEL] "OUR PROGRAMS"  (JetBrains Mono 12px, green-600, uppercase)
-[HEADLINE] "Every Course, a
-Career Upgrade"  (Instrument Serif 64px, text-primary)
-[SUBTEXT] "Meticulously designed curricula by CAs, CPAs, and industry veterans."
-[FILTER TABS] — pill-shaped tab buttons: All | Accounting | Taxation | Compliance | Advanced
-  Active tab: bg green-500, text white
-  Inactive: bg green-50, text-secondary, hover: bg green-100
-```
-
-Course Cards Grid: 3 columns desktop, 2 tablet, 1 mobile
-Gap: 24px
-
-Each Course Card (the crown jewel of the website):
-Structure: white bg, border-radius 20px, border 1px border-light, overflow hidden, position relative
-
-Card Top (card image area, height 200px):
-- Background: gradient unique per course (e.g., green-to-mint, dark-green-to-lime)
-- Course icon: large (64px) centered, white, using Lucide icon
-- Top-right corner: badge pill "BESTSELLER" or "NEW" or "ADVANCED" (Syne 10px bold, gold bg)
-- Bottom overlay: course category chip (JetBrains Mono 11px, white/70%)
-
-Card Body (padding 28px):
-- Course Title: Syne SemiBold 20px, text-primary, margin-bottom 8px
-- Description: Syne 14px, text-secondary, 2 lines max with CSS line-clamp
-- [Divider line: 1px border-light, margin 16px 0]
-- Meta row (flex, space-between):
-  Duration: 📅 "3 Months" (Syne 13px, text-secondary)
-  Level: 🎓 "Beginner → Pro" (Syne 13px, text-secondary)
-- Rating: ⭐ 4.9 (30 reviews) (Syne 13px)
-- [Space: 20px]
-- Price row:
-  Old Price: ₹12,000 (strikethrough, text-muted, 14px)
-  New Price: "₹7,499" (Syne Bold 24px, green-600)
-  "EMI from ₹625/mo" (JetBrains Mono 11px, text-muted)
-- CTA Button: "Enroll Now →" (full-width, green-500 bg, white text, 14px Syne SemiBold, border-radius pill, padding 14px, hover: green-600, scale 1.02)
-
-Card Hover State (transform-style: preserve-3d, perspective 1000px):
-- GSAP 3D tilt effect (tracks mouse x/y, rotates card max ±8deg on both axes)
-- Box-shadow deepens: var(--shadow-lift)
-- Top image area: scale(1.05) with overflow:hidden clipping
-- CTA button: translateY(-2px), slight glow
-- Border color: green-400
-
-```js
-// 3D Tilt on each card
-cards.forEach(card => {
-  card.addEventListener("mousemove", (e) => {
-    const rect = card.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width - 0.5;
-    const y = (e.clientY - rect.top) / rect.height - 0.5;
-    gsap.to(card, { rotateY: x * 16, rotateX: -y * 16, duration: 0.4, ease: "power2.out", transformPerspective: 1000 });
-  });
-  card.addEventListener("mouseleave", () => {
-    gsap.to(card, { rotateY: 0, rotateX: 0, duration: 0.6, ease: "elastic.out(1, 0.5)" });
-  });
-});
-```
-
-ScrollTrigger entrance: cards stagger from y:80, opacity:0 with 0.1s stagger
-
-### 12 ACCOUNTING COURSES TO INCLUDE:
-
-1. **Tally Prime Complete Mastery** 
-   - Badge: BESTSELLER | Icon: BarChart3 | Level: Beginner → Expert
-   - Duration: 3 Months | Price: ₹7,499 | Rating: 4.9
-   - Description: "From basic vouchers to advanced inventory management — become the Tally expert every company is searching for."
-   - Gradient: linear-gradient(135deg, #16A34A, #22C55E)
-   - Topics: Voucher Entry, Bank Reconciliation, GST in Tally, Payroll, Inventory, Reports
-
-2. **GST Filing & Compliance Expert**
-   - Badge: HOT | Icon: FileText | Level: Intermediate
-   - Duration: 6 Weeks | Price: ₹5,999
-   - Description: "Navigate India's GST labyrinth with confidence. File GSTR-1, GSTR-3B, handle ITC claims, and crush audits."
-   - Gradient: linear-gradient(135deg, #0D4A26, #16A34A)
-
-3. **Income Tax & ITR Filing Pro**
-   - Badge: NEW | Icon: Receipt | Level: Beginner
-   - Duration: 8 Weeks | Price: ₹4,999
-   - Description: "Master income tax computation, deductions under 80C-80U, and file ITR forms 1 through 7 with zero errors."
-   - Gradient: linear-gradient(135deg, #166534, #22C55E)
-
-4. **Financial Accounting & Reporting**
-   - Badge: — | Icon: BookOpen | Level: Intermediate
-   - Duration: 4 Months | Price: ₹9,999
-   - Description: "Build and read Profit & Loss, Balance Sheet, Cash Flow Statements like a seasoned finance professional."
-   - Gradient: linear-gradient(135deg, #15803D, #4ADE80)
-
-5. **Payroll & HR Compliance**
-   - Badge: — | Icon: Users | Level: Beginner
-   - Duration: 4 Weeks | Price: ₹3,499
-   - Description: "Process salaries, PF, ESI, TDS deductions, generate pay slips, and stay 100% compliant with labour laws."
-   - Gradient: linear-gradient(135deg, #052E16, #166534)
-
-6. **Cost Accounting & Management**
-   - Badge: ADVANCED | Icon: TrendingUp | Level: Advanced
-   - Duration: 3 Months | Price: ₹8,999
-   - Description: "Job costing, process costing, marginal costing — the analytical framework that drives C-suite decisions."
-   - Gradient: linear-gradient(135deg, #0D4A26, #15803D)
-
-7. **Audit & Internal Control Mastery**
-   - Badge: PROFESSIONAL | Icon: ShieldCheck | Level: Advanced
-   - Duration: 6 Weeks | Price: ₹6,499
-   - Description: "Design audit programs, execute internal audits, identify control gaps, and present board-ready audit reports."
-   - Gradient: linear-gradient(135deg, #14532D, #22C55E)
-
-8. **SAP FICO for Finance Professionals**
-   - Badge: ENTERPRISE | Icon: Cpu | Level: Advanced
-   - Duration: 5 Months | Price: ₹14,999
-   - Description: "The most in-demand ERP skill in corporate finance. Configure GL, AP, AR, Asset Accounting in SAP."
-   - Gradient: linear-gradient(135deg, #052E16, #0D4A26)
-
-9. **MCA & ROC Filing Compliance**
-   - Badge: — | Icon: Landmark | Level: Intermediate
-   - Duration: 4 Weeks | Price: ₹3,999
-   - Description: "Annual returns, AOC-4, MGT-7, DIN management — handle all MCA21 portal filings with precision."
-   - Gradient: linear-gradient(135deg, #166534, #16A34A)
-
-10. **Banking & Finance Operations**
-    - Badge: NEW | Icon: Banknote | Level: Beginner
-    - Duration: 3 Months | Price: ₹6,999
-    - Description: "Credit appraisal, MSME lending, NPA management, KYC/AML compliance for banking sector careers."
-    - Gradient: linear-gradient(135deg, #0D4A26, #22C55E)
-
-11. **QuickBooks & Zoho Books**
-    - Badge: — | Icon: Monitor | Level: Beginner
-    - Duration: 3 Weeks | Price: ₹2,999
-    - Description: "Cloud accounting for freelancers, startups, and SMEs. Master both platforms and offer a premium service."
-    - Gradient: linear-gradient(135deg, #15803D, #22C55E)
-
-12. **CA Foundation Accelerator**
-    - Badge: POPULAR | Icon: Award | Level: Beginner
-    - Duration: 6 Months | Price: ₹11,999
-    - Description: "Bridge between graduation and CA exams. Accounting principles, law basics, quantitative aptitude, economics."
-    - Gradient: linear-gradient(135deg, #052E16, #16A34A)
-
-View All Courses Button (centered below grid):
-- Outline style: border 1.5px green-500, text green-600, bg transparent
-- Hover: bg green-500, text white, scale(1.03)
-- Border-radius pill, padding 16px 48px, Syne SemiBold 16px
-- Arrow icon that slides right on hover (GSAP translateX)
-
----
-
-### SECTION 5: "WHY MILESTONE ACADEMY?" — USP SECTION
-
-Component: `<WhyUsSection />`
-
-Layout: Split layout — left side dark (var(--bg-dark)), right side light (var(--bg-primary))
-
-Left Side (dark, padding 80px 60px):
-```
-[LABEL] "WHY CHOOSE US"  (JetBrains Mono, mint green)
-[HEADLINE] "Not just a course.
-A career transformation."  (Instrument Serif 52px, text-inverse)
-[BODY] "We don't teach theory — we build practitioners. 
-Every module is built around real company workflows, 
-live software, and actual GST portals."  (Syne 18px, text-inverse/70%)
-[DECORATION] Large outlined "M" letterform as background element (stroke only, 400px, 5% opacity)
-```
-
-Right Side (light): 6 USP cards in 2-column grid (each 3 cards per column)
-
-USP Cards (minimal card: no border, just left accent line in green-500 3px width, padding 24px, bg transparent):
-1. 🏛 "CA & CPA Certified Faculty" — "Learn from practicing chartered accountants, not just lecturers."
-2. 🖥 "Live Software Practice" — "Hands-on practice with Tally Prime, SAP, GST portal — no simulations."
-3. 🏆 "Industry-Recognized Certificates" — "Certificates valued by 1,200+ companies across India."
-4. 📞 "Lifetime Doubt Support" — "WhatsApp access to mentors even after course completion."
-5. 💼 "100% Placement Assistance" — "Resume building, interview prep, and direct company referrals."
-6. 📱 "Hybrid Learning" — "Attend in-person at our Kerala centers or join live online from anywhere."
-
-Each card entrance: ScrollTrigger, slide in from alternating sides (odd: from left, even: from right)
-Hover: left accent bar extends to full card height, card bg becomes green-50, subtle translateX(4px)
-
----
-
-### SECTION 6: CURRICULUM DEEP DIVE (TABBED)
-
-Component: `<CurriculumSection />`
-
-Background: var(--bg-secondary) with subtle diagonal stripe pattern (CSS)
-
-Header:
-```
-"What You'll Learn —
-Broken Down, Module by Module"  (Instrument Serif 52px)
-```
-
-Tab Navigation (horizontal, sticky within section):
-Tabs: [Tally Prime] [GST Mastery] [Income Tax] [Financial Accounting] [SAP FICO]
-- Active: bg green-500, text white, border-radius pill
-- Hover: bg green-100
-- Tab switch: GSAP content cross-fade (opacity 0→1, y:10→0, duration 0.4s)
-- Underline indicator slides between tabs (GSAP x position)
-
-Each Tab Content: 2-column layout
-Left — Module List (accordion style, @radix-ui/react-accordion):
-- Module 1: "Fundamentals & Setup" ► (expands to show 5 sub-topics)
-  Topics: Installing Tally, Company Creation, Ledger Setup, Groups, Opening Balances
-- Module 2: "Voucher Transactions" ►
-  Topics: Payment, Receipt, Journal, Contra, Sales, Purchase vouchers
-- Module 3: "GST in Tally" ►
-- Module 4: "Inventory Management" ►
-- Module 5: "Payroll Processing" ►
-- Module 6: "Reports & MIS" ►
-- Module 7: "Advanced Features" ►
-- Module 8: "Live Project" ►
-
-Accordion animation: smooth height transition, rotate chevron icon (GSAP rotation)
-Active module: left border green-500, bg green-50, text green-700
-
-Right — Course Highlights Card (sticky while scrolling module list):
-```
-[CARD: white, shadow-lift, border-radius 24px, padding 40px]
-  Certificate Preview (mockup image: green bordered cert with "Milestone Academy" letterhead)
-  ─────────────────────
-  🕐 Duration: 3 Months
-  📺 Sessions: 48 Live Classes
-  🎥 Recordings: Lifetime Access
-  📋 Assignments: 12 Practice Sets
-  🔬 Live Projects: 3 Company Scenarios
-  👩‍🏫 Mentor: CA Rashida Nair (photo, name, credentials)
-  ─────────────────────
-  Price: ₹7,499
-  [ENROLL NOW →] (green CTA full width)
-  [Download Syllabus PDF] (outline button full width)
-```
-
----
-
-### SECTION 7: TESTIMONIALS SECTION
-
-Component: `<TestimonialsSection />`
-
-Background: var(--bg-dark)) — dark section for contrast
-Overflow: hidden (for horizontal scroll effect)
-
-Header:
-```
-[LABEL] "STUDENT STORIES" (JetBrains Mono, mint)
-[HEADLINE] "Real People.
-Real Results." (Instrument Serif 52px, text-inverse)
-```
-
-Layout: Horizontal infinite scroll marquee (two rows, opposite direction speeds)
-Row 1: scrolls left (speed 40s)
-Row 2: scrolls right (speed 50s)
-Pause on hover (both rows)
-
-Testimonial Cards (glassmorphic: bg rgba(255,255,255,0.06), border 1px rgba(255,255,255,0.1), blur 8px, border-radius 20px, padding 32px, width 360px, flex-shrink 0):
-
-```
-[QUOTE MARK] Large decorative " in green-500/30, Instrument Serif 120px
-[REVIEW TEXT] Syne 15px, text-inverse/80%, line-height 1.6, font-style italic
-[RATING] ★★★★★ (gold, 16px) — margin-top 16px
-[DIVIDER] thin line border-light/20
-[STUDENT INFO] flex, gap 12px:
-  [AVATAR] 44px circle (colored initial placeholder or real photo)
-  [Name] Syne SemiBold 15px, text-inverse
-  [Role] JetBrains Mono 12px, text-muted — e.g. "GST Executive, Deloitte Kerala"
-  [Course] pill chip: "Tally Prime" — bg green-500/20, text green-300, 11px
-```
-
-12 Testimonials:
-1. Aisha Rahman — "I went from not knowing what a ledger was to filing GST returns for 8 clients in just 3 months. Milestone's Tally course is the most practical training I've ever attended." — GST Consultant, Kozhikode | Tally Prime
-
-2. Arjun Menon — "The SAP FICO program placed me in Infosys BPM within a month of completion. The faculty's industry experience is unparalleled — they taught us exactly what multinationals expect." — SAP FICO Analyst, Infosys | SAP FICO
-
-3. Fathima Zubair — "As a housewife returning to work, I was terrified. Milestone's income tax course rebuilt my confidence. I now run my own ITR filing practice from home." — Freelance Tax Consultant | Income Tax
-
-4. Mohammed Riyas — "The Cost Accounting program changed how I think about business. My company's CFO noticed the difference immediately and fast-tracked my promotion." — Management Accountant, Kerala Pvt Ltd | Cost Accounting
-
-5. Sneha Pillai — "Every class felt like sitting with a CA at their office, not inside a classroom. The real-world scenarios made everything click." — Finance Executive, HDFC | Financial Accounting
-
-6. Vishnu K — "I cleared CA Foundation in my first attempt using Milestone's accelerator program. The structured approach and mentor support was everything." — CA Student | CA Foundation
-
-7. Divya Thomas — "Payroll compliance used to terrify me. Now I handle 200+ employee payroll for a manufacturing company. The course paid for itself in Week 1." — HR & Payroll Manager | Payroll
-
-8. Nabil Haris — "Tally Prime + GST together in one program? That's what the market actually needs. Got hired before I even finished the course!" — Accounts Executive, Startup | Tally + GST
-
-9. Ananya Krishnan — "The lifetime doubt support is REAL. I WhatsApped at 11pm about an ITC mismatch and got a detailed reply by 7am. That's beyond any institute I've seen." — CA Firm Associate | GST
-
-10. Santhosh Kumar — "From a factory floor to a finance desk — Milestone made that jump possible for me. The banking operations course was my turning point." — Banking Operations, Federal Bank | Banking
-
-11. Lakshmi Nair — "I've done three courses here and each one opened a new door. The certificates are genuinely recognized — HR executives mention Milestone by name." — Senior Accountant, MNC | Multiple Courses
-
-12. Asif Ali — "The placement team is insanely committed. They helped me polish my LinkedIn, prep for 4 interview rounds, and connected me directly to the hiring manager." — Finance Analyst, IT Firm | Placement
-
----
-
-### SECTION 8: PLACEMENT & COMPANIES SECTION
-
-Component: `<PlacementSection />`
-
-Background: var(--bg-primary), section padding 100px 0
-
-Left Side (content):
-```
-[LABEL] "PLACEMENT RECORD"
-[HEADLINE] "Your Dream Job,
-Our Promise."  (Instrument Serif 52px)
-[BODY] "Our placement team works tirelessly to connect Milestone-certified 
-professionals with companies that know our graduates deliver."
-
-[ACHIEVEMENT PILLS] (flex, wrap, gap 12px):
-  🏢 "100% Placement Assistance"
-  📄 "Resume Building"
-  🎤 "Mock Interviews"
-  🔗 "Direct HR Connections"
-  📊 "Salary Negotiation Coaching"
-  
-Each pill: bg green-50, border 1px green-200, text green-700, border-radius pill, padding 10px 18px, Syne 13px
-Hover: bg green-500, text white, scale 1.05, border-color green-500
-```
-
-Right Side (hiring companies marquee):
-```
-[SECTION LABEL] "Hiring Our Graduates"  (Syne SemiBold 16px, text-secondary)
-
-[COMPANY LOGO GRID] — 3 rows of logos, each row is infinite horizontal marquee
-Row 1 → (leftward): Deloitte | EY | KPMG | PWC | Grant Thornton | BDO
-Row 2 ← (rightward): Infosys BPM | Wipro | TCS | Accenture | Capgemini | Cognizant
-Row 3 → (leftward): Federal Bank | SBI | HDFC | Axis Bank | Yes Bank | ICICI
-
-Logo treatment: grayscale by default, full color on hover, opacity 0.6 → 1 on hover
-Logos: 140px wide, height 48px, object-contain
-```
-
-Center: Large circular graphic (CSS) with "96%" in the center in JetBrains Mono 64px green-500, surrounded by an SVG animated circle progress ring that draws from 0 to 96% on scroll entry
-
----
-
-### SECTION 9: CTA / CONTACT SECTION
-
-Component: `<CtaSection />`
-
-Layout: Full-width, dark background (var(--bg-dark)), overflow hidden
-Position: relative, with large decorative elements
-
-Background:
-- Animated gradient mesh (CSS @keyframes shifting green/dark)
-- Large blurred green circle glow (400px, radial, green-500/10) top-left
-- Large blurred green circle glow bottom-right
-
-Content (centered, max-width 800px, text-center):
-```
-[LABEL] "START YOUR JOURNEY"  (JetBrains Mono, mint, 12px)
-[HEADLINE] "Ready to Become a
-Certified Finance Expert?"  (Instrument Serif 72px, text-inverse, line-height 1.1)
-[BODY] "Join 4,800+ students who chose Milestone Academy — 
-and never looked back. Courses starting every month."
-(Syne 18px, text-inverse/70%, max-width 560px, mx-auto)
-
-[FORM BOX] (glassmorphic card: bg rgba(255,255,255,0.06), border 1px rgba(255,255,255,0.12), border-radius 24px, padding 48px)
-  Grid: 2 columns
-  [Name Field] placeholder "Your Full Name"
-  [Phone Field] placeholder "+91 XXXXX XXXXX"
-  [Email Field] (full width) placeholder "your@email.com"
-  [Course Interest Dropdown] (full width) 
-    Options: All 12 courses listed
-  [Message Field] (full width, 3 rows) placeholder "Any questions? Let us know..."
-  
-  Field styling:
-    bg: rgba(255,255,255,0.06), border: 1px solid rgba(255,255,255,0.12)
-    border-radius: 12px, padding: 14px 18px
-    text: text-inverse, placeholder: text-inverse/40%
-    focus: border-color green-500, box-shadow 0 0 0 3px rgba(34,197,94,0.15), outline none
-    Transition: all 0.25s ease
-    
-  [SUBMIT BUTTON] (full width, height 54px):
-    "Book Free Counselling Session →"
-    bg: var(--gradient-green)
-    text: white, Syne SemiBold 16px
-    border-radius: 12px
-    hover: translateY(-2px), box-shadow var(--shadow-green), scale(1.01)
-    loading state: spinner animation inside button
-    success state: "✓ We'll Call You Within 2 Hours!" with green checkmark animation
-
-[ALTERNATIVE CONTACT] (below form, mt-32px, text-center)
-  "Or reach us directly:"
-  📞 +91 98765 43210 (clickable tel: link)
-  📧 admissions@milestone.academy
-  📍 Calicut | Malappuram | Thrissur | Online
-```
-
----
-
-### SECTION 10: TEASE — MILESTONE TRADING ACADEMY SECTION
-
-Component: `<TradingTeaseSection />`
-
-Purpose: Introduce the sister brand without distracting from the accounting focus
-
-Background: var(--bg-secondary), section padding 80px 0
-Design: Centered, editorial feel
-
-```
-[LABEL] "OUR SISTER BRAND"  (JetBrains Mono, green-600, 12px)
-[HEADLINE] "Also Explore:
-Milestone Trading Academy"  (Instrument Serif 48px)
-[BODY] "Where our journey began. Professional stock market trading, 
-technical analysis, and investment mastery programs —
-trusted by 10,000+ traders across India."
-(Syne 18px, text-secondary, max-width 600px, mx-auto, text-center)
-
-[PREVIEW CARD] (max-width 800px, mx-auto, mt-48px)
-  Structure: Wide card with left image (screenshot/mockup of trading site) and right content
-  Left: Mockup of https://milestone-trading-academy.vercel.app/ (use a browser-frame mockup component)
-  Right:
-    Quick stats: 10,000+ Traders | 15+ Trading Courses | Stock | Crypto | Forex
-    "Explore Trading Programs →" button (outline, green-600, border green-400)
-    Link: https://milestone-trading-academy.vercel.app/
-
-Card hover: lift shadow, slight 3D tilt
-```
-
----
-
-## 🌐 FOOTER
-
-Component: `<Footer />`
-
-Background: var(--bg-dark), dark forest
-Grid: 4 columns on desktop
-
-Column 1 — Brand:
-- Milestone Academy logo (SVG, white version)
-- Tagline: "India's Most Practical Accounting Academy"
-- Social icons: Instagram | YouTube | LinkedIn | WhatsApp
-  Each icon: 38px circle, bg rgba(255,255,255,0.06), hover bg green-500, transition 0.3s
-- "© 2025 Milestone Academy. All rights reserved."
-
-Column 2 — Quick Links:
-- Courses | About Us | Placements | Blog | Contact
-- Each link: Syne 14px, text-inverse/60%, hover text green-400, translateX(4px) on hover
-
-Column 3 — Programs:
-- Tally Prime | GST Filing | Income Tax | SAP FICO | CA Foundation | All Courses
-- Same hover treatment
-
-Column 4 — Contact:
-- 📍 1st Floor, Calicut Business Centre, Kozhikode — 673001
-- 📞 +91 98765 43210
-- 📧 admissions@milestone.academy
-- ⏰ Mon–Sat: 9 AM – 7 PM
-
-Bottom bar: thin top border (rgba(255,255,255,0.08)), flex space-between
-Left: "Made with 💚 in Kerala, India"
-Right: "Privacy Policy | Terms | Sitemap"
-
-Footer entrance: ScrollTrigger, columns stagger from y:40, opacity 0
-
----
-
-## 🖱 GLOBAL COMPONENTS — IMPLEMENT THESE UNIVERSALLY
-
-### Custom Cursor (`<CustomCursor />`)
-- Default: Small filled circle (10px, green-500, mix-blend-mode: difference)
-- Outer ring: 36px circle, green-500/30, border 1.5px, follows with GSAP lerp (0.08 factor — buttery lag)
-- On link/button hover: outer ring scales to 60px, inner dot disappears — cursor "expands to swallow" the element
-- On text hover: outer ring morphs to a thin horizontal line (cursor becomes a text caret)
-- On card hover: outer ring shows "DRAG" text inside it (for scroll sections)
-```js
-// Magnetic button effect
-document.querySelectorAll(".magnetic").forEach(el => {
-  el.addEventListener("mousemove", (e) => {
-    const rect = el.getBoundingClientRect();
-    const x = (e.clientX - rect.left - rect.width / 2) * 0.35;
-    const y = (e.clientY - rect.top - rect.height / 2) * 0.35;
-    gsap.to(el, { x, y, duration: 0.4, ease: "power2.out" });
-  });
-  el.addEventListener("mouseleave", () => {
-    gsap.to(el, { x: 0, y: 0, duration: 0.6, ease: "elastic.out(1, 0.5)" });
-  });
-});
-```
-
-### Lenis Smooth Scroll Setup (`<LenisProvider />`)
-```js
-// app/providers/LenisProvider.tsx
-"use client";
-import Lenis from "@studio-freight/lenis";
-import { useEffect } from "react";
-import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
-
-export function LenisProvider({ children }) {
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 0.8,
-    });
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
-    return () => { lenis.destroy(); gsap.ticker.remove(); };
-  }, []);
-  return <>{children}</>;
+  /* === SHADOWS === */
+  --shadow-green: 0 4px 40px rgba(45, 158, 68, 0.15);
+  --shadow-card:  0 2px 20px rgba(10, 26, 11, 0.08);
+  --shadow-lift:  0 20px 60px rgba(10, 26, 11, 0.18);
+
+  /* === GRADIENTS === */
+  --gradient-hero:  linear-gradient(135deg, #F7F9F4 0%, #E8F5E9 50%, #F0FFF4 100%);
+  --gradient-green: linear-gradient(135deg, #2D9E44 0%, #237A35 100%);
+  --gradient-dark:  linear-gradient(180deg, #0A1A0B 0%, #132015 100%);
+  --gradient-glow:  radial-gradient(ellipse at center, rgba(45,158,68,0.15) 0%, transparent 70%);
+
+  /* === SPACING === */
+  --section-pad: 120px 0;
+  --container:   1280px;
+
+  /* === BORDER RADIUS === */
+  --r-sm:   8px;
+  --r-md:   16px;
+  --r-lg:   24px;
+  --r-xl:   40px;
+  --r-pill: 100px;
 }
 ```
 
-### Navbar (`<Navbar />`)
-Height: 72px, position fixed, top 0, full-width, z-index 1000
-Initial state: transparent bg, white logo/links (for hero with light bg: use dark)
-Scrolled state (after 80px scroll): 
-  bg: rgba(247,249,244,0.92), backdrop-filter blur(16px) saturate(180%)
-  border-bottom: 1px solid var(--border-light)
-  box-shadow: var(--shadow-card)
-  Transition: all 0.4s ease
+### Typography:
+```
+Display/Headline:  "Instrument Serif" — editorial serif for hero, section heads
+Body/UI:           "Syne" — modern geometric sans for nav, body, labels
+Mono/Numbers:      "JetBrains Mono" — for stats, prices, code-style accents
 
-Content: max-width container, flex space-between, align-center
-Left: Logo (SVG mark + "Milestone Academy" wordmark in Syne SemiBold)
-Center: Nav links (Syne Medium 14px, text-primary/80%)
-  Home | Courses | About | Placements | Contact
-  Active link: text green-600, underline dot below (3px circle, green-500, centered)
-  Hover: text green-600, translateY(-1px)
-Right: CTA button "Enroll Now →" (green-500 bg, white text, pill, padding 10px 24px)
-        + phone number (JetBrains Mono 13px, text-secondary) "📞 +91 98765 43210"
-
-Mobile hamburger: animated to X on click (GSAP line morphing)
-Mobile menu: full-screen overlay, bg var(--bg-dark), nav links stagger in from right
-
-### Page Transition (`<PageTransition />`)
-- On link click: green panel slides in from right (GSAP), covering full screen
-- URL changes, new page content loads
-- Panel slides out to right, revealing new content
-- Duration: 0.5s per phase, ease: power3.inOut
-
-### GSAP Text Animations (apply to all section headlines):
-```js
-// Split headlines into lines, animate each line up
-import SplitType from "split-type";
-const headings = document.querySelectorAll(".gsap-heading");
-headings.forEach(heading => {
-  const split = new SplitType(heading, { types: "lines" });
-  split.lines.forEach(line => {
-    const wrapper = document.createElement("div");
-    wrapper.style.overflow = "hidden";
-    line.parentNode.insertBefore(wrapper, line);
-    wrapper.appendChild(line);
-  });
-  gsap.from(split.lines, {
-    y: "100%",
-    opacity: 0,
-    duration: 0.9,
-    stagger: 0.08,
-    ease: "power4.out",
-    scrollTrigger: { trigger: heading, start: "top 85%" }
-  });
-});
+Scale:
+  Hero headline:    96px / Instrument Serif / weight 400 (italic for accent word)
+  Section headline: 64px / Instrument Serif
+  Sub-headline:     40px / Syne Bold
+  Body large:       20px / Syne Regular
+  Body:             16px / Syne Regular
+  Label:            12px / JetBrains Mono / letter-spacing 0.15em / UPPERCASE
+  Stat number:      72px / JetBrains Mono Bold
+  Price:            28px / JetBrains Mono SemiBold
 ```
 
 ---
 
-## 📱 RESPONSIVE DESIGN
+## 🖼 LOGO USAGE — RULES FOR THE AGENT
 
-Breakpoints (Tailwind):
-- sm: 640px — Stacks everything, single column
-- md: 768px — 2 columns where appropriate
-- lg: 1024px — Full layout
-- xl: 1280px — Max-width container kicks in
-- 2xl: 1536px — Comfortable breathing room
+Two logo files are available in `/public/logos/`:
+- `milestone-logo-dark.png` — White wordmark on dark background
+- `milestone-logo-light.png` — Black wordmark on white/light background
 
-Mobile specifics:
-- Hero: single column, 3D element hidden (performance), headline 52px
-- Stats: 2x2 grid
-- Course cards: single column, no 3D tilt
-- Custom cursor: disabled on touch devices
-- Smooth scroll (Lenis): disabled on mobile (browser native scroll)
-- Hamburger menu with full-screen overlay
+The logo has:
+- Square icon with green bar chart (candlestick-style bars — 2 green vertical bars)
+- "Milestone" wordmark — bold sans-serif
+- The "il" in "Milestone" uses the two green bars as the letters
+
+### Agent Logo Selection Rules:
+```
+Dark section (bg-dark, bg-dark-card):     → use milestone-logo-dark.png  (white version)
+Light section (bg-primary, bg-card):      → use milestone-logo-light.png (dark version)
+Navbar (transparent → scrolled frosted):  → use milestone-logo-light.png (dark text shows on light)
+Footer:                                   → use milestone-logo-dark.png  (white version)
+Loading screen:                           → use milestone-logo-dark.png  (on dark bg)
+OG image / meta:                          → use milestone-logo-light.png
+```
+
+### Logo Implementation in Next.js:
+```tsx
+// components/global/Logo.tsx
+import Image from "next/image";
+type LogoVariant = "dark" | "light";
+
+export function Logo({ variant = "light", width = 180, className = "" }: {
+  variant?: LogoVariant; width?: number; className?: string;
+}) {
+  return (
+    <Image
+      src={variant === "dark" ? "/logos/milestone-logo-dark.png" : "/logos/milestone-logo-light.png"}
+      alt="Milestone Academy"
+      width={width}
+      height={Math.round(width * 0.22)}
+      className={className}
+      priority
+    />
+  );
+}
+```
 
 ---
 
-## ⚡ PERFORMANCE
+## 🎲 3D HERO ANIMATION — SPLINE SPECIFICATION
 
-- All GSAP animations: use `will-change: transform` on animated elements
-- Images: Next.js `<Image />` with lazy loading and blur placeholder
-- Spline: Load lazily with `<Suspense>` boundary
-- Font loading: `display: swap` for all Google Fonts
-- Course cards: virtualize if over 12 (use `react-window`)
-- Critical CSS inlined, rest code-split per page
-- Lighthouse target: 90+ on all metrics
+### What to Build (reference: uploaded screenshot shows dark 3D scene with hexagonal/cube shapes):
+
+The hero's right-side 3D element must be an **abstract 3D accounting-themed scene**. Options for Spline scene (Claude Code should implement whichever is achievable with @splinetool/react-spline):
+
+**Option A — Preferred: Floating 3D Financial Dashboard**
+- Dark background scene (#0A1A0B)
+- Central element: A smooth 3D geometric shape (hexagonal prism or rounded cube, dark charcoal color, metallic surface material)
+- Floating around it: 3 small glowing green bar chart icons, animated orbit paths
+- Green laser-thin lines connecting the shapes (like the screenshot's colored lines)
+- Subtle particle system: tiny glowing dots floating upward
+- Lighting: Green rim light from below-left, subtle white fill from top
+
+**Option B — Fallback CSS/Three.js implementation** (if Spline unavailable):
+```tsx
+// Build a Three.js scene with:
+// - Rotating dark hexagonal prism (Three.js CylinderGeometry, 6 sides)
+// - Green wireframe overlay pulsing opacity 0.3 → 0.8
+// - 3 orbiting small spheres on elliptical paths (green-400, emissive)
+// - Floating green particles (200 points, random positions, slow drift up)
+// - Thin colored laser lines (LineSegments) — green, with one blue and one red accent
+// - Point light: green (#2D9E44) from left, ambient white low intensity
+// - Responsive: resize handler, devicePixelRatio support
+// - Render loop with requestAnimationFrame
+```
+
+**Floating Badge Cards** (overlaid on top of the 3D scene, absolute positioned):
+```
+Card 1 (top-right of 3D area):
+  Icon: bar chart (Lucide BarChart3, 20px, green-500)
+  Text: "GST Certification"
+  Style: bg white/90, backdrop-blur 12px, border 1px border-light, 
+         border-radius 12px, padding 12px 20px, box-shadow shadow-card
+  Animation: float up-down 3s ease-in-out infinite
+
+Card 2 (bottom-left of 3D area):
+  Icon: trophy (Lucide Trophy, 20px, --accent-gold)
+  Text: "Tally Expert Program"
+  Style: same glassmorphic style
+  Animation: float delayed 1.5s
+
+Card 3 (center-left, smaller):
+  Icon: check-circle (Lucide CheckCircle, 16px, green-500)
+  Text: "Industry Recognized"
+  Style: slightly smaller
+  Animation: float delayed 0.8s
+```
 
 ---
 
-## 🗂 FILE STRUCTURE
+## 📦 COURSES — FROM CURRICULUM PDF (ONLY THESE 4 PACKAGES)
+
+### ⚠️ IMPORTANT: Use ONLY these 4 packages. No invented courses.
+
+```typescript
+// lib/courses.ts
+
+export const COURSES = [
+  {
+    id: "basic-package",
+    slug: "basic-package",
+    title: "Basic Package",
+    tagline: "Your first step into professional accounting",
+    badge: "STARTER",
+    badgeColor: "green",
+    duration: "3 Months",
+    price: 30000,
+    originalPrice: 38000,
+    emi: "₹10,000/month",
+    level: "Beginner",
+    category: "accounting",
+    icon: "BookOpen",
+    gradient: "linear-gradient(135deg, #2D9E44, #4ADE80)",
+    rating: 4.8,
+    reviews: 142,
+    enrolled: 1240,
+    topics: [
+      "Manual Accounting",
+      "Tally Prime",
+      "Microsoft Word",
+      "Microsoft Excel",
+      "Microsoft PowerPoint",
+      "Trading Fundamentals"
+    ],
+    highlights: [
+      "Hands-on Tally Prime practice",
+      "Real-world accounting entries",
+      "MS Office for finance professionals",
+      "Introduction to trading concepts",
+      "Course completion certificate"
+    ],
+    description: "Build your accounting foundation from scratch. Master manual bookkeeping, Tally Prime, MS Office tools, and get an introduction to trading — everything a fresh accounting professional needs.",
+    whoIsItFor: "Freshers, students, and career-changers entering the accounting profession",
+    modules: [
+      { title: "Manual Accounting Fundamentals", topics: ["Accounting concepts", "Double-entry system", "Trial balance", "Journal & ledger", "Financial statements"] },
+      { title: "Tally Prime Mastery", topics: ["Company setup", "Voucher entries", "Bank reconciliation", "Inventory basics", "Reports & MIS"] },
+      { title: "MS Office for Finance", topics: ["Excel formulas for accounts", "Word for business letters", "PowerPoint presentations"] },
+      { title: "Trading Introduction", topics: ["Stock market basics", "Reading charts", "Trading terminology"] }
+    ]
+  },
+  {
+    id: "short-term-tax",
+    slug: "short-term-tax-software-package",
+    title: "Short-Term Tax & Software Package",
+    tagline: "Master UAE & Indian taxation fast",
+    badge: "FAST-TRACK",
+    badgeColor: "gold",
+    duration: "2 Months",
+    price: 37000,
+    originalPrice: 46000,
+    emi: "₹18,500/month",
+    level: "Intermediate",
+    category: "taxation",
+    icon: "FileText",
+    gradient: "linear-gradient(135deg, #1A5C28, #2D9E44)",
+    rating: 4.9,
+    reviews: 98,
+    enrolled: 876,
+    topics: [
+      "Manual Accounting",
+      "Tally Prime",
+      "Zoho Books",
+      "UAE VAT & VAT Filing",
+      "UAE Corporate Tax & Filing",
+      "Trading"
+    ],
+    highlights: [
+      "UAE VAT filing on FTA portal",
+      "UAE Corporate Tax compliance",
+      "Zoho Books cloud accounting",
+      "Dual India & UAE expertise",
+      "High-demand Gulf job skills"
+    ],
+    description: "Designed for professionals targeting Gulf/UAE markets. Master UAE VAT, Corporate Tax filing, Zoho Books, and Tally — become the go-to accounting expert for Indian businesses operating in the UAE.",
+    whoIsItFor: "Accounting professionals targeting UAE/Gulf job market, expats, and finance teams of India-UAE businesses",
+    modules: [
+      { title: "Manual Accounting", topics: ["Fundamentals refresher", "UAE business accounting standards"] },
+      { title: "Tally Prime for UAE", topics: ["UAE company setup", "Multi-currency entries", "VAT-enabled vouchers"] },
+      { title: "Zoho Books", topics: ["Cloud accounting setup", "Invoicing & payments", "Bank feeds", "Reports"] },
+      { title: "UAE VAT", topics: ["VAT registration", "Tax invoice requirements", "VAT return filing on FTA portal", "Input tax credit"] },
+      { title: "UAE Corporate Tax", topics: ["CT registration", "Taxable income computation", "CT return filing", "Free zone exemptions"] },
+      { title: "Trading", topics: ["UAE market overview", "Trading concepts"] }
+    ]
+  },
+  {
+    id: "intermediate-package",
+    slug: "intermediate-package",
+    title: "Intermediate Package",
+    tagline: "Complete accounting + GST + analytics mastery",
+    badge: "BESTSELLER",
+    badgeColor: "green",
+    duration: "5 Months",
+    price: 45000,
+    originalPrice: 58000,
+    emi: "₹9,000/month",
+    level: "Intermediate → Advanced",
+    category: "accounting",
+    icon: "TrendingUp",
+    gradient: "linear-gradient(135deg, #0A2810, #2D9E44)",
+    rating: 4.9,
+    reviews: 215,
+    enrolled: 1820,
+    topics: [
+      "Manual Accounting",
+      "Tally Prime",
+      "GST & Filing",
+      "Microsoft Word",
+      "Microsoft Excel (Advanced)",
+      "Microsoft PowerPoint",
+      "Zoho Books",
+      "Power BI",
+      "Trading"
+    ],
+    highlights: [
+      "Live GST return filing (GSTR-1, GSTR-3B)",
+      "Power BI dashboards for finance",
+      "Advanced Excel (pivot tables, VLOOKUP, macros)",
+      "Zoho Books + Tally dual expertise",
+      "Most comprehensive package",
+      "Placement assistance included"
+    ],
+    description: "The most comprehensive accounting program at Milestone. From manual bookkeeping to GST filing, from Tally to Zoho, from Excel to Power BI dashboards — graduate as a complete, job-ready finance professional.",
+    whoIsItFor: "Professionals seeking complete accounting mastery, those targeting corporate finance roles, and anyone wanting a thorough skillset",
+    modules: [
+      { title: "Manual Accounting", topics: ["Complete accounting cycle", "Financial statements", "Ratio analysis"] },
+      { title: "Tally Prime (Advanced)", topics: ["Advanced inventory", "Payroll", "TDS in Tally", "Multi-branch", "GST in Tally"] },
+      { title: "GST Mastery", topics: ["GST registration", "HSN/SAC codes", "GSTR-1 filing", "GSTR-3B filing", "ITC reconciliation", "Annual return"] },
+      { title: "MS Office Advanced", topics: ["Excel: VLOOKUP, HLOOKUP, pivot tables, macros, conditional formatting", "Word & PowerPoint for finance"] },
+      { title: "Zoho Books", topics: ["Complete cloud accounting", "Automation workflows", "Financial reports"] },
+      { title: "Power BI", topics: ["Data import & modeling", "DAX formulas", "Finance dashboards", "Interactive reports"] },
+      { title: "Trading", topics: ["Technical analysis basics", "Chart reading", "Risk management"] }
+    ]
+  },
+  {
+    id: "comprehensive-package",
+    slug: "comprehensive-package",
+    title: "Comprehensive Package",
+    tagline: "The ultimate accounting & finance mastery program",
+    badge: "ULTIMATE",
+    badgeColor: "gold",
+    duration: "7 Months",
+    price: null, // Price not listed — "Contact for pricing"
+    originalPrice: null,
+    emi: null,
+    level: "All Levels → Expert",
+    category: "advanced",
+    icon: "Award",
+    gradient: "linear-gradient(135deg, #0A1A0B, #1A5C28)",
+    rating: 5.0,
+    reviews: 67,
+    enrolled: 520,
+    topics: [
+      "Manual Accounting",
+      "Tally Prime",
+      "GST & Filing",
+      "UAE VAT & Filing",
+      "UAE Corporate Tax & Filing",
+      "Microsoft Excel (Advanced)",
+      "Power BI",
+      "Microsoft PowerPoint",
+      "Zoho Books",
+      "QuickBooks (QB)",
+      "Microsoft Word",
+      "Trading"
+    ],
+    highlights: [
+      "Everything in all other packages",
+      "UAE + India dual taxation expertise",
+      "QuickBooks + Zoho + Tally triple proficiency",
+      "Power BI advanced dashboards",
+      "Maximum career opportunities",
+      "Priority placement assistance",
+      "Dedicated mentor support"
+    ],
+    description: "The pinnacle of accounting education. Master every tool, every tax system, every software used in modern finance — across India and UAE. This is the program for those who want to be the best.",
+    whoIsItFor: "Ambitious professionals aiming for senior finance roles, those targeting India + UAE markets, aspiring CFOs and finance managers",
+    modules: [
+      { title: "Complete Manual Accounting", topics: ["Advanced bookkeeping", "IFRS & IndAS basics", "Audit trail"] },
+      { title: "Tally Prime Expert", topics: ["All Tally features", "Customization", "Advanced reporting"] },
+      { title: "Indian GST Complete", topics: ["All GSTR forms", "E-invoicing", "E-way bill", "GST audit"] },
+      { title: "UAE Taxation Complete", topics: ["VAT registration to filing", "Corporate tax end-to-end", "FTA portal mastery"] },
+      { title: "Advanced Excel + Power BI", topics: ["Financial modeling", "Power Query", "Advanced DAX", "Executive dashboards"] },
+      { title: "Triple Software: Zoho + QB + Tally", topics: ["Zoho Books advanced", "QuickBooks Desktop & Online", "Cross-platform workflow"] },
+      { title: "MS Office Complete", topics: ["Excel, Word, PowerPoint for finance professionals"] },
+      { title: "Trading Complete", topics: ["Full trading course", "Portfolio management", "Investment analysis"] }
+    ]
+  }
+];
+```
+
+---
+
+## 🏦 TRADING SECTION — HOW TO PRESENT IT
+
+### ⚠️ KEY BRAND TRUTH:
+Milestone Academy is ONE brand. It started as a trading academy. It now also offers accounting courses. Trading courses are still very much available. This is an expansion, not a separate entity.
+
+### Trading Highlight Section on Homepage:
+```
+Component: <TradingSection />
+Position: After Courses Section, before Why Us
+
+Design: Dark background (var(--bg-dark))
+Layout: 2-column (left: content, right: visual)
+
+Left Content:
+  [LABEL] "ALSO AT MILESTONE" (JetBrains Mono, mint green)
+  [HEADLINE] "Where It All
+  Began — Trading." (Instrument Serif 52px, text-inverse)
+  [BODY] (Syne 18px, text-inverse/70%)
+  "Milestone began as a trading academy and has trained 
+  10,000+ traders across India. Our trading programs — 
+  stock market, technical analysis, options, and investment 
+  strategies — continue to run alongside our accounting courses.
+  One academy. Complete financial education."
+  
+  [PILL TAGS] (flex wrap, gap 12px)
+  🚀 Stock Market  |  📊 Technical Analysis  |  💰 Options Trading
+  📈 Fundamental Analysis  |  💼 Portfolio Management  |  ₿ Cryptocurrency
+  
+  [CTA] "Explore Trading Programs →" 
+  (outline button, border green-400, text green-300, hover bg green-500)
+  Links to: /trading — a dedicated page with trading course details
+
+Right Content:
+  Trading stats cards (dark glassmorphic):
+  Card 1: "10,000+" | "Traders Trained"
+  Card 2: "8+" | "Trading Programs"  
+  Card 3: "Since 2019" | "Milestone's Legacy"
+  
+  + A subtle animated trading chart line (SVG path, green stroke, 
+    draws itself on scroll using GSAP DrawSVG)
+```
+
+### /trading Page:
+```
+Full page dedicated to trading courses.
+Navbar, Hero banner ("Master the Markets"), 
+8 trading course cards (with price on request / contact for details),
+Trading testimonials section,
+CTA to contact/enroll,
+Footer.
+
+Trading courses to show (make these up with reasonable details):
+1. Stock Market Foundation
+2. Technical Analysis Pro
+3. Options & Derivatives
+4. Fundamental Analysis
+5. Intraday & Swing Trading
+6. Cryptocurrency & Blockchain
+7. Forex & Commodity Trading
+8. Investment Portfolio Management
+```
+
+---
+
+## 🔐 ADMIN PANEL — COMPLETE CMS
+
+### Overview:
+A fully functional admin dashboard at `/admin` (protected by Supabase Auth).
+Only admin users can access it. All data (courses, testimonials, leads, notifications) is stored in Supabase.
+
+### Admin Authentication:
+```
+URL: /admin/login
+Method: Supabase Auth (email + password)
+Middleware: middleware.ts → protect all /admin/* routes
+Admin email: set as environment variable ADMIN_EMAIL
+On login: redirect to /admin/dashboard
+On logout: redirect to /admin/login
+Session: Supabase session (cookie-based via @supabase/auth-helpers-nextjs)
+```
+
+### Admin Dashboard Layout:
+```
+Component: AdminLayout (wraps all /admin/* pages)
+
+Sidebar (fixed left, 260px width, bg var(--bg-dark), border-right 1px rgba(255,255,255,0.08)):
+  Top: Milestone logo (dark version) + "Admin Panel" label
+  
+  Navigation sections:
+  ── MAIN
+     📊 Dashboard          → /admin
+     
+  ── CONTENT
+     📚 Courses            → /admin/courses
+     💬 Testimonials       → /admin/testimonials
+     🔔 Notifications      → /admin/notifications
+     
+  ── LEADS & INQUIRIES
+     📬 Enrollments        → /admin/enrollments
+     
+  ── ACADEMY INFO
+     ℹ️ About Content      → /admin/about
+     📞 Contact Info       → /admin/contact-info
+     🎓 Faculty            → /admin/faculty
+     
+  ── TRADING
+     📈 Trading Courses    → /admin/trading-courses
+  
+  Bottom: User email + Logout button
+
+Top Bar (header, fixed, height 64px):
+  Left: Page title + breadcrumb
+  Right: Notifications bell (count badge) + Admin avatar
+  
+Main content area: scroll, padding 32px
+```
+
+### Dashboard Page (/admin):
+```
+Stats row (4 cards):
+  Total Enrollments | Active Courses | Pending Inquiries | Total Reviews
+
+Quick charts (recharts):
+  Line chart: Enrollments over last 30 days
+  Bar chart: Course popularity (enrollments per course)
+
+Recent activity feed:
+  Latest 10 enrollment inquiries (name, course, time)
+  
+Quick action buttons:
+  "+ Add Course" | "+ Add Testimonial" | "View Inquiries"
+```
+
+### Courses Management (/admin/courses):
+```
+List view: Table of all 4 courses + any added ones
+Columns: Title | Badge | Duration | Price | Status (Published/Draft) | Actions
+
+Actions per course:
+  ✏️ Edit → opens edit form
+  👁 Preview → opens /courses/[slug] in new tab
+  📌 Toggle Published/Draft
+  🗑 Delete (with confirmation dialog)
+
+Add/Edit Course Form (full-page form or slide-in drawer):
+  Fields:
+  - Title (text input)
+  - Slug (auto-generated from title, editable)
+  - Tagline (text input, 1 line)
+  - Description (rich text editor — react-quill)
+  - Badge text (text) + Badge color (select: green/gold/blue/red)
+  - Duration (text: "3 Months", "7 Months", etc.)
+  - Price (number — 0 for "contact for pricing")
+  - Original Price (number — for strikethrough)
+  - Level (select: Beginner / Intermediate / Advanced / All Levels)
+  - Category (select: accounting / taxation / advanced / trading)
+  - Rating (number 0-5)
+  - Topics (tag input — add/remove topics)
+  - Highlights (textarea — one per line)
+  - Who Is It For (text)
+  - Status (toggle: Published / Draft)
+  - Sort Order (number — controls display order)
+  
+  Modules editor (add/remove/reorder modules):
+    Module title + Topics list (add/remove topics per module)
+  
+  Save button → saves to Supabase courses table
+  Cancel → back to list
+```
+
+### Testimonials Management (/admin/testimonials):
+```
+Table: Name | Role | Company | Course | Rating | Status | Actions
+
+Add/Edit Testimonial Form:
+  - Student Name
+  - Role (text: "GST Executive")
+  - Company (text: "Deloitte Kerala")
+  - Course (select from courses list)
+  - Review Text (textarea)
+  - Rating (star selector 1-5)
+  - Avatar (image upload to Supabase Storage, or initial color fallback)
+  - Status (Published / Hidden)
+  - Featured (toggle — featured testimonials appear in homepage)
+
+Display: shows avatar, full review text, rating, dates
+```
+
+### Notifications Management (/admin/notifications):
+```
+Purpose: Create banner/popup notifications shown to website visitors
+  (e.g., "New batch starting May 5th!" / "Limited seats for Comprehensive Package!")
+
+Table: Message | Type | Status | Start Date | End Date | Actions
+
+Add Notification Form:
+  - Message (text input, 120 chars max)
+  - Type (select: info / success / warning / promo)
+  - Display Location (select: Top Banner / Hero Popup / All Pages)
+  - Start Date (date picker)
+  - End Date (date picker — auto-expires)
+  - CTA Button Text (optional — e.g., "Enroll Now")
+  - CTA Link (optional URL)
+  - Status (Active / Inactive)
+
+Website display: 
+  Active notifications appear as a dismissable top banner 
+  (JetBrains Mono 13px, green-500 bg, white text, "×" dismiss button)
+  Stored in localStorage so dismissed notification doesn't reappear same session
+```
+
+### Enrollments / Inquiries (/admin/enrollments):
+```
+All contact form submissions and enrollment inquiries from the website.
+
+Table: Name | Phone | Email | Course | Date | Status | Actions
+
+Status options: New → Contacted → Enrolled → Not Interested
+
+Actions:
+  - Mark as Contacted
+  - Change Status (dropdown)
+  - View Full Details (modal with complete form data)
+  - Delete
+
+Filters: By course | By status | By date range
+
+Export: Download as CSV button
+
+Auto-send email notification to admin@milestone.academy on new inquiry (via Resend)
+```
+
+### About Content (/admin/about):
+```
+Editable sections for the /about page:
+  - Hero headline & subtext (text inputs)
+  - Story paragraphs (rich text editor)
+  - Stats (editable key-value pairs: label + value)
+  - Vision/Mission statements
+  - Faculty list (name, title, credentials, photo upload)
+  - Certifications/Awards (add/remove items)
+  
+Save → updates Supabase "content" table → /about page fetches fresh data
+```
+
+### Contact Info (/admin/contact-info):
+```
+Editable contact details shown in footer and contact page:
+  - Phone number(s) (add multiple)
+  - Email address(es)
+  - Physical addresses (add multiple branches)
+  - WhatsApp number
+  - Social media links (Instagram, YouTube, LinkedIn, Facebook)
+  - Office hours
+  
+These update in real-time via Supabase across the entire website.
+```
+
+### Admin UI Design:
+```
+Color scheme: Dark sidebar + light main content area
+Sidebar bg: #0A1A0B
+Main content bg: #F7F9F4 (same as site)
+Cards: white, shadow-card
+Tables: Clean, zebra striping, hover row highlight (green-50)
+Buttons: Primary (green-500), Secondary (outline), Danger (red)
+Typography: Syne throughout (consistent with main site)
+Status badges: Pill chips (green=active, yellow=pending, red=inactive/draft)
+Animations: Subtle — sidebar items fade in on load, table rows stagger
+Forms: shadcn/ui form components
+Toast notifications: react-hot-toast (green for success, red for error)
+```
+
+---
+
+## 🗄 SUPABASE DATABASE SCHEMA
+
+```sql
+-- Courses table
+CREATE TABLE courses (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  slug TEXT UNIQUE NOT NULL,
+  title TEXT NOT NULL,
+  tagline TEXT,
+  description TEXT,
+  badge TEXT,
+  badge_color TEXT DEFAULT 'green',
+  duration TEXT,
+  price INTEGER, -- null = contact for pricing
+  original_price INTEGER,
+  level TEXT,
+  category TEXT,
+  icon TEXT,
+  gradient TEXT,
+  rating DECIMAL(2,1) DEFAULT 4.8,
+  review_count INTEGER DEFAULT 0,
+  enrolled_count INTEGER DEFAULT 0,
+  topics TEXT[], -- array of topic strings
+  highlights TEXT[],
+  who_is_it_for TEXT,
+  modules JSONB, -- [{title, topics:[]}]
+  is_published BOOLEAN DEFAULT true,
+  is_trading BOOLEAN DEFAULT false,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Testimonials table
+CREATE TABLE testimonials (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  student_name TEXT NOT NULL,
+  role TEXT,
+  company TEXT,
+  course_id UUID REFERENCES courses(id),
+  review_text TEXT NOT NULL,
+  rating INTEGER DEFAULT 5,
+  avatar_url TEXT, -- Supabase Storage URL
+  is_published BOOLEAN DEFAULT false,
+  is_featured BOOLEAN DEFAULT false,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Notifications table
+CREATE TABLE notifications (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  message TEXT NOT NULL,
+  type TEXT DEFAULT 'info', -- info/success/warning/promo
+  display_location TEXT DEFAULT 'top-banner',
+  cta_text TEXT,
+  cta_link TEXT,
+  is_active BOOLEAN DEFAULT true,
+  start_date DATE,
+  end_date DATE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Enrollments/Inquiries table
+CREATE TABLE enrollments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  phone TEXT NOT NULL,
+  email TEXT,
+  course_id UUID REFERENCES courses(id),
+  course_name TEXT, -- denormalized for easy display
+  message TEXT,
+  status TEXT DEFAULT 'new', -- new/contacted/enrolled/not_interested
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Site content table (for editable about/contact content)
+CREATE TABLE site_content (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  section TEXT UNIQUE NOT NULL, -- 'about', 'contact', 'stats', etc.
+  content JSONB NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+---
+
+## 📄 COMPLETE PAGE ARCHITECTURE
+
+```
+/ (Home)
+  LoadingScreen → Navbar → HeroSection → MarqueeBand → StatsSection
+  → CoursesSection → TradingSection → WhyUsSection
+  → TestimonialsSection → PlacementSection → CtaSection → Footer
+
+/courses
+  Navbar → CoursesBanner → FilterTabs → CourseGrid (4 accounting cards) → Footer
+
+/courses/[slug]
+  Navbar → CourseHero → CourseOverviewBar → CurriculumAccordion
+  → InstructorSection → StickyEnrollSidebar → RelatedCourses → Footer
+
+/trading
+  Navbar → TradingHero → TradingCourseGrid (8 cards) 
+  → TradingTestimonials → TradingCTA → Footer
+
+/about
+  Navbar → AboutHero → StorySection → Stats → Faculty → Certifications → Footer
+
+/contact
+  Navbar → ContactHero → ContactForm + Map + Info → Footer
+
+/admin/login          — Auth page
+/admin                — Dashboard
+/admin/courses        — Courses CMS
+/admin/courses/new    — Add course
+/admin/courses/[id]   — Edit course
+/admin/testimonials   — Testimonials CMS
+/admin/notifications  — Notifications CMS
+/admin/enrollments    — Leads/inquiries
+/admin/about          — About content editor
+/admin/contact-info   — Contact info editor
+/admin/trading-courses — Trading courses CMS
+```
+
+---
+
+## 🌐 HOMEPAGE SECTIONS — BRIEF REFERENCE
+
+1. **LoadingScreen** — Dark overlay, SVG logo draws with GSAP DrawSVG, progress bar 0→100, curtain exit
+2. **Navbar** — Glassmorphic sticky, transparent→frosted on scroll, Logo component, magnetic CTA
+3. **HeroSection** — 55/45 split, headline "Master the Language of Business", Spline 3D, floating badge cards
+4. **MarqueeBand** — Dark band, infinite ticker: all topics from all 4 courses
+5. **StatsSection** — Dark section, 4 glassmorphic stat cards, GSAP count-up on scroll
+6. **CoursesSection** — 4 course cards (from PDF data only), filter tabs, 3D tilt hover
+7. **TradingSection** — Dark section: trading legacy story + stats + chart animation
+8. **WhyUsSection** — Split dark/light, 6 USP cards with green accent bars
+9. **TestimonialsSection** — Dark, dual-row infinite marquee, 12 student reviews
+10. **PlacementSection** — Company logos marquee, 96% circle stat
+11. **CtaSection** — Dark, contact form with Supabase submission + Resend email
+12. **Footer** — Dark, 4-col, Logo (dark version), social links, all nav
+
+---
+
+## ✅ CODING RULES — ALWAYS FOLLOW
+
+```
+1. TypeScript strict mode — no `any` types ever
+2. All components in proper folders (/sections, /global, /admin, /ui)
+3. All animations: GSAP + ScrollTrigger only (no Framer Motion for page animations)
+4. Framer Motion: only for admin panel micro-interactions if needed
+5. Tailwind classes + CSS variables — zero inline styles
+6. Next.js Image component for ALL images (logos, avatars, course images)
+7. Mobile-first responsive (375px → 768px → 1024px → 1280px)
+8. Keep components under 200 lines — split if larger
+9. All Supabase calls in /lib/supabase/ folder
+10. All environment variables in .env.local (never hardcode)
+11. Error boundaries around 3D components (Spline can fail)
+12. Loading states on all async data fetches
+13. Toast notifications for all form submissions
+14. Admin routes: always check auth in middleware.ts
+```
+
+---
+
+## 🔧 ENVIRONMENT VARIABLES (.env.local)
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+RESEND_API_KEY=your_resend_key
+ADMIN_EMAIL=admin@milestone.academy
+NEXT_PUBLIC_SITE_URL=https://milestone-academy.vercel.app
+```
+
+---
+
+## 📁 FILE STRUCTURE
 
 ```
 milestone-academy/
+├── CLAUDE.md                          ← THIS FILE
+├── .env.local
+├── middleware.ts                      ← Admin route protection
 ├── app/
-│   ├── layout.tsx            (LenisProvider, CustomCursor, PageTransition, fonts)
-│   ├── page.tsx              (HomePage — imports all sections)
+│   ├── layout.tsx                     ← LenisProvider + fonts + metadata
+│   ├── page.tsx                       ← Home
 │   ├── courses/
-│   │   ├── page.tsx          (CoursesPage — all 12 courses grid)
-│   │   └── [slug]/page.tsx   (CourseDetailPage)
+│   │   ├── page.tsx
+│   │   └── [slug]/page.tsx
+│   ├── trading/page.tsx
 │   ├── about/page.tsx
-│   └── contact/page.tsx
+│   ├── contact/page.tsx
+│   └── admin/
+│       ├── layout.tsx                 ← AdminLayout (sidebar + topbar)
+│       ├── page.tsx                   ← Dashboard
+│       ├── login/page.tsx
+│       ├── courses/
+│       │   ├── page.tsx
+│       │   ├── new/page.tsx
+│       │   └── [id]/page.tsx
+│       ├── testimonials/page.tsx
+│       ├── notifications/page.tsx
+│       ├── enrollments/page.tsx
+│       ├── about/page.tsx
+│       ├── contact-info/page.tsx
+│       └── trading-courses/page.tsx
 ├── components/
 │   ├── global/
 │   │   ├── Navbar.tsx
 │   │   ├── Footer.tsx
+│   │   ├── Logo.tsx                   ← Smart logo component
 │   │   ├── CustomCursor.tsx
 │   │   ├── LoadingScreen.tsx
-│   │   └── PageTransition.tsx
+│   │   ├── PageTransition.tsx
+│   │   └── NotificationBanner.tsx     ← Shows active notifications
 │   ├── sections/
 │   │   ├── HeroSection.tsx
 │   │   ├── MarqueeBand.tsx
 │   │   ├── StatsSection.tsx
 │   │   ├── CoursesSection.tsx
+│   │   ├── TradingSection.tsx         ← NEW — trading highlight
 │   │   ├── WhyUsSection.tsx
-│   │   ├── CurriculumSection.tsx
 │   │   ├── TestimonialsSection.tsx
 │   │   ├── PlacementSection.tsx
 │   │   ├── CtaSection.tsx
-│   │   └── TradingTeaseSection.tsx
+│   │   └── Hero3D.tsx                 ← Spline or Three.js 3D scene
+│   ├── admin/
+│   │   ├── AdminSidebar.tsx
+│   │   ├── AdminTopBar.tsx
+│   │   ├── CourseForm.tsx
+│   │   ├── TestimonialForm.tsx
+│   │   ├── NotificationForm.tsx
+│   │   ├── DataTable.tsx              ← Reusable admin table component
+│   │   └── StatsCard.tsx
 │   └── ui/
 │       ├── CourseCard.tsx
 │       ├── StatCard.tsx
 │       ├── TestimonialCard.tsx
 │       ├── Button.tsx
-│       └── Badge.tsx
+│       ├── Badge.tsx
+│       └── ModuleAccordion.tsx
 ├── lib/
-│   ├── gsap.ts               (GSAP registration, plugin setup)
-│   ├── lenis.ts              (Lenis instance)
-│   └── courses.ts            (Course data — all 12 courses as typed objects)
+│   ├── courses.ts                     ← Static course data (seed data)
+│   ├── supabase/
+│   │   ├── client.ts                  ← Browser Supabase client
+│   │   ├── server.ts                  ← Server Supabase client
+│   │   ├── courses.ts                 ← Course CRUD functions
+│   │   ├── testimonials.ts            ← Testimonial CRUD
+│   │   ├── notifications.ts           ← Notification CRUD
+│   │   ├── enrollments.ts             ← Enrollment CRUD
+│   │   └── content.ts                 ← Site content CRUD
+│   └── resend.ts                      ← Email sending functions
 ├── providers/
 │   └── LenisProvider.tsx
+├── hooks/
+│   ├── useGsapAnimations.ts
+│   └── useScrollProgress.ts
 ├── styles/
-│   └── globals.css           (CSS variables, fonts, base styles)
+│   └── globals.css
 ├── public/
-│   ├── fonts/
+│   ├── logos/
+│   │   ├── milestone-logo-dark.png    ← Copy from uploaded assets
+│   │   └── milestone-logo-light.png   ← Copy from uploaded assets
 │   └── images/
 └── tailwind.config.ts
 ```
 
 ---
 
-## 🎯 CONTENT COPY — WEBSITE TEXT
+## 🚀 DEPLOY TARGET
 
-### Meta / SEO:
-Title: "Milestone Academy | India's Premier Accounting & Finance Courses"
-Description: "Master Tally Prime, GST, Income Tax, SAP FICO and 8 more courses at Milestone Academy. Industry-recognized certificates, 100% placement assistance. Join 4,800+ students in Kerala."
-
-### About Milestone Academy (for /about page):
-```
-THE MILESTONE STORY
-
-Milestone began as a vision — to democratize financial education in India. 
-Starting as Milestone Trading Academy, we've trained over 10,000 traders 
-across the country. Our students demanded more. They wanted accounting. 
-They wanted compliance. They wanted careers in corporate finance.
-
-So we built Milestone Academy.
-
-Not another coaching center. A career transformation engine.
-
-Our faculty are practicing Chartered Accountants, SAP-certified consultants, 
-and seasoned tax practitioners — professionals who work in the field every day 
-and teach what the industry actually demands, not what textbooks say.
-
-WHAT MAKES US DIFFERENT
-
-01 — Industry-First Curriculum
-Every course is built from job descriptions, not syllabi. We analyze what 
-companies actually hire for, then reverse-engineer the curriculum.
-
-02 — Live Software Environments  
-No screenshots. No simulations. You practice on real Tally Prime, live GST 
-portals, actual SAP training environments.
-
-03 — Kerala's Most Recognized Accounting Certificate  
-Walk into any accounting firm, CA office, or MNC in Kerala and mention 
-Milestone Academy — they know our standards.
-
-04 — A Community, Not Just a Course  
-Join our exclusive WhatsApp group of 4,800+ Milestone alumni — share 
-opportunities, get advice, and grow together.
-
-THE NUMBERS SPEAK
-
-10,000+ Total Students  |  4,800+ Accounting Students  
-96% Placement Rate  |  1,200+ Hiring Partners  
-12 Specialized Programs  |  5 Learning Centers + Online  
-₹45,000 Average Salary Hike Post-Completion
-```
-
----
-
-## 🔧 FINAL CLAUDE CODE COMMANDS
-
-After generating all files, run these in order:
-
-```bash
-# 1. Install all dependencies
-npm install gsap @studio-freight/lenis @splinetool/react-spline framer-motion lucide-react react-icons zustand react-hook-form zod @hookform/resolvers clsx tailwind-merge class-variance-authority @radix-ui/react-dialog @radix-ui/react-accordion @radix-ui/react-tabs @radix-ui/react-tooltip split-type
-
-# 2. Install shadcn/ui
-npx shadcn@latest init
-npx shadcn@latest add button card badge tabs accordion dialog tooltip
-
-# 3. Run dev server
-npm run dev
-
-# 4. Build and check
-npm run build
-```
-
----
-
-## ✅ QUALITY CHECKLIST — VERIFY BEFORE DEPLOY
-
-- [ ] Loading screen plays once per session (sessionStorage flag)
-- [ ] Lenis smooth scroll active on desktop, disabled on mobile
-- [ ] All GSAP animations tied to ScrollTrigger with correct start/end
-- [ ] Custom cursor hidden on touch devices
-- [ ] All 12 course cards render with correct data
-- [ ] Form validation works (Zod schema)
-- [ ] Form submission shows loading → success state
-- [ ] Marquee pauses on hover
-- [ ] 3D tilt on cards disabled on mobile (performance)
-- [ ] Navbar becomes opaque on scroll
-- [ ] All CTAs link to correct pages/anchors
-- [ ] Trading Academy tease section links to correct URL
-- [ ] Responsive: test 320px, 768px, 1024px, 1440px breakpoints
-- [ ] Fonts load correctly (no FOUT)
-- [ ] Dark sections readable in bright light
-- [ ] All green colors pass WCAG AA contrast ratio
-- [ ] Page transitions work between routes
-- [ ] Lighthouse: Performance 90+, Accessibility 95+
-
----
-
-BUILD THIS. MAKE IT LEGENDARY. MAKE EVERY VISITOR SAY "WOW."
-```
-
----
-
-## 📌 QUICK REFERENCE — COLORS FOR TWEAKCN
-
-Go to https://tweakcn.com/ and set:
-- Primary: #22C55E
-- Primary Foreground: #FFFFFF
-- Background: #F7F9F4
-- Foreground: #0D1A0E
-- Card: #FFFFFF
-- Muted: #EDEFEA
-- Muted Foreground: #7A9B7C
-- Border: #D4E8D4
-- Ring: #22C55E
-
-Export the CSS variables and paste into globals.css under :root
-
----
-
-## 🔗 REFERENCE LINKS TO GIVE CLAUDE CODE
-
-- Smooth Scroll: https://lenis.darkroom.engineering/
-- GSAP Docs: https://gsap.com/docs/v3/
-- 3D Elements: https://spline.design/
-- UI Components: https://21st.dev/community/components
-- shadcn/ui: https://ui.shadcn.com/
-- Color Tool: https://tweakcn.com/
+- Platform: Vercel
+- Domain: milestone-academy.vercel.app (then custom domain)
+- Database: Supabase (free tier sufficient to start)
+- Images: Supabase Storage bucket "milestone-assets"
+- Email: Resend (100 emails/day free)

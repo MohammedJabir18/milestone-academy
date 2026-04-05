@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Syne, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { LenisProvider } from "@/providers/LenisProvider";
@@ -7,10 +7,7 @@ import Navbar from "@/components/global/Navbar";
 import Footer from "@/components/global/Footer";
 import { PageTransitionProvider } from "@/components/global/PageTransition";
 import { GsapInitializer } from "@/hooks/useGsapAnimations";
-
-
-
-
+import { TooltipProvider } from "@/components/ui/tooltip";
 
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
@@ -23,14 +20,23 @@ const instrumentSerif = Instrument_Serif({
 const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const jetBrainsMono = JetBrains_Mono({
   variable: "--font-jetbrains-mono",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: "#22C55E",
+};
 
 export const metadata: Metadata = {
   title: "Milestone Academy | India's Premier Accounting & Finance Courses",
@@ -82,16 +88,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${syne.variable} ${jetBrainsMono.variable} h-full antialiased`}
+      className={`${instrumentSerif.variable} ${syne.variable} ${jetBrainsMono.variable} antialiased`}
     >
-      <body className="min-h-full flex flex-col font-sans">
+      <body className="min-h-screen flex flex-col font-sans overflow-x-hidden">
         <CustomCursor />
         <GsapInitializer />
         <PageTransitionProvider>
           <LenisProvider>
-            <Navbar />
-            <main className="flex-1 flex flex-col">{children}</main>
-            <Footer />
+            <TooltipProvider>
+              {children}
+            </TooltipProvider>
           </LenisProvider>
         </PageTransitionProvider>
       </body>

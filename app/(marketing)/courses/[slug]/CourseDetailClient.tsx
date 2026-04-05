@@ -165,11 +165,23 @@ export default function CourseDetailClient({ course }: { course: Course }) {
                {/* Header Block inside Sidebar */}
                <div className="p-8 border-b border-[var(--border-light)] text-center relative pointer-events-none">
                   <div className="absolute top-0 inset-x-0 h-1.5" style={{ background: course.gradient }} />
-                  <p className="font-sans text-[14px] text-[var(--text-secondary)] line-through mb-1">₹{course.originalPrice.toLocaleString('en-IN')}</p>
+                  {course.originalPrice && (
+                    <p className="font-sans text-[14px] text-[var(--text-secondary)] line-through mb-1">₹{course.originalPrice.toLocaleString('en-IN')}</p>
+                  )}
                   <div className="flex items-center justify-center gap-2 mb-2">
-                     <span className="font-sans font-bold text-[42px] text-[var(--green-600)] tracking-tight">₹{course.price.toLocaleString('en-IN')}</span>
+                     <span className="font-sans font-bold text-[42px] text-[var(--green-600)] tracking-tight">
+                        {course.price ? `₹${course.price.toLocaleString('en-IN')}` : 'Custom Pricing'}
+                     </span>
                   </div>
-                  <p className="font-mono text-[11px] text-[var(--text-muted)] tracking-wider">EMI OPTIONS AVAILABLE FROM ₹499/MO</p>
+                  {course.emi ? (
+                    <p className="font-mono text-[11px] text-[var(--text-muted)] tracking-wider">
+                      EMI OPTIONS: {course.emi.toUpperCase()}
+                    </p>
+                  ) : (
+                    <p className="font-mono text-[11px] text-[var(--text-muted)] tracking-wider">
+                      {course.price ? 'EMI OPTIONS AVAILABLE FROM ₹499/MO' : 'CONTACT US FOR MORE INFO'}
+                    </p>
+                  )}
                </div>
 
                {/* Inclusion Checklist */}

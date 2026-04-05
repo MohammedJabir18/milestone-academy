@@ -9,6 +9,41 @@ export default {
   theme: {
     extend: {
       colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+
+        /* Milestone Brand Colors */
         'bg-primary': "var(--bg-primary)",
         'bg-secondary': "var(--bg-secondary)",
         'bg-card': "var(--bg-card)",
@@ -28,11 +63,10 @@ export default {
           900: "var(--green-900)",
         },
 
-        accent: {
-          gold: "var(--accent-gold)",
-          mint: "var(--accent-mint)",
-          neon: "var(--accent-neon)",
-        },
+        /* Branded Accents */
+        brandGold: "var(--accent-gold)",
+        brandMint: "var(--accent-mint)",
+        brandNeon: "var(--accent-neon)",
 
         'text-primary': "var(--text-primary)",
         'text-secondary': "var(--text-secondary)",
@@ -65,11 +99,11 @@ export default {
         container: "var(--container-max)",
       },
       borderRadius: {
-        sm: "var(--radius-sm)",
-        md: "var(--radius-md)",
-        lg: "var(--radius-lg)",
-        xl: "var(--radius-xl)",
-        pill: "var(--radius-pill)",
+        sm: "var(--r-sm)",
+        md: "var(--r-md)",
+        lg: "var(--r-lg)",
+        xl: "var(--r-xl)",
+        pill: "var(--r-pill)",
       },
       animation: {
         ripple: "ripple 0.6s linear",

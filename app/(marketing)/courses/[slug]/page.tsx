@@ -9,8 +9,9 @@ export function generateStaticParams() {
   }));
 }
 
-export default function CoursePage({ params }: { params: { slug: string } }) {
-  const course = courses.find((c) => c.slug === params.slug);
+export default async function CoursePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const course = courses.find((c) => c.slug === slug);
 
   if (!course) {
     notFound();

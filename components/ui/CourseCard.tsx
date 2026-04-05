@@ -3,13 +3,21 @@
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
 import Link from "next/link";
-import { Star, Clock, ArrowRight } from "lucide-react";
+import { Star, Clock, ArrowRight, BookOpen, FileText, TrendingUp, Award } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Course } from "@/lib/courses";
+
+const iconMap: Record<string, LucideIcon> = {
+  BookOpen,
+  FileText,
+  TrendingUp,
+  Award,
+};
 
 export default function CourseCard({ course }: { course: Course }) {
   const cardRef = useRef<HTMLDivElement>(null);
   const bgRef = useRef<HTMLDivElement>(null);
-  const Icon = course.icon;
+  const Icon = iconMap[course.icon] || BookOpen;
 
   useEffect(() => {
     // 3D Tilt logic triggered only on non-touch devices
@@ -116,7 +124,7 @@ export default function CourseCard({ course }: { course: Course }) {
               <Star size={16} className="text-[var(--accent-gold)] fill-[var(--accent-gold)]" />
               <div className="flex items-baseline gap-1">
                 <span className="font-bold text-[var(--text-primary)]">{course.rating}</span>
-                <span className="text-[13px] opacity-70">({course.reviewCount})</span>
+                <span className="text-[13px] opacity-70">({course.reviews})</span>
               </div>
             </div>
           </div>
@@ -127,18 +135,22 @@ export default function CourseCard({ course }: { course: Course }) {
           {/* Pricing Row */}
           <div className="flex items-end justify-between w-full mb-8">
             <div className="flex flex-col">
-              <span className="text-[13px] text-[var(--text-secondary)] line-through mb-1 decoration-red-500/40">
-                ₹{course.originalPrice.toLocaleString('en-IN')}
-              </span>
+              {course.originalPrice && (
+                <span className="text-[13px] text-[var(--text-secondary)] line-through mb-1 decoration-red-500/40">
+                  ₹{course.originalPrice.toLocaleString('en-IN')}
+                </span>
+              )}
               <div className="flex items-baseline gap-1 relative">
                 <span className="font-sans font-extrabold text-[28px] text-[var(--text-primary)] leading-none tracking-tight">
-                  ₹{course.price.toLocaleString('en-IN')}
+                  {course.price ? `₹${course.price.toLocaleString('en-IN')}` : 'Custom Pricing'}
                 </span>
               </div>
             </div>
-            <span className="font-mono text-[11px] text-[var(--green-700)] bg-[var(--green-50)] border border-[var(--green-500)]/20 px-2.5 py-1.5 rounded-md font-bold uppercase tracking-wider mb-1 shadow-sm">
-              EMI Available
-            </span>
+            {course.emi && (
+              <span className="font-mono text-[11px] text-[var(--green-700)] bg-[var(--green-50)] border border-[var(--green-500)]/20 px-2.5 py-1.5 rounded-md font-bold uppercase tracking-wider mb-1 shadow-sm">
+                EMI Available
+              </span>
+            )}
           </div>
           
           {/* Full Width CTA */}

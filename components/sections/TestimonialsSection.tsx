@@ -1,215 +1,275 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 import { Star } from "lucide-react";
 
-// Real 12 Testimonials Dataset
-const row1Data = [
-  {
-    name: "Aisha Rahman",
-    text: "I went from not knowing what a ledger was to filing GST returns for 8 clients in just 3 months. Milestone's Tally course is the most practical training I've ever attended.",
-    role: "GST Consultant, Kozhikode",
-    course: "Tally Prime",
-    initial: "A"
-  },
-  {
-    name: "Arjun Menon",
-    text: "The SAP FICO program placed me in Infosys BPM within a month of completion. The faculty's industry experience is unparalleled — they taught us exactly what multinationals expect.",
-    role: "SAP FICO Analyst, Infosys",
-    course: "SAP FICO",
-    initial: "A"
-  },
-  {
-    name: "Fathima Zubair",
-    text: "As a housewife returning to work, I was terrified. Milestone's income tax course rebuilt my confidence. I now run my own ITR filing practice from home.",
-    role: "Freelance Tax Consultant",
-    course: "Income Tax",
-    initial: "F"
-  },
-  {
-    name: "Mohammed Riyas",
-    text: "The Cost Accounting program changed how I think about business. My company's CFO noticed the difference immediately and fast-tracked my promotion.",
-    role: "Management Accountant, Kerala Pvt Ltd",
-    course: "Cost Accounting",
-    initial: "M"
-  },
-  {
-    name: "Sneha Pillai",
-    text: "Every class felt like sitting with a CA at their office, not inside a classroom. The real-world scenarios made everything click.",
-    role: "Finance Executive, HDFC",
-    course: "Financial Accounting",
-    initial: "S"
-  },
-  {
-    name: "Vishnu K",
-    text: "I cleared CA Foundation in my first attempt using Milestone's accelerator program. The structured approach and mentor support was everything.",
-    role: "CA Student",
-    course: "CA Foundation",
-    initial: "V"
-  }
-];
+interface Testimonial {
+  student_name: string;
+  role: string;
+  company?: string;
+  course_name: string;
+  review_text: string;
+  rating: number;
+}
 
-const row2Data = [
+const STATIC_TESTIMONIALS: Testimonial[] = [
   {
-    name: "Divya Thomas",
-    text: "Payroll compliance used to terrify me. Now I handle 200+ employee payroll for a manufacturing company. The course paid for itself in Week 1.",
-    role: "HR & Payroll Manager",
-    course: "Payroll",
-    initial: "D"
+    student_name: "Rahul M.",
+    role: "Junior Accountant",
+    company: "TechNova",
+    course_name: "Basic Package",
+    review_text: "This course gave me the perfect foundation. Tally Prime is now second nature to me.",
+    rating: 5,
   },
   {
-    name: "Nabil Haris",
-    text: "Tally Prime + GST together in one program? That's what the market actually needs. Got hired before I even finished the course!",
-    role: "Accounts Executive, Startup",
-    course: "Tally + GST",
-    initial: "N"
+    student_name: "Priya S.",
+    role: "GST Executive",
+    company: "Deloitte",
+    course_name: "Intermediate Package",
+    review_text: "The GST modules are incredibly detailed. I was able to practically apply the learning immediately at work.",
+    rating: 5,
   },
   {
-    name: "Ananya Krishnan",
-    text: "The lifetime doubt support is REAL. I WhatsApped at 11pm about an ITC mismatch and got a detailed reply by 7am. That's beyond any institute I've seen.",
-    role: "CA Firm Associate",
-    course: "GST",
-    initial: "A"
+    student_name: "Ahmad K.",
+    role: "Finance Manager",
+    company: "Al Futtaim Group",
+    course_name: "Short-Term Tax",
+    review_text: "Exactly what I needed for the UAE market. Zoho Books and UAE Corporate Tax coverage is phenomenal.",
+    rating: 5,
   },
   {
-    name: "Santhosh Kumar",
-    text: "From a factory floor to a finance desk — Milestone made that jump possible for me. The banking operations course was my turning point.",
-    role: "Banking Operations, Federal Bank",
-    course: "Banking",
-    initial: "S"
+    student_name: "Sneha V.",
+    role: "Senior Analyst",
+    company: "KPMG",
+    course_name: "Comprehensive Package",
+    review_text: "The Power BI and advanced Excel training completely transformed how I handle financial modeling.",
+    rating: 5,
   },
   {
-    name: "Lakshmi Nair",
-    text: "I've done three courses here and each one opened a new door. The certificates are genuinely recognized — HR executives mention Milestone by name.",
-    role: "Senior Accountant, MNC",
-    course: "Multiple Courses",
-    initial: "L"
+    student_name: "Arjun T.",
+    role: "Freelance Acct.",
+    company: "",
+    course_name: "Basic Package",
+    review_text: "Highly recommend! The manual accounting classes cleared all my basic doubts.",
+    rating: 4,
   },
   {
-    name: "Asif Ali",
-    text: "The placement team is insanely committed. They helped me polish my LinkedIn, prep for 4 interview rounds, and connected me directly to the hiring manager.",
-    role: "Finance Analyst, IT Firm",
-    course: "Placement",
-    initial: "A"
-  }
+    student_name: "Riya D.",
+    role: "Tax Consultant",
+    company: "Ernst & Young",
+    course_name: "Intermediate Package",
+    review_text: "Milestone's approach to teaching live GST return filing gave me a huge edge over my peers.",
+    rating: 5,
+  },
+  {
+    student_name: "Omar M.",
+    role: "Accounts Executive",
+    company: "Lulu Group",
+    course_name: "Short-Term Tax",
+    review_text: "I secured a job in Dubai within a month of completing this course. The UAE VAT module is spot on.",
+    rating: 5,
+  },
+  {
+    student_name: "Kavita R.",
+    role: "Financial Controller",
+    company: "Reliance Retail",
+    course_name: "Comprehensive Package",
+    review_text: "A masterclass in accounting. The triple software proficiency (Zoho, QB, Tally) is unparalleled.",
+    rating: 5,
+  },
+  {
+    student_name: "Vikram J.",
+    role: "Accounts Assistant",
+    company: "TCS",
+    course_name: "Basic Package",
+    review_text: "The trainers are very patient and explain concepts with real-world examples.",
+    rating: 5,
+  },
+  {
+    student_name: "Neha P.",
+    role: "Audit Associate",
+    company: "PwC",
+    course_name: "Intermediate Package",
+    review_text: "The practical approach to Tally Prime and advanced MS Office really streamlined my audit tasks.",
+    rating: 5,
+  },
+  {
+    student_name: "Zayed H.",
+    role: "Business Owner",
+    company: "Desert Ventures",
+    course_name: "Short-Term Tax",
+    review_text: "As a business owner in the UAE, this helped me understand my own compliance and accounting software.",
+    rating: 4,
+  },
+  {
+    student_name: "Siddharth C.",
+    role: "CFO",
+    company: "Startup Inc.",
+    course_name: "Comprehensive Package",
+    review_text: "The best investment for my career. The mentors are top-notch industry experts.",
+    rating: 5,
+  },
 ];
-
-// Helper to determine arbitrary avatar colors
-const getAvatarBg = (initial: string) => {
-  const colors = [
-    "bg-emerald-500/20 text-emerald-300",
-    "bg-sky-500/20 text-sky-300",
-    "bg-indigo-500/20 text-indigo-300",
-    "bg-amber-500/20 text-amber-300",
-    "bg-rose-500/20 text-rose-300"
-  ];
-  return colors[initial.charCodeAt(0) % colors.length];
-};
 
 export default function TestimonialsSection() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function fetchTestimonials() {
+      try {
+        const { data, error } = await supabase
+          .from("testimonials")
+          .select("student_name, role, company, courses(title), review_text, rating")
+          .eq("is_published", true)
+          .order("sort_order", { ascending: true });
+
+        if (error || !data || data.length === 0) {
+          setTestimonials(STATIC_TESTIMONIALS);
+        } else {
+          // Normalize the data format from Supabase
+          const formatted = data.map((item: any) => ({
+            student_name: item.student_name,
+            role: item.role,
+            company: item.company,
+            course_name: item.courses ? item.courses.title : "Milestone Student",
+            review_text: item.review_text,
+            rating: item.rating || 5,
+          }));
+          
+          // Pad with static data if less than 12
+          if (formatted.length < 12) {
+            setTestimonials([...formatted, ...STATIC_TESTIMONIALS.slice(0, 12 - formatted.length)]);
+          } else {
+            setTestimonials(formatted.slice(0, 12));
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching testimonials:", err);
+        setTestimonials(STATIC_TESTIMONIALS);
+      }
+    }
+
+    fetchTestimonials();
+  }, []);
+
+  // Split testimonials into two rows for the marquee
+  const row1Data = testimonials.slice(0, 6);
+  const row2Data = testimonials.slice(6, 12);
+
+  // If we haven't loaded yet, use static testimonials to prevent layout shift
+  const displayRow1 = row1Data.length > 0 ? row1Data : STATIC_TESTIMONIALS.slice(0, 6);
+  const displayRow2 = row2Data.length > 0 ? row2Data : STATIC_TESTIMONIALS.slice(6, 12);
+
   return (
-    <section id="testimonials" className="w-full py-24 md:py-32 bg-[var(--bg-dark)] overflow-hidden relative">
-      <div className="max-w-[var(--container-max)] mx-auto px-6 mb-16 relative z-10 flex flex-col items-center text-center">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-8 h-[1px] bg-[var(--accent-mint)]/80" />
-          <span className="font-mono text-[13px] text-[var(--accent-mint)] uppercase tracking-widest font-semibold flex-1">
-            Student Stories
-          </span>
-          <div className="w-8 h-[1px] bg-[var(--accent-mint)]/80" />
-        </div>
-        
-        <h2 className="gsap-heading font-serif text-[48px] md:text-[64px] text-white leading-[1.05] -tracking-[0.02em]">
+    <section id="testimonials" className="w-full py-24 md:py-32 bg-[var(--bg-dark)] overflow-hidden">
+      {/* Header */}
+      <div className="max-w-[var(--container)] mx-auto px-6 mb-16 flex flex-col items-center text-center">
+        <span className="font-mono text-[13px] text-[var(--accent-mint)] uppercase tracking-[0.15em] font-bold mb-6">
+          Student Stories
+        </span>
+        <h2 className="font-serif text-[48px] md:text-[64px] text-[var(--text-inverse)] leading-[1.05] -tracking-[0.02em]">
           Real People.<br />
           <span className="italic text-[var(--green-500)]">Real Results.</span>
         </h2>
       </div>
 
-      {/* Marquee Wrapper Row 1 (Forwards) */}
-      <div className="relative w-full flex overflow-hidden group mb-8">
-        
-        {/* Edge Gradients */}
-        <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-[var(--bg-dark)] to-transparent z-[1] pointer-events-none" />
-        <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-[var(--bg-dark)] to-transparent z-[1] pointer-events-none" />
-        
-        {/* Animate-Marquee */}
-        <div className="flex w-max shrink-0 animate-marquee hover:[animation-play-state:paused] gap-6 px-3">
-           
-           {/* Rendering two identical chunks side by side for exactly -50% loop offset */}
-           {[0, 1].map((copyIdx) => (
-             <div key={`row1-copy-${copyIdx}`} className="flex gap-6 items-center shrink-0">
-               {row1Data.map((t, i) => (
-                 <TestimonialCard key={`row1-${copyIdx}-${i}`} data={t} />
-               ))}
-             </div>
-           ))}
-           
-        </div>
-      </div>
+      <div className="flex flex-col gap-6 w-full relative">
+        <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-[var(--bg-dark)] to-transparent z-10 pointer-events-none" />
+        <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-[var(--bg-dark)] to-transparent z-10 pointer-events-none" />
 
-      {/* Marquee Wrapper Row 2 (Reverse) */}
-      <div className="relative w-full flex overflow-hidden group">
-        
-        {/* Edge Gradients */}
-        <div className="absolute top-0 bottom-0 left-0 w-32 bg-gradient-to-r from-[var(--bg-dark)] to-transparent z-[1] pointer-events-none" />
-        <div className="absolute top-0 bottom-0 right-0 w-32 bg-gradient-to-l from-[var(--bg-dark)] to-transparent z-[1] pointer-events-none" />
-        
-        {/* Animate-Reverse-Marquee */}
-        <div className="flex w-max shrink-0 animate-marquee-reverse hover:[animation-play-state:paused] gap-6 px-3">
-           
-           {[0, 1].map((copyIdx) => (
-             <div key={`row2-copy-${copyIdx}`} className="flex gap-6 items-center shrink-0">
-               {row2Data.map((t, i) => (
-                 <TestimonialCard key={`row2-${copyIdx}-${i}`} data={t} />
-               ))}
-             </div>
-           ))}
-           
+        <div className="relative w-full overflow-hidden group">
+          <div className="flex w-max shrink-0 gap-[20px] px-[10px] animate-marquee_40s hover:[animation-play-state:paused]">
+            {[0, 1, 2].map((copyIdx) => (
+              <div key={`row1-copy-${copyIdx}`} className="flex gap-[20px] shrink-0">
+                {displayRow1.map((t, i) => (
+                  <TestimonialCard key={`row1-${copyIdx}-${i}`} data={t} />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative w-full overflow-hidden group">
+          <div className="flex w-max shrink-0 gap-[20px] px-[10px] animate-marquee_52s_reverse hover:[animation-play-state:paused]">
+            {[0, 1, 2].map((copyIdx) => (
+              <div key={`row2-copy-${copyIdx}`} className="flex gap-[20px] shrink-0">
+                {displayRow2.map((t, i) => (
+                  <TestimonialCard key={`row2-${copyIdx}-${i}`} data={t} />
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
       
+      {/* Inline styles for custom marquees if not in tailwind.config */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-33.333333% - 6.666px)); }
+          }
+          @keyframes marquee-reverse {
+            0% { transform: translateX(calc(-33.333333% - 6.666px)); }
+            100% { transform: translateX(0); }
+          }
+          .animate-marquee_40s {
+            animation: marquee 40s linear infinite;
+          }
+          .animate-marquee_52s_reverse {
+            animation: marquee-reverse 52s linear infinite;
+          }
+        `
+      }} />
     </section>
   );
 }
 
-// Subcomponent rendering the individual dark cards
-function TestimonialCard({ data }: { data: any }) {
+function TestimonialCard({ data }: { data: Testimonial }) {
+  const initial = data.student_name.charAt(0);
+  const companyString = data.company ? `, ${data.company}` : "";
+
   return (
-    <div className="group relative w-[320px] md:w-[360px] flex flex-col justify-between shrink-0 bg-white/[0.04] border border-white/[0.08] backdrop-blur-[12px] p-6 md:p-8 rounded-[20px] transition-all duration-300 hover:bg-white/[0.06] hover:border-white/[0.15] cursor-default overflow-hidden">
+    <div className="group relative w-[340px] shrink-0 bg-[var(--bg-dark-glass)] backdrop-blur-sm border border-white/10 p-8 rounded-2xl transition-all duration-300 hover:bg-white/[0.08] hover:border-white/[0.15] cursor-default">
       
-      {/* Decorative Quote Mark */}
-      <div className="absolute -top-6 -left-2 text-[120px] font-serif font-black text-[var(--green-500)] opacity-10 leading-none select-none pointer-events-none transition-transform duration-500 group-hover:-translate-y-2 group-hover:scale-110">
+      {/* Quote Mark */}
+      <div className="absolute top-2 left-6 text-[100px] font-serif font-black text-[var(--green-500)]/20 leading-none pointer-events-none select-none transition-transform duration-500 group-hover:-translate-y-1">
         "
       </div>
       
-      <div className="relative z-10">
-        <p className="font-sans text-[15px] text-white/80 leading-[1.6] italic mb-6">
-          "{data.text}"
-        </p>
-        
-        <div className="flex text-[var(--accent-gold)] mb-6">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} size={15} fill="currentColor" strokeWidth={1} />
-          ))}
-        </div>
+      {/* Review Text */}
+      <p className="relative z-10 font-sans text-[14px] text-[var(--text-inverse)]/80 leading-relaxed italic mb-5">
+        "{data.review_text}"
+      </p>
+      
+      {/* Rating */}
+      <div className="flex text-[var(--accent-gold)] text-base mb-4 relative z-10">
+        {[...Array(5)].map((_, i) => (
+          <Star key={i} size={16} fill={i < data.rating ? "currentColor" : "none"} strokeWidth={1} />
+        ))}
       </div>
       
-      <div>
-        <div className="w-full h-[1px] bg-white/[0.08] mb-5" />
-        
-        <div className="flex items-center gap-3 relative z-10 w-full">
-          {/* Avatar Initial Component */}
-          <div className={`w-11 h-11 shrink-0 rounded-full flex items-center justify-center font-sans font-bold text-[18px] border border-white/10 ${getAvatarBg(data.initial)}`}>
-            {data.initial}
-          </div>
-          
-          <div className="flex flex-col overflow-hidden leading-tight flex-1">
-            <span className="font-sans font-semibold text-[15px] text-white mb-1 truncate">{data.name}</span>
-            <span className="font-mono text-[11px] text-white/50 truncate mb-1.5">{data.role}</span>
-          </div>
-          
-          <span className="font-mono text-[10px] bg-[var(--green-500)]/20 text-[var(--green-400)] border border-[var(--green-500)]/30 px-2.5 py-1 rounded whitespace-nowrap hidden sm:block">
-            {data.course}
-          </span>
+      {/* Divider */}
+      <div className="w-full h-[1px] bg-[rgba(255,255,255,0.1)] mb-4" />
+      
+      {/* Student Info */}
+      <div className="flex items-center gap-3 relative z-10 w-full">
+        {/* Avatar */}
+        <div className="w-[42px] h-[42px] shrink-0 rounded-full bg-[var(--green-600)] flex items-center justify-center font-sans font-semibold text-[16px] text-white">
+          {initial}
         </div>
+        
+        <div className="flex flex-col overflow-hidden max-w-[150px]">
+          <span className="font-sans font-semibold text-[14px] text-[var(--text-inverse)] mb-0.5 truncate">{data.student_name}</span>
+          <span className="font-mono text-[11px] text-[var(--text-muted)] truncate">{data.role}{companyString}</span>
+        </div>
+        
+        {/* Course Badge */}
+        <span className="ml-auto bg-[var(--green-500)]/20 text-[var(--green-300)] font-mono text-[10px] px-3 py-1 rounded-full whitespace-nowrap">
+          {data.course_name}
+        </span>
       </div>
       
     </div>

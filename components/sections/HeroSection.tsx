@@ -1,263 +1,215 @@
 "use client";
 
-import { useEffect, useRef, useState, Suspense } from "react";
-import Spline from "@splinetool/react-spline";
-import Image from "next/image";
+import React, { useEffect, useRef } from "react";
 import gsap from "gsap";
-import SplitType from "split-type";
-import ScrollTrigger from "gsap/ScrollTrigger";
-import { Star, Play, CheckCircle2, Trophy, BarChart3 } from "lucide-react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { BarChart3, Trophy, CheckCircle, Play } from "lucide-react";
+import Hero3D from "./Hero3D";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function HeroSection() {
   const containerRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const leftColRef = useRef<HTMLDivElement>(null);
-  const rightColRef = useRef<HTMLDivElement>(null);
-  const particlesRef = useRef<HTMLDivElement>(null);
-  
-  // Ripple effect state
-  const [ripples, setRipples] = useState<{ x: number; y: number; id: number }[]>([]);
+  const initialized = useRef(false);
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger);
-    if (!containerRef.current || !headlineRef.current) return;
+    if (!containerRef.current || initialized.current) return;
+    initialized.current = true;
 
-    // 1. Split Text
-    const split = new SplitType(headlineRef.current, { types: "lines" });
-    
-    // We need to wrap each line in an overflow hidden wrapper for that clean reveal
-    split.lines?.forEach(line => {
-      const wrapper = document.createElement("div");
-      wrapper.style.overflow = "hidden";
-      line.parentNode?.insertBefore(wrapper, line);
-      wrapper.appendChild(line);
-    });
+    const ctx = gsap.context(() => {
+      // ENTRANCE ANIMATIONS
+      gsap.from(".hero-label", { y: 30, opacity: 0, duration: 0.7, delay: 0.2 });
+      gsap.from(".hero-line-1", { y: "100%", opacity: 0, duration: 0.9, delay: 0.45 });
+      gsap.from(".hero-line-2", { y: "100%", opacity: 0, duration: 0.9, delay: 0.58 });
+      gsap.from(".hero-line-3", { y: "100%", opacity: 0, duration: 0.9, delay: 0.71 });
+      gsap.from(".hero-sub", { y: 40, opacity: 0, duration: 0.8, delay: 0.9 });
+      gsap.from(".hero-cta-1", { y: 30, opacity: 0, duration: 0.7, delay: 1.05 });
+      gsap.from(".hero-cta-2", { y: 30, opacity: 0, duration: 0.7, delay: 1.15 });
+      gsap.from(".social-proof", { y: 20, opacity: 0, duration: 0.6, delay: 1.3 });
+      gsap.from(".hero-3d", { x: 80, opacity: 0, duration: 1.2, delay: 0.6, ease: "power4.out" });
 
-    // 2. Entrance Animations
-    // Let's delay roughly enough to let the loader pass on the session's first hit.
-    // If we've seen the loader before, we trigger nearly instantly.
-    let baseDelay = 0.1;
-    if (typeof window !== "undefined" && !sessionStorage.getItem("hero_entered")) {
-       baseDelay = 2.4; 
-       sessionStorage.setItem("hero_entered", "true");
-    }
-
-    const tl = gsap.timeline({ delay: baseDelay });
-
-    tl.fromTo(".hero-label", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power3.out" }, 0)
-      .fromTo((split.lines || []), { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 0.9, stagger: 0.12, ease: "power4.out" }, 0.2)
-      .fromTo(".hero-sub", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" }, 0.6)
-      .fromTo(".hero-cta", { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, stagger: 0.1, ease: "power3.out" }, 0.8)
-      .fromTo(".social-proof", { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, 1.1)
-      .fromTo(".hero-3d", { x: 80, opacity: 0 }, { x: 0, opacity: 1, duration: 1.2, ease: "power4.out" }, 0.4);
-
-    // 3. Floating Particles (20 dots)
-    const particleEls = particlesRef.current?.querySelectorAll(".particle") || [];
-    particleEls.forEach(p => {
-      gsap.to(p, {
-        x: `random(-100, 100)`,
-        y: `random(-100, 100)`,
-        opacity: `random(0.3, 0.8)`,
-        duration: `random(10, 20)`,
-        ease: "none",
-        repeat: -1,
-        yoyo: true
+      // SCROLL PARALLAX
+      gsap.to(".hero-content", {
+        yPercent: -20,
+        scrollTrigger: {
+          trigger: ".hero",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1,
+        },
       });
-    });
 
-    // 4. Floating Badge Cards (up-down motion)
-    gsap.to(".badge-1", { y: -15, duration: 3, ease: "sine.inOut", repeat: -1, yoyo: true });
-    gsap.to(".badge-2", { y: 15, duration: 3.5, ease: "sine.inOut", repeat: -1, yoyo: true, delay: 1.5 });
-    gsap.to(".badge-3", { y: -10, duration: 2.5, ease: "sine.inOut", repeat: -1, yoyo: true, delay: 0.8 });
+      // FLOATING PARTICLES
+      gsap.utils.toArray(".particle").forEach((particle: any) => {
+        gsap.to(particle, {
+          y: "random(-100, 100)",
+          x: "random(-100, 100)",
+          rotation: "random(-180, 180)",
+          duration: "random(10, 20)",
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      });
 
-    // 5. ScrollTrigger Parallax
-    gsap.to(headlineRef.current, { 
-      yPercent: -25, 
-      ease: "none", 
-      scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: 1 }
-    });
-    
-    gsap.to(rightColRef.current, { 
-      yPercent: 15, 
-      ease: "none", 
-      scrollTrigger: { trigger: containerRef.current, start: "top top", end: "bottom top", scrub: 1.5 }
-    });
+      // FLOATING OVERLAY BADGES
+      gsap.to(".float-badge-1", { y: -15, duration: 3, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0 });
+      gsap.to(".float-badge-2", { y: -15, duration: 3.5, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 1.5 });
+      gsap.to(".float-badge-3", { y: -10, duration: 4, repeat: -1, yoyo: true, ease: "sine.inOut", delay: 0.8 });
 
-    return () => {
-      split.revert();
-      tl.kill();
-    };
+    }, containerRef);
+
+    return () => ctx.revert();
   }, []);
 
-  // Ripple effect handler
-  const handleRippleClick = (e: React.MouseEvent<HTMLAnchorElement | HTMLButtonElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    
-    const newRipple = { x, y, id: Date.now() };
-    setRipples(prev => [...prev, newRipple]);
-    
-    // Remove ripple after animation completes
-    setTimeout(() => {
-      setRipples(prev => prev.filter(r => r.id !== newRipple.id));
-    }, 600);
-  };
-
   return (
-    <section ref={containerRef} className="hero min-h-[100vh] w-full flex items-center pt-[72px] pb-12 overflow-hidden bg-[var(--bg-primary)] relative z-0">
+    <section 
+      ref={containerRef} 
+      className="hero relative min-h-screen w-full overflow-hidden bg-primary" 
+      style={{ backgroundImage: "var(--gradient-hero)" }}
+    >
+      {/* SVG filter grain & Glow */}
+      <div className="pointer-events-none absolute inset-0 z-0 mix-blend-overlay" style={{ opacity: 0.03 }}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%">
+          <filter id="noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+            <feColorMatrix type="matrix" values="1 0 0 0 0, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 0.1 0" />
+          </filter>
+          <rect width="100%" height="100%" filter="url(#noise)" />
+        </svg>
+      </div>
       
-      {/* Background Gradient & Gradient Glow */}
-      <div className="absolute inset-0 bg-[var(--gradient-hero)] -z-[1]" />
-      <div className="absolute right-0 top-1/2 -translate-y-1/2 w-[600px] md:w-[800px] h-[600px] md:h-[800px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(34,197,94,0.15)_0%,transparent_70%)] blur-2xl -z-[1] pointer-events-none" />
-      
-      {/* Subtle HTML/CSS pattern overlay */}
-      <div className="absolute inset-0 -z-[1] opacity-[0.03] pointer-events-none" style={{ backgroundImage: "url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc4JyBoZWlnaHQ9JzgnPgo8cmVjdCB3aWR0aD0nOCcgaGVpZ2h0PSc4JyBmaWxsPScjZmZmJy8+CjxwYXRoIGQ9J00wIDBMOCA4Wk04IDBMMCA4Wicgc3Ryb2tlPScjMDAwJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+')", backgroundSize: '16px 16px' }} />
+      <div 
+        className="pointer-events-none absolute top-0 right-0 z-0 h-full w-1/2" 
+        style={{ backgroundImage: "var(--gradient-glow)" }}
+      ></div>
 
-      {/* Floating Particles Container */}
-      <div ref={particlesRef} className="absolute inset-0 z-0 pointer-events-none">
-        {[...Array(20)].map((_, i) => (
-          <div 
-            key={i} 
-            className="particle absolute w-[3px] h-[3px] rounded-full bg-[var(--green-500)]"
-            style={{ 
-              top: `${Math.random() * 100}%`, 
+      {/* Floating Particles */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        {Array.from({ length: 20 }).map((_, i) => (
+          <div
+            key={i}
+            className="particle absolute h-[3px] w-[3px] rounded-full"
+            style={{
+              backgroundColor: "var(--green-500)",
+              top: `${Math.random() * 100}%`,
               left: `${Math.random() * 100}%`,
-              opacity: 0.5
+              opacity: Math.random() * 0.5 + 0.2
             }}
           />
         ))}
       </div>
 
-      <div className="max-w-[var(--container-max)] mx-auto w-full px-6 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8 h-full mt-10 md:mt-0">
+      <div className="hero-content relative z-10 mx-auto grid min-h-screen max-w-[var(--container)] grid-cols-1 px-6 lg:grid-cols-[55fr_45fr]">
         
-        {/* Left Column (55%) */}
-        <div ref={leftColRef} className="w-full lg:w-[55%] flex flex-col pt-10 lg:pt-0">
+        {/* LEFT COLUMN */}
+        <div className="flex flex-col justify-center pb-16 pt-24 lg:pr-8">
           
-          <div className="hero-label flex items-center gap-3 mb-6">
-            <div className="w-8 h-[1px] bg-[var(--green-600)]" />
-            <span className="font-mono text-[12px] text-[var(--green-600)] uppercase tracking-widest font-semibold flex-1">
+          {/* Label Row */}
+          <div className="hero-label mb-5 flex items-center gap-3">
+            <div className="h-[1px] w-[32px] bg-[var(--green-500)]"></div>
+            <span 
+              className="uppercase tracking-[0.2em] text-[var(--green-600)]" 
+              style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "11px" }}
+            >
               India's Premier Accounting Academy
             </span>
           </div>
-          
-          <h1 ref={headlineRef} className="hero-headline font-serif text-[48px] md:text-[80px] lg:text-[96px] leading-[1.05] text-[var(--text-primary)] -tracking-[0.02em]">
-            Master the<br />Language of<br />
-            <span className="italic text-[var(--green-500)] text-[56px] md:text-[90px] lg:text-[104px] pr-2">Business</span>
-          </h1>
-          
-          <p className="hero-sub font-sans text-lg lg:text-[20px] text-[var(--text-secondary)] max-w-[480px] mt-6 leading-relaxed">
-            From Tally to Taxation, GST to Financial Reporting — 
-            Milestone Academy transforms ambitious professionals 
-            into certified financial experts trusted by 1,200+ companies.
-          </p>
-          
-          {/* CTA Buttons */}
-          <div className="flex flex-wrap items-center gap-4 mt-10 w-full">
-            <a 
-              href="#courses"
-              onClick={handleRippleClick as any}
-              className="hero-cta magnetic clickable relative overflow-hidden bg-[var(--gradient-green)] text-white font-sans font-semibold text-[16px] px-[36px] py-[18px] rounded-full transition-all duration-300 shadow-[var(--shadow-green)] group"
-            >
-              <span className="relative z-10 flex items-center gap-2 group-hover:scale-[1.04] group-hover:-translate-y-[2px] transition-transform duration-300 origin-center">
-                Explore Courses &rarr;
-              </span>
-              
-              {/* Ripple elements */}
-              {ripples.map(ripple => (
-                <span 
-                  key={ripple.id}
-                  className="absolute bg-white/30 rounded-full animate-ripple pointer-events-none z-0"
-                  style={{
-                    left: ripple.x, top: ripple.y,
-                    width: '100px', height: '100px',
-                    transform: 'translate(-50%, -50%)'
-                  }}
-                />
-              ))}
-            </a>
-            
-            <a 
-              href="#demo"
-              className="hero-cta magnetic clickable group flex items-center gap-3 bg-transparent border-[1.5px] border-[var(--border-medium)] text-[var(--text-primary)] font-sans font-semibold text-[16px] px-[36px] py-[18px] rounded-full transition-all duration-300 hover:border-[var(--green-500)] hover:text-[var(--green-600)] hover:bg-[var(--green-50)]"
-            >
-              Watch Demo
-              <span className="relative flex items-center justify-center">
-                <Play size={16} className="fill-[currentColor] group-hover:scale-110 transition-transform" />
-                <span className="absolute inset-0 rounded-full bg-[var(--green-500)]/20 animate-ping opacity-0 group-hover:opacity-100" />
-              </span>
-            </a>
-          </div>
-          
-          {/* Social Proof Row */}
-          <div className="social-proof flex flex-col sm:flex-row items-start sm:items-center gap-6 sm:gap-8 mt-14">
-            <div className="flex items-center">
-              {/* Simulated avatar stack */}
-              {[1, 2, 3, 4, 5].map((i, idx) => (
-                <div 
-                  key={i} 
-                  className="w-[40px] h-[40px] rounded-full border-2 border-white bg-green-100 flex items-center justify-center overflow-hidden"
-                  style={{ marginLeft: idx === 0 ? 0 : '-8px', zIndex: 10 - idx }}
-                >
-                  <Image width={40} height={40} priority={true} src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="Student" className="w-full h-full object-cover" />
-                </div>
-              ))}
-              <span className="font-sans font-semibold text-[14px] text-[var(--text-primary)] ml-4">
-                4,800+ Students Enrolled
-              </span>
-            </div>
-            
-            <div className="hidden sm:block w-[1px] h-[24px] bg-[var(--border-light)]" />
-            
-            <div className="flex flex-col gap-1">
-              <div className="flex text-[var(--accent-gold)]">
-                {[1, 2, 3, 4, 5].map(i => <Star key={i} size={14} fill="currentColor" stroke="currentColor" />)}
+
+          {/* Headline */}
+          <h1 className="gsap-heading mb-6" style={{ fontFamily: "'Instrument Serif', serif", lineHeight: 1.05 }}>
+            <div className="overflow-hidden">
+              <div className="hero-line-1 text-[clamp(52px,8vw,96px)] text-[var(--text-primary)]">
+                Master the
               </div>
-              <span className="font-sans text-[14px] text-[var(--text-secondary)]">
-                4.9/5 Rating
-              </span>
             </div>
-          </div>
-          
-        </div>
-        
-        {/* Right Column (45%) */}
-        <div ref={rightColRef} className="hero-3d relative hidden md:block w-full lg:w-[45%] md:h-[500px] lg:h-[700px] pointer-events-none mt-12 lg:mt-0">
-          
-          {/* Spline Base Wrapper */}
-          <div className="absolute inset-0 w-full h-full flex items-center justify-center scale-100 md:scale-110 lg:scale-125 pointer-events-auto">
-             <Suspense fallback={<div className="w-64 h-64 rounded-full bg-[var(--green-500)]/10 animate-pulse blur-3xl" />}>
-               <Spline scene="https://prod.spline.design/6Wq1Q7YGyM-iab9i/scene.splinecode" />
-             </Suspense>
+            <div className="overflow-hidden">
+              <div className="hero-line-2 text-[clamp(52px,8vw,96px)] text-[var(--text-primary)]">
+                Language of
+              </div>
+            </div>
+            <div className="overflow-hidden">
+              <div className="hero-line-3 italic text-[clamp(52px,8vw,96px)] text-[var(--green-500)]">
+                Business.
+              </div>
+            </div>
+          </h1>
+
+          {/* Subheadline */}
+          <p 
+            className="hero-sub mb-10 max-w-[500px] leading-relaxed text-[var(--text-secondary)]" 
+            style={{ fontFamily: "'Syne', sans-serif", fontSize: "18px" }}
+          >
+            From Tally to Taxation, GST to Financial Reporting — Milestone Academy transforms ambitious professionals into certified financial experts trusted by 1,200+ companies.
+          </p>
+
+          {/* CTA Buttons */}
+          <div className="mb-12 flex flex-wrap gap-4">
+            <button 
+              className="hero-cta-1 magnetic group relative overflow-hidden rounded-full px-9 py-4 transition-all duration-300 hover:-translate-y-[2px] hover:scale-[1.04] bg-[image:var(--gradient-green)] text-white shadow-[var(--shadow-card)] hover:shadow-[var(--shadow-green)]"
+              style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "15px" }}
+            >
+              <div className="absolute inset-0 z-0 bg-white opacity-0 transition-opacity duration-300 group-active:animate-ping group-active:opacity-30"></div>
+              <span className="relative z-10 flex items-center justify-center gap-2">
+                Explore Courses <span className="text-lg transition-transform duration-300 group-hover:translate-x-1">→</span>
+              </span>
+            </button>
+            
+            <button 
+              className="hero-cta-2 magnetic group flex items-center justify-center gap-2 rounded-full border-[1.5px] border-[var(--border-medium)] bg-transparent text-[var(--text-primary)] px-9 py-4 transition-all duration-300 hover:border-[var(--green-400)] hover:bg-[var(--green-50)] hover:text-[var(--green-600)]"
+              style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "15px" }}
+            >
+              Watch Demo 
+              <span className="relative flex h-5 w-5 items-center justify-center ml-1">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--border-medium)] group-hover:bg-[var(--green-400)] opacity-40"></span>
+                <Play className="relative z-10 h-[14px] w-[14px] fill-[var(--text-primary)] group-hover:fill-[var(--green-600)] transition-colors duration-300" />
+              </span>
+            </button>
           </div>
 
-          {/* Floating CSS Badges */}
-          <div className="badge-1 absolute top-[5%] md:top-[10%] -right-2 md:right-[5%] lg:right-[10%] bg-white/80 backdrop-blur-[12px] shadow-[var(--shadow-card)] border border-[var(--border-light)] rounded-[16px] p-4 flex items-center gap-3 pointer-events-auto hover:border-[var(--green-500)] transition-colors">
-            <div className="w-10 h-10 rounded-full bg-[var(--green-50)] flex items-center justify-center text-[var(--green-600)]">
-              <BarChart3 size={20} />
+          {/* Social Proof */}
+          <div className="social-proof flex flex-wrap items-center gap-6">
+            <div className="flex -space-x-3">
+              {['#FEF3C7', '#DBEAFE', '#D1FAE5', '#FCE7F3', '#F3E8FF'].map((bg, i) => (
+                <div key={i} className="flex h-[38px] w-[38px] items-center justify-center rounded-full border-2 border-white text-xs font-bold" style={{ backgroundColor: bg, color: "var(--text-primary)" }}>
+                  {['S', 'M', 'A', 'J', 'R'][i]}
+                </div>
+              ))}
             </div>
-            <span className="font-sans font-semibold text-[13px] text-[var(--text-primary)] whitespace-nowrap">
-              GST Certification
-            </span>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-4">
+                <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "13px", color: "var(--text-primary)" }}>4,800+ Students Enrolled</span>
+                <span className="h-6 w-px bg-[var(--border-medium)]"></span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[13px] tracking-widest text-[#D4AF37]">★★★★★</span>
+                  <span style={{ fontFamily: "'Syne', sans-serif", fontSize: "13px", color: "var(--text-secondary)" }}>4.9/5 Rating</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        {/* RIGHT COLUMN */}
+        <div className="hero-3d relative flex min-h-[500px] w-full items-center justify-center">
+          <div className="absolute inset-0 z-0 h-full w-full">
+            <Hero3D />
           </div>
           
-          <div className="badge-2 absolute bottom-[5%] md:bottom-[15%] -left-2 md:left-[5%] lg:-left-[10%] bg-white/80 backdrop-blur-[12px] shadow-[var(--shadow-card)] border border-[var(--border-light)] rounded-[16px] p-4 flex items-center gap-3 pointer-events-auto hover:border-[var(--green-500)] transition-colors">
-            <div className="w-10 h-10 rounded-full bg-[var(--green-50)] flex items-center justify-center text-[var(--accent-gold)]">
-              <Trophy size={20} />
-            </div>
-            <span className="font-sans font-semibold text-[13px] text-[var(--text-primary)] whitespace-nowrap">
-              Tally Expert Program
-            </span>
+          {/* Badge overlays */}
+          <div className="float-badge-1 absolute top-[15%] right-[5%] z-20 flex items-center gap-3 rounded-xl border border-[var(--border-light)] bg-white/90 backdrop-blur-[12px] px-5 py-3 shadow-[var(--shadow-card)]">
+            <BarChart3 size={20} className="text-[var(--green-500)]" />
+            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "15px", color: "var(--text-primary)" }}>GST Certification</span>
           </div>
-          
-          <div className="badge-3 absolute top-[35%] md:top-[40%] -left-4 md:-left-[2%] lg:-left-[5%] bg-white/80 backdrop-blur-[12px] shadow-[var(--shadow-card)] border border-[var(--border-light)] rounded-[12px] py-2.5 px-4 flex items-center gap-2 pointer-events-auto hover:border-[var(--green-500)] transition-colors scale-90">
-            <CheckCircle2 size={16} className="text-[var(--green-600)]" />
-            <span className="font-sans font-semibold text-[12px] text-[var(--text-primary)] whitespace-nowrap hidden md:block">
-              Industry Recognized
-            </span>
-            <span className="font-sans font-semibold text-[12px] text-[var(--text-primary)] whitespace-nowrap md:hidden">
-              Recognized
-            </span>
+
+          <div className="float-badge-2 absolute bottom-[20%] left-[5%] z-20 flex items-center gap-3 rounded-xl border border-[var(--border-light)] bg-white/90 backdrop-blur-[12px] px-5 py-3 shadow-[var(--shadow-card)]">
+            <Trophy size={20} style={{ color: "var(--accent-gold)" }} />
+            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "15px", color: "var(--text-primary)" }}>Tally Expert Program</span>
+          </div>
+
+          <div className="float-badge-3 absolute left-[5%] top-[40%] z-20 flex items-center gap-2 rounded-xl border border-[var(--border-light)] bg-white/90 backdrop-blur-[12px] px-4 py-2 shadow-sm">
+            <CheckCircle size={16} className="text-[var(--green-500)]" />
+            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "13px", color: "var(--text-primary)" }}>Industry Recognized</span>
           </div>
 
         </div>
