@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -42,7 +42,7 @@ export default function TestimonialForm({ initialData, courses }: { initialData?
   const isEditing = !!initialData;
 
   const form = useForm<TestimonialFormValues>({
-    resolver: zodResolver(testimonialSchema),
+    resolver: zodResolver(testimonialSchema) as any,
     defaultValues: initialData ? {
       ...initialData,
       course_id: initialData.course_id || '',

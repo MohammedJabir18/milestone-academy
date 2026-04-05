@@ -77,7 +77,7 @@ export default function CourseForm({ course, isOpen, onClose, onSuccess }: Cours
   const [isPending, setIsPending] = useState(false);
 
   const form = useForm<CourseFormValues>({
-    resolver: zodResolver(courseSchema),
+    resolver: zodResolver(courseSchema) as any,
     defaultValues: {
       title: "",
       slug: "",

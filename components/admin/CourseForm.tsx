@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -140,7 +140,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
   }
 
   const form = useForm<CourseFormValues>({
-    resolver: zodResolver(courseSchema),
+    resolver: zodResolver(courseSchema) as any,
     defaultValues,
   });
 

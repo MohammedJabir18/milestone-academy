@@ -115,7 +115,7 @@ export default function CourseDetailClient({ course }: { course: Course }) {
                  <div className="w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center"><Star size={18} fill="currentColor" /></div>
                  <div>
                    <p className="font-mono text-[10px] text-[var(--text-secondary)] uppercase tracking-wider mb-0.5">Rating</p>
-                   <div className="flex items-center gap-1.5"><strong className="font-sans font-bold text-[15px]">{course.rating}</strong><span className="text-[12px] text-[var(--text-secondary)]">({course.reviewCount})</span></div>
+                   <div className="flex items-center gap-1.5"><strong className="font-sans font-bold text-[15px]">{course.rating}</strong><span className="text-[12px] text-[var(--text-secondary)]">({course.reviews})</span></div>
                  </div>
                </div>
             </div>

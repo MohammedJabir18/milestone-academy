@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -48,7 +48,7 @@ export default function NotificationForm({ initialData }: { initialData?: any })
   const isEditing = !!initialData;
 
   const form = useForm<NotificationFormValues>({
-    resolver: zodResolver(notificationSchema),
+    resolver: zodResolver(notificationSchema) as any,
     defaultValues: initialData ? {
       ...initialData,
       start_date: initialData.start_date ? format(new Date(initialData.start_date), 'yyyy-MM-dd') : '',
