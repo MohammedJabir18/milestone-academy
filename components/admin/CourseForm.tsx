@@ -8,19 +8,16 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { createBrowserClient } from "@supabase/ssr";
 import { 
-  Loader2, Plus, Trash2, ArrowUp, ArrowDown, X, ChevronDown, ChevronUp
 } from "lucide-react";
-import dynamic from "next/dynamic";
+import Image from "next/image";
+import { useDropzone } from "react-dropzone";
+import { useCallback } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-
-// Dynamic import for React-Quill to avoid SSR issues
-const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
-import "react-quill/dist/quill.snow.css";
 
 // Zod schema
 const courseSchema = z.object({
@@ -50,20 +47,13 @@ const courseSchema = z.object({
   is_published: z.boolean().default(true),
   is_trading: z.boolean().default(false),
   sort_order: z.number().default(0),
+  image_url: z.string().nullable().optional(),
 });
 
 type CourseFormValues = z.infer<typeof courseSchema>;
 
-// Quill modules
-const quillModules = {
-  toolbar: [
-    [{ header: [1, 2, 3, false] }],
-    ["bold", "italic", "underline"],
-    [{ list: "ordered" }, { list: "bullet" }],
-    ["link"],
-    ["clean"],
-  ],
-};
+// Quill modules removed due to React 19 incompatibility
+// const quillModules = {...}
 
 // --- Subcomponent: Tag Input ---
 function TagInput({ tags, onChange }: { tags: string[], onChange: (tags: string[]) => void }) {
@@ -116,6 +106,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const isEditing = !!initialData;
 
   // Transform initial data if editing
@@ -127,6 +118,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
     sort_order: 0,
     topics: [],
     modules: [],
+    image_url: null,
   };
 
   if (initialData) {
@@ -154,12 +146,65 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
 
   // Watch title to auto-generate slug (only if not editing)
   const title = watch("title");
+  const imageUrl = watch("image_url");
+
   useEffect(() => {
     if (!isEditing && title) {
       const generatedSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
       setValue("slug", generatedSlug, { shouldValidate: true });
     }
   }, [title, isEditing, setValue]);
+
+  // Image Upload Logic
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("File is larger than 5MB");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const tempId = isEditing ? initialData.id : crypto.randomUUID();
+      const path = `${tempId}/course-photo-${Date.now()}.jpg`;
+
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("bucket", "courses");
+      formData.append("path", path);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Upload failed");
+      }
+
+      const { url } = await res.json();
+      setValue("image_url", url, { shouldValidate: true });
+      toast.success("Course photo uploaded");
+    } catch (e: any) {
+      toast.error(e.message || "Failed to upload photo");
+    } finally {
+      setIsUploading(false);
+    }
+  }, [isEditing, initialData, setValue]);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: {
+      'image/jpeg': ['.jpeg', '.jpg'],
+      'image/png': ['.png'],
+      'image/webp': ['.webp']
+    },
+    maxFiles: 1,
+    multiple: false
+  });
 
   const onSubmit = async (data: CourseFormValues) => {
     setIsSubmitting(true);
@@ -193,6 +238,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
         is_published: data.is_published,
         is_trading: data.is_trading,
         sort_order: Number(data.sort_order),
+        image_url: data.image_url,
       };
 
       if (isEditing) {
@@ -241,15 +287,56 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
 
         <div className="space-y-2 py-2">
           <Label>Description</Label>
-          <div className="bg-white [&_.ql-container]:min-h-[150px] [&_.ql-container]:text-base [&_.ql-toolbar]:rounded-t-md [&_.ql-container]:rounded-b-md">
-            <Controller
-              control={control}
-              name="description"
-              render={({ field }) => (
-                <ReactQuill theme="snow" modules={quillModules} value={field.value} onChange={field.onChange} />
+          <Textarea 
+            {...register("description")} 
+            placeholder="Build your accounting foundation from scratch..."
+            rows={6}
+          />
+        </div>
+      </section>
+
+      {/* Course Image Upload */}
+      <section className="space-y-4">
+        <h3 className="text-lg font-semibold border-b pb-2">Course Image</h3>
+        <div 
+          {...getRootProps()} 
+          className={`
+            relative h-[240px] rounded-xl border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer overflow-hidden
+            ${isDragActive ? 'border-[var(--green-500)] bg-[var(--green-50)]' : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 hover:border-neutral-300'}
+          `}
+        >
+          <input {...getInputProps()} />
+          {imageUrl ? (
+            <>
+              <Image src={imageUrl} alt="Course Preview" fill className="object-cover" />
+              <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
+                <UploadCloud size={32} className="mb-2" />
+                <span className="text-sm font-bold">Replace Course Image</span>
+              </div>
+            </>
+          ) : (
+            <div className="text-center">
+              {isUploading ? (
+                <Loader2 className="animate-spin text-neutral-400" size={32} />
+              ) : (
+                <>
+                  <UploadCloud size={32} className="text-neutral-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-neutral-600">Drop course header image here or click</p>
+                  <p className="text-xs text-neutral-400 mt-1">Recommended 16:9 aspect ratio (Max 5MB)</p>
+                </>
               )}
-            />
-          </div>
+            </div>
+          )}
+          
+          {imageUrl && !isUploading && (
+            <button
+              type="button"
+              onClick={(e) => { e.stopPropagation(); setValue("image_url", null); }}
+              className="absolute top-3 right-3 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 shadow-lg z-20"
+            >
+              <X size={16} />
+            </button>
+          )}
         </div>
       </section>
 

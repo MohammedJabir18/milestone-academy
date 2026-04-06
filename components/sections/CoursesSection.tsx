@@ -210,7 +210,7 @@ export default function CoursesSection() {
                 const visibleArr = dbCourses.filter(c => activeTab === "All Programs" || (c.category && c.category.toLowerCase() === activeTab.toLowerCase()));
                 const isLastVisible = visibleArr[visibleArr.length - 1]?.id === course.id;
                 
-                const levelNum = course.sort_order || index + 1;
+                const levelNum = (course as any).sort_order || index + 1;
                 const shortCode = course.badge || course.title.substring(0, 4).toUpperCase();
                 
                 return (
