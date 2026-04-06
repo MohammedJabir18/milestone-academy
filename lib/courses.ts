@@ -26,6 +26,8 @@ export interface Course {
   description: string;
   whoIsItFor: string;
   modules: CourseModule[];
+  sort_order?: number;
+  image_url?: string | null;
 }
 
 export const COURSES: Course[] = [
