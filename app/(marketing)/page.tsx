@@ -7,19 +7,11 @@ import StatsSection from "@/components/sections/StatsSection";
 import CoursesSection from "@/components/sections/CoursesSection";
 import WhyUsSection from "@/components/sections/WhyUsSection";
 import CurriculumSection from "@/components/sections/CurriculumSection";
+import FacultySection from "@/components/sections/FacultySection";
 import TestimonialsSection from "@/components/sections/TestimonialsSection";
 import PlacementSection from "@/components/sections/PlacementSection";
 import CtaSection from "@/components/sections/CtaSection";
 import TradingTeaseSection from "@/components/sections/TradingTeaseSection";
-
-
-
-
-
-
-
-
-
 
 export default function Home() {
   return (
@@ -35,6 +27,7 @@ export default function Home() {
         <TradingTeaseSection />
         <WhyUsSection />
         <CurriculumSection />
+        <FacultySection />
         <TestimonialsSection />
         <PlacementSection />
         <CtaSection />

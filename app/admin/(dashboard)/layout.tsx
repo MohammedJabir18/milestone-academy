@@ -58,6 +58,7 @@ export default async function AdminDashboardLayout({
           
           <p className="px-4 text-[11px] font-bold text-stone-400 uppercase tracking-widest mt-10 mb-4">Settings</p>
           <NavItem icon={<Phone size={20} />} label="Contact Info" href="/admin/contact-info" />
+          <NavItem icon={<Users size={20} />} label="Faculty Team" href="/admin/faculty" />
           <NavItem icon={<Settings size={20} />} label="Site Config" href="/admin/settings" />
           <NavItem icon={<ShieldCheck size={20} />} label="Security" href="/admin/security" />
         </nav>

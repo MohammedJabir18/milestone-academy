@@ -1,778 +1,1044 @@
-# MILESTONE ACADEMY — MASTER CLAUDE.md
-## Awwwards-Winning Website — Full Project Memory
-## Last Updated: Always read this before every session.
+# MILESTONE FIN ACADEMY — MASTER CLAUDE.md (v2)
+## Updated: Spline Hero · Level Diplomas · Faculty · News & Media · Full Admin CMS
+## Place this file at: milestone-academy/CLAUDE.md
 
 ---
 
 ## 🎯 PROJECT OVERVIEW
 
-- **Brand:** Milestone Academy
-- **Brand Story:** Milestone started as a premier trading academy. Now expanded to include professional accounting & finance courses under the same brand. NOT a sister brand — ONE unified academy.
-- **Website Goal:** A jaw-dropping, Awwwards-winning, WOW-level website for accounting courses, with trading courses also highlighted as part of the same academy.
-- **Live Reference:** https://milestone-trading-academy.vercel.app/
-- **Stack Status:** [Update this as you build — e.g., "Hero done, Stats in progress"]
+- **Brand:** Milestone Fin Academy — ONE unified brand (not two separate institutes)
+- **Story:** Started as a trading academy. Expanded to professional accounting & finance diplomas.
+- **Website Goal:** Awwwards-winning, WOW-level. Every visitor says "WOW."
+- **Live Ref:** https://milestone-trading-academy.vercel.app/
 
 ---
 
 ## 🏗 BUILD STATUS TRACKER
 
 ```
-- [ ] Phase 1: Foundation (packages, globals, Lenis, data)
+- [ ] Phase 1: Foundation (packages, globals, Lenis, Supabase, data)
 - [ ] Phase 2: Global Shell (LoadingScreen, Cursor, Navbar, Footer)
-- [ ] Phase 3: Hero + Marquee + Stats
-- [ ] Phase 4: Courses + WhyUs + Curriculum
-- [ ] Phase 5: Testimonials + Placement + CTA + Trading Section
-- [ ] Phase 6: Pages (/courses, /about, /contact, /course/[slug])
-- [ ] Phase 7: Admin Panel (Full CMS)
-- [ ] Phase 8: Polish, Responsive, SEO, Deploy
+- [ ] Phase 3: Hero Section — Spline 3D (REPLACE old Three.js completely)
+- [ ] Phase 4: Marquee + Stats + Level-Based Courses (Timeline layout)
+- [ ] Phase 5: Faculty Section + Trading Section
+- [ ] Phase 6: News & Media Section + Testimonials + Placement + CTA
+- [ ] Phase 7: All Public Pages (/courses, /trading, /news, /about, /contact)
+- [ ] Phase 8: Admin Panel — Full CMS (courses+faculty+news+testimonials)
+- [ ] Phase 9: Polish, Responsive, SEO, Deploy
 ```
 
 ---
 
-## 🛠 TECH STACK — USE EXACTLY THESE
+## 🛠 TECH STACK
 
 ```
-Framework:        Next.js 14+ (App Router, TypeScript strict mode)
-Styling:          Tailwind CSS v3 + CSS custom properties in globals.css
-Animations:       GSAP 3 (ScrollTrigger, SplitText, Flip, DrawSVG)
-Smooth Scroll:    Lenis (@studio-freight/lenis) — connect to GSAP RAF
-3D Elements:      @splinetool/react-spline — Spline scenes in hero
-Components:       shadcn/ui (radix-ui primitives)
-Icons:            Lucide React + React Icons
-Fonts:            Instrument Serif (Google) + Syne (Google) + JetBrains Mono (Google)
-State:            Zustand (nav, modal, admin UI state)
-Forms:            React Hook Form + Zod
-Backend/DB:       Supabase (PostgreSQL + Auth + Storage + Realtime)
-Admin Auth:       Supabase Auth with RLS (Row Level Security)
-ORM:              Supabase JS client (no extra ORM needed)
-Image Storage:    Supabase Storage for logo, course images, avatars
-Email:            Resend (for enrollment inquiry notifications)
+Framework:      Next.js 14+ (App Router, TypeScript strict)
+Styling:        Tailwind CSS v3 + CSS custom properties in globals.css
+Animations:     GSAP 3 (ScrollTrigger, SplitText, DrawSVG, Flip)
+Smooth Scroll:  Lenis (@studio-freight/lenis) — connected to GSAP RAF
+3D Hero:        @splinetool/react-spline — PRIMARY (Spline design tool)
+Components:     shadcn/ui (radix-ui primitives)
+Icons:          Lucide React
+Fonts:          Instrument Serif + Syne + JetBrains Mono (Google Fonts)
+State:          Zustand
+Forms:          React Hook Form + Zod
+Backend/DB:     Supabase (PostgreSQL + Auth + Storage + Realtime)
+Admin Auth:     Supabase Auth with Next.js middleware route protection
+File Uploads:   react-dropzone (drag-and-drop for images/videos)
+Rich Text:      react-quill (admin post editor)
+Video Player:   react-player (YouTube/Vimeo/upload playback)
+Email:          Resend
+Toasts:         react-hot-toast
+Charts:         recharts (admin dashboard)
 ```
 
-### Install Command:
+### Install:
 ```bash
 npm install gsap @studio-freight/lenis @splinetool/react-spline \
-  framer-motion lucide-react react-icons zustand react-hook-form zod \
-  @hookform/resolvers clsx tailwind-merge class-variance-authority \
+  lucide-react zustand react-hook-form zod @hookform/resolvers \
+  clsx tailwind-merge class-variance-authority \
   @radix-ui/react-dialog @radix-ui/react-accordion @radix-ui/react-tabs \
   @radix-ui/react-tooltip @radix-ui/react-select @radix-ui/react-switch \
   @radix-ui/react-alert-dialog @radix-ui/react-dropdown-menu \
   split-type next-themes @supabase/supabase-js @supabase/auth-helpers-nextjs \
-  resend react-hot-toast react-quill date-fns recharts
+  resend react-hot-toast react-quill date-fns recharts \
+  react-dropzone react-player
+
+npx shadcn@latest init
+npx shadcn@latest add button card badge tabs accordion dialog tooltip \
+  select switch alert-dialog dropdown-menu table form input textarea label
 ```
 
 ---
 
-## 🎨 DESIGN SYSTEM
+## 🎨 DESIGN SYSTEM — globals.css
 
-### Color Palette — CSS Variables in globals.css:
 ```css
 :root {
-  /* === BACKGROUNDS === */
-  --bg-primary:    #F7F9F4;   /* Off-white with green tint — main page bg */
-  --bg-secondary:  #EDEFEA;   /* Subtle sage — alternate sections */
-  --bg-card:       #FFFFFF;   /* Pure white cards */
-  --bg-dark:       #0A1A0B;   /* Deep forest dark — dark sections */
-  --bg-dark-card:  #132015;   /* Dark card bg */
-  --bg-dark-glass: rgba(255,255,255,0.05); /* Glassmorphic on dark */
+  --bg-primary:    #F7F9F4;
+  --bg-secondary:  #EDEFEA;
+  --bg-card:       #FFFFFF;
+  --bg-dark:       #0A1A0B;
+  --bg-dark-card:  #132015;
+  --bg-dark-glass: rgba(255,255,255,0.05);
 
-  /* === GREEN SPECTRUM === */
   --green-50:   #F0F7F0;
   --green-100:  #D4EDD4;
   --green-200:  #A8D8A8;
   --green-300:  #6DBF6D;
   --green-400:  #3DA83D;
-  --green-500:  #2D9E44;   /* Primary brand green — matches logo */
-  --green-600:  #237A35;   /* Deeper action green */
+  --green-500:  #2D9E44;
+  --green-600:  #237A35;
   --green-700:  #1A5C28;
   --green-800:  #124019;
   --green-900:  #0A2810;
 
-  /* === ACCENT === */
-  --accent-gold:  #D4AF37;  /* Premium gold for badges */
-  --accent-mint:  #A8F5C2;  /* Soft mint for marquee/data text */
-  --accent-neon:  #39FF14;  /* Neon green — use on counters/stats sparingly */
+  --accent-gold: #D4AF37;
+  --accent-mint: #A8F5C2;
 
-  /* === TYPOGRAPHY === */
-  --text-primary:   #0A1A0B;  /* Near-black with green soul */
-  --text-secondary: #3A5C3C;  /* Muted forest green */
-  --text-muted:     #7A9B7C;  /* Soft sage text */
-  --text-inverse:   #F7F9F4;  /* Light text on dark bg */
+  --text-primary:   #0A1A0B;
+  --text-secondary: #3A5C3C;
+  --text-muted:     #7A9B7C;
+  --text-inverse:   #F7F9F4;
 
-  /* === BORDERS === */
   --border-light:  #D4E8D4;
   --border-medium: #A8C8A8;
 
-  /* === SHADOWS === */
   --shadow-green: 0 4px 40px rgba(45, 158, 68, 0.15);
   --shadow-card:  0 2px 20px rgba(10, 26, 11, 0.08);
   --shadow-lift:  0 20px 60px rgba(10, 26, 11, 0.18);
 
-  /* === GRADIENTS === */
   --gradient-hero:  linear-gradient(135deg, #F7F9F4 0%, #E8F5E9 50%, #F0FFF4 100%);
   --gradient-green: linear-gradient(135deg, #2D9E44 0%, #237A35 100%);
   --gradient-dark:  linear-gradient(180deg, #0A1A0B 0%, #132015 100%);
-  --gradient-glow:  radial-gradient(ellipse at center, rgba(45,158,68,0.15) 0%, transparent 70%);
+  --gradient-glow:  radial-gradient(ellipse at center, rgba(45,158,68,0.18) 0%, transparent 70%);
 
-  /* === SPACING === */
-  --section-pad: 120px 0;
-  --container:   1280px;
-
-  /* === BORDER RADIUS === */
-  --r-sm:   8px;
-  --r-md:   16px;
-  --r-lg:   24px;
-  --r-xl:   40px;
-  --r-pill: 100px;
+  --r-sm: 8px; --r-md: 16px; --r-lg: 24px; --r-xl: 40px; --r-pill: 100px;
 }
 ```
 
-### Typography:
+### Fonts:
 ```
-Display/Headline:  "Instrument Serif" — editorial serif for hero, section heads
-Body/UI:           "Syne" — modern geometric sans for nav, body, labels
-Mono/Numbers:      "JetBrains Mono" — for stats, prices, code-style accents
-
-Scale:
-  Hero headline:    96px / Instrument Serif / weight 400 (italic for accent word)
-  Section headline: 64px / Instrument Serif
-  Sub-headline:     40px / Syne Bold
-  Body large:       20px / Syne Regular
-  Body:             16px / Syne Regular
-  Label:            12px / JetBrains Mono / letter-spacing 0.15em / UPPERCASE
-  Stat number:      72px / JetBrains Mono Bold
-  Price:            28px / JetBrains Mono SemiBold
+Instrument Serif (400, 400 italic) — headlines, editorial text
+Syne (400, 500, 600, 700) — nav, body, labels
+JetBrains Mono (400, 600, 700) — numbers, stats, codes, badges
 ```
 
 ---
 
-## 🖼 LOGO USAGE — RULES FOR THE AGENT
+## 🖼 LOGO RULES
 
-Two logo files are available in `/public/logos/`:
-- `milestone-logo-dark.png` — White wordmark on dark background
-- `milestone-logo-light.png` — Black wordmark on white/light background
+Files in `/public/logos/`:
+- `milestone-logo-dark.png` — white wordmark (for dark backgrounds)
+- `milestone-logo-light.png` — dark wordmark (for light backgrounds)
 
-The logo has:
-- Square icon with green bar chart (candlestick-style bars — 2 green vertical bars)
-- "Milestone" wordmark — bold sans-serif
-- The "il" in "Milestone" uses the two green bars as the letters
-
-### Agent Logo Selection Rules:
 ```
-Dark section (bg-dark, bg-dark-card):     → use milestone-logo-dark.png  (white version)
-Light section (bg-primary, bg-card):      → use milestone-logo-light.png (dark version)
-Navbar (transparent → scrolled frosted):  → use milestone-logo-light.png (dark text shows on light)
-Footer:                                   → use milestone-logo-dark.png  (white version)
-Loading screen:                           → use milestone-logo-dark.png  (on dark bg)
-OG image / meta:                          → use milestone-logo-light.png
+Loading screen (dark):   → milestone-logo-dark.png
+Navbar (light/frosted):  → milestone-logo-light.png
+Hero section (light bg): → milestone-logo-light.png
+Footer (dark):           → milestone-logo-dark.png
+Admin sidebar (dark):    → milestone-logo-dark.png
 ```
 
-### Logo Implementation in Next.js:
+Logo component: `components/global/Logo.tsx`
+Props: `variant: "dark" | "light"`, `width: number`
+Use Next.js `<Image>` with `priority` for navbar + loading screen.
+
+---
+
+## 🎲 HERO SECTION — FULL SPLINE REBUILD
+
+### ⚠️ SCRAP THE CURRENT HERO COMPLETELY. Build this new Spline version.
+
+### The Problem with Current Hero:
+The uploaded screenshot shows a flat dark hexagon + two green dots. It looks like a basic CSS shape, not Awwwards quality. We need immersive, premium, real 3D.
+
+### New Hero Architecture:
+```
+Layout: FULL BLEED — Spline fills entire right portion of screen
+        Content overlaid as HTML layer (z-10) on left
+        No two-column grid constraint — the 3D bleeds edge-to-edge
+
+Background: var(--gradient-hero) as base
+Spline: absolute, right 0, top 0, width 65%, height 100%
+Left-to-right gradient fade: overlays the Spline on the left edge
+  (linear-gradient: bg-primary at 40% → transparent at 70%)
+  This blends Spline seamlessly into the content area
+```
+
+### Spline Scene — What to Build/Find:
+```
+Go to https://app.spline.design/community and search:
+  Keywords: "finance" / "data" / "abstract green" / "crystal" / "sphere gradient"
+
+IDEAL SCENE CHARACTERISTICS:
+  ✓ Dark atmospheric environment (#0A1A0B base)
+  ✓ Abstract 3D geometry — NOT a plain box/hexagon
+    Best options: floating polyhedra, abstract curved surfaces, 
+    data visualization shapes, crystal formations, sphere clusters
+  ✓ Green accent lighting: rim light, glow halos in #2D9E44
+  ✓ Animated: slow rotation, particle trails, pulsing glow
+  ✓ Mouse interactivity: follow-cursor or orbit built into Spline
+  ✓ Premium material: metallic, glass, or iridescent surface
+
+TO USE IN CODE:
+  1. Find/create a Spline scene at spline.design
+  2. Click "Export" → "Viewer" → copy the scene URL
+  3. Use: <Spline scene="https://prod.spline.design/{ID}/scene.splinecode" />
+  4. If no URL available at build time, use placeholder URL + comment:
+     // TODO: Replace SPLINE_SCENE_URL with actual published Milestone scene
+
+IMPORTANT: Add error boundary + Suspense around Spline.
+If Spline fails to load → show HeroFallback (CSS animated scene, see below).
+```
+
+### HeroFallback — CSS-Only Premium Alternative:
 ```tsx
-// components/global/Logo.tsx
-import Image from "next/image";
-type LogoVariant = "dark" | "light";
+// components/sections/HeroFallback.tsx
+// Renders when Spline fails or on slow connections
 
-export function Logo({ variant = "light", width = 180, className = "" }: {
-  variant?: LogoVariant; width?: number; className?: string;
-}) {
-  return (
-    <Image
-      src={variant === "dark" ? "/logos/milestone-logo-dark.png" : "/logos/milestone-logo-light.png"}
-      alt="Milestone Academy"
-      width={width}
-      height={Math.round(width * 0.22)}
-      className={className}
-      priority
-    />
-  );
-}
+// Visual elements (pure CSS, zero JavaScript):
+// 1. Background: dark gradient overlay on right 65% (--bg-dark to transparent)
+// 2. Large pulsing orb: 500px circle, radial gradient green/50 transparent
+//    animation: pulse 4s ease-in-out infinite (opacity 0.3 → 0.8)
+// 3. Rotating outer ring: 450px, border 1px green-500/20, rotate 30s linear
+// 4. Counter-rotating inner ring: 300px, border 1px green-500/30, rotate -20s linear
+// 5. Orbiting dot: 14px green circle on ring circumference, orbit CSS animation
+// 6. Grid pattern: CSS bg-image grid lines (green 5% opacity, 60px spacing)
+// 7. Three floating data chips (staggered CSS animation delays):
+//    "₹30,000 Average Salary Hike" / "96% Placement" / "4,800+ Students"
+//    Style: frosted glass pill, white bg/80, backdrop-blur, JetBrains Mono
+
+// This fallback must still look IMPRESSIVE — better than current Three.js
+```
+
+### Hero HTML Content (overlaid on Spline, z-10):
+```
+Container: max-w-[1280px] mx-auto px-6, absolute z-10
+           left-aligned content, max-width 520px on left
+
+[PILL BADGE] (mb-6):
+  bg var(--green-500)/12, border 1px var(--green-500)/25
+  rounded-full, px-5 py-2, inline-flex gap-2 items-center
+  "✦ India's Premier Accounting Academy"
+  Syne 12px, text-[var(--green-600)], letter-spacing 0.05em
+  Entrance: scale 0→1, spring ease, delay 0.25s
+
+[HEADLINE] (Instrument Serif, clamp(58px, 7.5vw, 96px), line-height 1.0):
+  "Master the"    → text-[var(--text-primary)]
+  "Language of"   → text-[var(--text-primary)]
+  "Business."     → text-[var(--green-500)], italic
+                     text-decoration: underline 3px solid var(--green-500)/25
+
+  Each line: wrapped in overflow:hidden div
+  GSAP: y:"110%" → 0, stagger 0.12s, duration 0.9s, power4.out
+  class="gsap-heading"
+
+[SUBTEXT] (mt-6, Syne 18px, text-secondary, max-w-[440px], leading-[1.65]):
+  "From Tally to Taxation, GST to Financial Analytics —
+  Milestone Fin Academy turns ambition into expertise,
+  one certified professional at a time."
+  Entrance: y:30 → 0, opacity 0→1, delay 0.85s
+
+[CTA ROW] (mt-10, flex gap-4):
+  Primary: "Explore Programs →"
+    bg var(--gradient-green), white, Syne SemiBold 15px
+    px-9 py-4, rounded-full, class="magnetic"
+    Hover: translateY(-2px), shadow-[var(--shadow-green)], scale(1.03)
+    Click ripple: expanding ring animation
+
+  Secondary: "Watch Demo ▶"
+    border 1.5px var(--border-medium), bg transparent
+    Syne SemiBold 15px, px-9 py-4, rounded-full, class="magnetic"
+    Play icon: 2 expanding ring CSS pulse (opacity 1→0, scale 1→2.5, 2s loop)
+    Hover: border var(--green-400), text var(--green-600), bg var(--green-50)
+
+[SOCIAL PROOF ROW] (mt-8, flex items-center gap-6):
+  5 colored-initial avatar circles (38px, -10px overlap, border-2 white)
+  "4,800+ Students Enrolled" Syne SemiBold 13px
+  │ 1px vertical line h-5
+  "★★★★★ 4.9/5 Rating" (gold stars, Syne 13px)
+
+[SCROLL INDICATOR] (absolute bottom-8 left-6):
+  "SCROLL" JetBrains Mono 10px, text-muted, tracking-[0.3em], vertical text
+  Thin 40px line below, animated: GSAP y oscillation (0↔12px, 1.5s loop)
+
+[FLOATING BADGE CARDS] (absolute z-20, overlaid on Spline area):
+  3 frosted glass cards floating in the Spline area:
+  
+  Card style: bg white/88, backdrop-blur-md, border border-[var(--border-light)]
+    rounded-2xl, px-5 py-3, flex items-center gap-3
+    box-shadow: var(--shadow-card)
+  
+  Icon circle: 36px, bg var(--green-50), rounded-full, centered icon 16px green-600
+  Text: Syne SemiBold 13px, text-primary
+  
+  Card 1 (top-right of 3D area): BarChart3 icon | "GST Certification"
+    GSAP float: y 0→-14px→0, 3.2s ease-in-out infinite, yoyo
+  
+  Card 2 (middle area): CheckCircle icon | "Industry Recognized"
+    GSAP float: delay 1.1s, 3.8s duration
+  
+  Card 3 (bottom area): Trophy icon | "Tally Expert Program"
+    GSAP float: delay 0.7s, 4.2s duration
+  
+  All cards entrance: scale 0→1, opacity 0→1, spring ease, stagger 0.9/1.2/1.5s
 ```
 
 ---
 
-## 🎲 3D HERO ANIMATION — SPLINE SPECIFICATION
+## 📚 COURSES — 4-LEVEL DIPLOMA SYSTEM
 
-### What to Build (reference: uploaded screenshot shows dark 3D scene with hexagonal/cube shapes):
+### ⚠️ These are the ONLY courses. No invented courses. Based on PDF curriculum.
 
-The hero's right-side 3D element must be an **abstract 3D accounting-themed scene**. Options for Spline scene (Claude Code should implement whichever is achievable with @splinetool/react-spline):
-
-**Option A — Preferred: Floating 3D Financial Dashboard**
-- Dark background scene (#0A1A0B)
-- Central element: A smooth 3D geometric shape (hexagonal prism or rounded cube, dark charcoal color, metallic surface material)
-- Floating around it: 3 small glowing green bar chart icons, animated orbit paths
-- Green laser-thin lines connecting the shapes (like the screenshot's colored lines)
-- Subtle particle system: tiny glowing dots floating upward
-- Lighting: Green rim light from below-left, subtle white fill from top
-
-**Option B — Fallback CSS/Three.js implementation** (if Spline unavailable):
-```tsx
-// Build a Three.js scene with:
-// - Rotating dark hexagonal prism (Three.js CylinderGeometry, 6 sides)
-// - Green wireframe overlay pulsing opacity 0.3 → 0.8
-// - 3 orbiting small spheres on elliptical paths (green-400, emissive)
-// - Floating green particles (200 points, random positions, slow drift up)
-// - Thin colored laser lines (LineSegments) — green, with one blue and one red accent
-// - Point light: green (#2D9E44) from left, ambient white low intensity
-// - Responsive: resize handler, devicePixelRatio support
-// - Render loop with requestAnimationFrame
+### Diploma Level Names:
+```
+Level 1: Diploma in Accounting & Business Systems          (DABS)
+Level 2: Diploma in UAE Taxation & Compliance              (DUTC)
+Level 3: Postgraduate Diploma in Accounting & Financial Analytics (PGDAFA)
+Level 4: Executive Master Diploma in Accounting & Taxation (EMDAT)
 ```
 
-**Floating Badge Cards** (overlaid on top of the 3D scene, absolute positioned):
-```
-Card 1 (top-right of 3D area):
-  Icon: bar chart (Lucide BarChart3, 20px, green-500)
-  Text: "GST Certification"
-  Style: bg white/90, backdrop-blur 12px, border 1px border-light, 
-         border-radius 12px, padding 12px 20px, box-shadow shadow-card
-  Animation: float up-down 3s ease-in-out infinite
-
-Card 2 (bottom-left of 3D area):
-  Icon: trophy (Lucide Trophy, 20px, --accent-gold)
-  Text: "Tally Expert Program"
-  Style: same glassmorphic style
-  Animation: float delayed 1.5s
-
-Card 3 (center-left, smaller):
-  Icon: check-circle (Lucide CheckCircle, 16px, green-500)
-  Text: "Industry Recognized"
-  Style: slightly smaller
-  Animation: float delayed 0.8s
-```
-
----
-
-## 📦 COURSES — FROM CURRICULUM PDF (ONLY THESE 4 PACKAGES)
-
-### ⚠️ IMPORTANT: Use ONLY these 4 packages. No invented courses.
-
+### Course Data — lib/courses.ts (TypeScript):
 ```typescript
-// lib/courses.ts
+export interface Module { title: string; topics: string[]; }
 
-export const COURSES = [
+export interface Course {
+  id: string;
+  slug: string;
+  level: 1 | 2 | 3 | 4;
+  level_label: string;
+  diploma_code: "DABS" | "DUTC" | "PGDAFA" | "EMDAT";
+  title: string;
+  short_title: string;
+  tagline: string;
+  badge: string;
+  badge_color: "green" | "gold" | "dark";
+  duration: string;
+  price: number | null;               // null = contact for pricing
+  original_price: number | null;
+  emi: string | null;
+  skill_level: string;
+  category: "accounting" | "taxation" | "advanced";
+  icon: string;                       // Lucide icon name
+  gradient: string;
+  rating: number;
+  review_count: number;
+  enrolled_count: number;
+  image_url: string | null;           // Admin-uploaded banner image
+  gallery_images: string[];           // Admin-uploaded gallery
+  topics: string[];
+  highlights: string[];
+  who_is_it_for: string;
+  modules: Module[];
+  is_published: boolean;
+  sort_order: number;
+}
+
+export const COURSES: Course[] = [
   {
-    id: "basic-package",
-    slug: "basic-package",
-    title: "Basic Package",
-    tagline: "Your first step into professional accounting",
-    badge: "STARTER",
-    badgeColor: "green",
-    duration: "3 Months",
-    price: 30000,
-    originalPrice: 38000,
-    emi: "₹10,000/month",
-    level: "Beginner",
-    category: "accounting",
-    icon: "BookOpen",
-    gradient: "linear-gradient(135deg, #2D9E44, #4ADE80)",
-    rating: 4.8,
-    reviews: 142,
-    enrolled: 1240,
-    topics: [
-      "Manual Accounting",
-      "Tally Prime",
-      "Microsoft Word",
-      "Microsoft Excel",
-      "Microsoft PowerPoint",
-      "Trading Fundamentals"
-    ],
-    highlights: [
-      "Hands-on Tally Prime practice",
-      "Real-world accounting entries",
-      "MS Office for finance professionals",
-      "Introduction to trading concepts",
-      "Course completion certificate"
-    ],
-    description: "Build your accounting foundation from scratch. Master manual bookkeeping, Tally Prime, MS Office tools, and get an introduction to trading — everything a fresh accounting professional needs.",
-    whoIsItFor: "Freshers, students, and career-changers entering the accounting profession",
+    id: "dabs", slug: "diploma-accounting-business-systems",
+    level: 1, level_label: "Level 1", diploma_code: "DABS",
+    title: "Diploma in Accounting & Business Systems",
+    short_title: "Accounting & Business Systems",
+    tagline: "Your gateway into professional accounting",
+    badge: "STARTER", badge_color: "green", duration: "3 Months",
+    price: 30000, original_price: 38000, emi: "₹10,000/month",
+    skill_level: "Beginner", category: "accounting", icon: "BookOpen",
+    gradient: "linear-gradient(135deg, #2D9E44 0%, #4ADE80 100%)",
+    rating: 4.8, review_count: 142, enrolled_count: 1240,
+    image_url: null, gallery_images: [],
+    topics: ["Manual Accounting", "Tally Prime", "MS Word", "MS Excel", "MS PowerPoint", "Trading Fundamentals"],
+    highlights: ["Hands-on Tally Prime with real company data", "Manual bookkeeping from scratch", "MS Office for finance professionals", "Trading fundamentals included", "Industry certificate on completion"],
+    who_is_it_for: "Freshers, students, and career-changers entering the accounting profession",
     modules: [
-      { title: "Manual Accounting Fundamentals", topics: ["Accounting concepts", "Double-entry system", "Trial balance", "Journal & ledger", "Financial statements"] },
-      { title: "Tally Prime Mastery", topics: ["Company setup", "Voucher entries", "Bank reconciliation", "Inventory basics", "Reports & MIS"] },
-      { title: "MS Office for Finance", topics: ["Excel formulas for accounts", "Word for business letters", "PowerPoint presentations"] },
-      { title: "Trading Introduction", topics: ["Stock market basics", "Reading charts", "Trading terminology"] }
-    ]
+      { title: "Manual Accounting Fundamentals", topics: ["Accounting concepts & principles", "Double-entry bookkeeping", "Trial balance preparation", "Journal & ledger maintenance", "Financial statements overview"] },
+      { title: "Tally Prime Core", topics: ["Company setup & configuration", "Voucher entry types", "Bank reconciliation", "Inventory management basics", "MIS reports generation"] },
+      { title: "MS Office for Finance", topics: ["Excel: formulas, functions, formatting", "Word: business letters & reports", "PowerPoint: finance presentations"] },
+      { title: "Trading Introduction", topics: ["Stock market overview", "Reading price charts", "Trading terminology glossary"] }
+    ],
+    is_published: true, sort_order: 1
   },
   {
-    id: "short-term-tax",
-    slug: "short-term-tax-software-package",
-    title: "Short-Term Tax & Software Package",
-    tagline: "Master UAE & Indian taxation fast",
-    badge: "FAST-TRACK",
-    badgeColor: "gold",
-    duration: "2 Months",
-    price: 37000,
-    originalPrice: 46000,
-    emi: "₹18,500/month",
-    level: "Intermediate",
-    category: "taxation",
-    icon: "FileText",
-    gradient: "linear-gradient(135deg, #1A5C28, #2D9E44)",
-    rating: 4.9,
-    reviews: 98,
-    enrolled: 876,
-    topics: [
-      "Manual Accounting",
-      "Tally Prime",
-      "Zoho Books",
-      "UAE VAT & VAT Filing",
-      "UAE Corporate Tax & Filing",
-      "Trading"
-    ],
-    highlights: [
-      "UAE VAT filing on FTA portal",
-      "UAE Corporate Tax compliance",
-      "Zoho Books cloud accounting",
-      "Dual India & UAE expertise",
-      "High-demand Gulf job skills"
-    ],
-    description: "Designed for professionals targeting Gulf/UAE markets. Master UAE VAT, Corporate Tax filing, Zoho Books, and Tally — become the go-to accounting expert for Indian businesses operating in the UAE.",
-    whoIsItFor: "Accounting professionals targeting UAE/Gulf job market, expats, and finance teams of India-UAE businesses",
+    id: "dutc", slug: "diploma-uae-taxation-compliance",
+    level: 2, level_label: "Level 2", diploma_code: "DUTC",
+    title: "Diploma in UAE Taxation & Compliance",
+    short_title: "UAE Taxation & Compliance",
+    tagline: "Unlock Gulf market opportunities",
+    badge: "GULF READY", badge_color: "gold", duration: "2 Months",
+    price: 37000, original_price: 46000, emi: "₹18,500/month",
+    skill_level: "Intermediate", category: "taxation", icon: "FileText",
+    gradient: "linear-gradient(135deg, #1A5C28 0%, #2D9E44 100%)",
+    rating: 4.9, review_count: 98, enrolled_count: 876,
+    image_url: null, gallery_images: [],
+    topics: ["Manual Accounting", "Tally Prime", "Zoho Books", "UAE VAT & Filing", "UAE Corporate Tax & Filing", "Trading"],
+    highlights: ["Live UAE VAT return filing on FTA portal", "UAE Corporate Tax — registration to filing", "Zoho Books cloud accounting mastery", "India + UAE dual taxation expertise", "High-demand Gulf job market skills"],
+    who_is_it_for: "Accounting professionals targeting UAE/Gulf job market, expats, and finance teams of India-UAE businesses",
     modules: [
-      { title: "Manual Accounting", topics: ["Fundamentals refresher", "UAE business accounting standards"] },
-      { title: "Tally Prime for UAE", topics: ["UAE company setup", "Multi-currency entries", "VAT-enabled vouchers"] },
-      { title: "Zoho Books", topics: ["Cloud accounting setup", "Invoicing & payments", "Bank feeds", "Reports"] },
-      { title: "UAE VAT", topics: ["VAT registration", "Tax invoice requirements", "VAT return filing on FTA portal", "Input tax credit"] },
-      { title: "UAE Corporate Tax", topics: ["CT registration", "Taxable income computation", "CT return filing", "Free zone exemptions"] },
-      { title: "Trading", topics: ["UAE market overview", "Trading concepts"] }
-    ]
+      { title: "UAE Business Accounting", topics: ["UAE accounting standards overview", "Multi-currency accounting entries", "Tally Prime for UAE companies"] },
+      { title: "Zoho Books Mastery", topics: ["Cloud accounting setup", "Invoicing & payment management", "Bank feeds & reconciliation", "Financial reports in Zoho"] },
+      { title: "UAE VAT Complete", topics: ["VAT registration process", "Tax invoice requirements", "VAT return filing on FTA portal", "Input tax credit reconciliation", "VAT refund procedure"] },
+      { title: "UAE Corporate Tax", topics: ["CT registration on EmaraTax", "Taxable income computation", "Corporate Tax return filing", "Free zone CT exemptions", "Transfer pricing basics"] },
+      { title: "Trading in UAE Context", topics: ["UAE financial market overview", "Trading concepts for UAE investors"] }
+    ],
+    is_published: true, sort_order: 2
   },
   {
-    id: "intermediate-package",
-    slug: "intermediate-package",
-    title: "Intermediate Package",
-    tagline: "Complete accounting + GST + analytics mastery",
-    badge: "BESTSELLER",
-    badgeColor: "green",
-    duration: "5 Months",
-    price: 45000,
-    originalPrice: 58000,
-    emi: "₹9,000/month",
-    level: "Intermediate → Advanced",
-    category: "accounting",
-    icon: "TrendingUp",
-    gradient: "linear-gradient(135deg, #0A2810, #2D9E44)",
-    rating: 4.9,
-    reviews: 215,
-    enrolled: 1820,
-    topics: [
-      "Manual Accounting",
-      "Tally Prime",
-      "GST & Filing",
-      "Microsoft Word",
-      "Microsoft Excel (Advanced)",
-      "Microsoft PowerPoint",
-      "Zoho Books",
-      "Power BI",
-      "Trading"
-    ],
-    highlights: [
-      "Live GST return filing (GSTR-1, GSTR-3B)",
-      "Power BI dashboards for finance",
-      "Advanced Excel (pivot tables, VLOOKUP, macros)",
-      "Zoho Books + Tally dual expertise",
-      "Most comprehensive package",
-      "Placement assistance included"
-    ],
-    description: "The most comprehensive accounting program at Milestone. From manual bookkeeping to GST filing, from Tally to Zoho, from Excel to Power BI dashboards — graduate as a complete, job-ready finance professional.",
-    whoIsItFor: "Professionals seeking complete accounting mastery, those targeting corporate finance roles, and anyone wanting a thorough skillset",
+    id: "pgdafa", slug: "postgraduate-diploma-accounting-financial-analytics",
+    level: 3, level_label: "Level 3", diploma_code: "PGDAFA",
+    title: "Postgraduate Diploma in Accounting & Financial Analytics",
+    short_title: "Accounting & Financial Analytics",
+    tagline: "Complete accounting + analytics mastery",
+    badge: "BESTSELLER", badge_color: "green", duration: "5 Months",
+    price: 45000, original_price: 58000, emi: "₹9,000/month",
+    skill_level: "Intermediate → Advanced", category: "accounting", icon: "TrendingUp",
+    gradient: "linear-gradient(135deg, #0A2810 0%, #2D9E44 100%)",
+    rating: 4.9, review_count: 215, enrolled_count: 1820,
+    image_url: null, gallery_images: [],
+    topics: ["Manual Accounting", "Tally Prime", "GST & Filing", "MS Excel Advanced", "MS PowerPoint", "Zoho Books", "Power BI", "Trading"],
+    highlights: ["Live GST filing — GSTR-1, GSTR-3B hands-on", "Power BI finance dashboards from scratch", "Advanced Excel: pivot tables, VLOOKUP, macros", "Zoho Books + Tally dual expertise", "Most popular program — 1,820+ alumni enrolled"],
+    who_is_it_for: "Professionals seeking complete accounting mastery and targeting corporate finance roles",
     modules: [
-      { title: "Manual Accounting", topics: ["Complete accounting cycle", "Financial statements", "Ratio analysis"] },
-      { title: "Tally Prime (Advanced)", topics: ["Advanced inventory", "Payroll", "TDS in Tally", "Multi-branch", "GST in Tally"] },
-      { title: "GST Mastery", topics: ["GST registration", "HSN/SAC codes", "GSTR-1 filing", "GSTR-3B filing", "ITC reconciliation", "Annual return"] },
-      { title: "MS Office Advanced", topics: ["Excel: VLOOKUP, HLOOKUP, pivot tables, macros, conditional formatting", "Word & PowerPoint for finance"] },
-      { title: "Zoho Books", topics: ["Complete cloud accounting", "Automation workflows", "Financial reports"] },
-      { title: "Power BI", topics: ["Data import & modeling", "DAX formulas", "Finance dashboards", "Interactive reports"] },
-      { title: "Trading", topics: ["Technical analysis basics", "Chart reading", "Risk management"] }
-    ]
+      { title: "Advanced Manual Accounting", topics: ["Complete accounting cycle", "Financial statement preparation", "Ratio analysis & interpretation", "Bank & credit reconciliation"] },
+      { title: "Tally Prime Advanced", topics: ["Payroll processing in Tally", "TDS & TCS management", "GST in Tally — all returns", "Multi-branch company setup", "Advanced inventory management"] },
+      { title: "Indian GST Mastery", topics: ["GST registration & amendments", "HSN/SAC code classification", "GSTR-1 preparation & filing", "GSTR-3B filing & ITC claim", "Annual return GSTR-9", "E-invoicing & E-way bill"] },
+      { title: "Advanced Excel for Finance", topics: ["VLOOKUP, HLOOKUP, INDEX/MATCH", "Pivot tables & pivot charts", "Financial formulas & functions", "Macro recording & VBA basics", "Financial modeling templates"] },
+      { title: "Zoho Books Advanced", topics: ["Complete cloud accounting workflow", "Automation & recurring transactions", "Multi-user access management", "Comprehensive financial reports"] },
+      { title: "Power BI for Finance", topics: ["Data import & transformation", "DAX formula writing", "Building interactive dashboards", "Executive finance reports", "Publishing & sharing reports"] },
+      { title: "Trading Fundamentals", topics: ["Technical analysis basics", "Candlestick chart reading", "Risk & money management"] }
+    ],
+    is_published: true, sort_order: 3
   },
   {
-    id: "comprehensive-package",
-    slug: "comprehensive-package",
-    title: "Comprehensive Package",
-    tagline: "The ultimate accounting & finance mastery program",
-    badge: "ULTIMATE",
-    badgeColor: "gold",
-    duration: "7 Months",
-    price: null, // Price not listed — "Contact for pricing"
-    originalPrice: null,
-    emi: null,
-    level: "All Levels → Expert",
-    category: "advanced",
-    icon: "Award",
-    gradient: "linear-gradient(135deg, #0A1A0B, #1A5C28)",
-    rating: 5.0,
-    reviews: 67,
-    enrolled: 520,
-    topics: [
-      "Manual Accounting",
-      "Tally Prime",
-      "GST & Filing",
-      "UAE VAT & Filing",
-      "UAE Corporate Tax & Filing",
-      "Microsoft Excel (Advanced)",
-      "Power BI",
-      "Microsoft PowerPoint",
-      "Zoho Books",
-      "QuickBooks (QB)",
-      "Microsoft Word",
-      "Trading"
-    ],
-    highlights: [
-      "Everything in all other packages",
-      "UAE + India dual taxation expertise",
-      "QuickBooks + Zoho + Tally triple proficiency",
-      "Power BI advanced dashboards",
-      "Maximum career opportunities",
-      "Priority placement assistance",
-      "Dedicated mentor support"
-    ],
-    description: "The pinnacle of accounting education. Master every tool, every tax system, every software used in modern finance — across India and UAE. This is the program for those who want to be the best.",
-    whoIsItFor: "Ambitious professionals aiming for senior finance roles, those targeting India + UAE markets, aspiring CFOs and finance managers",
+    id: "emdat", slug: "executive-master-diploma-accounting-taxation",
+    level: 4, level_label: "Level 4", diploma_code: "EMDAT",
+    title: "Executive Master Diploma in Accounting & Taxation",
+    short_title: "Executive Accounting & Taxation",
+    tagline: "The pinnacle of financial education",
+    badge: "ULTIMATE", badge_color: "dark", duration: "7 Months",
+    price: null, original_price: null, emi: null,
+    skill_level: "All Levels → Expert", category: "advanced", icon: "Award",
+    gradient: "linear-gradient(135deg, #0A1A0B 0%, #1A5C28 50%, #2D9E44 100%)",
+    rating: 5.0, review_count: 67, enrolled_count: 520,
+    image_url: null, gallery_images: [],
+    topics: ["Manual Accounting", "Tally Prime", "GST & Filing", "UAE VAT & Filing", "UAE Corporate Tax & Filing", "Advanced Excel", "Power BI", "Zoho Books", "QuickBooks", "MS Word", "Trading Complete"],
+    highlights: ["Complete curriculum — all 4 levels combined", "India + UAE dual taxation mastery", "QuickBooks + Zoho + Tally triple proficiency", "Power BI advanced analytics suite", "Priority placement — direct HR referrals", "1-on-1 dedicated mentor sessions"],
+    who_is_it_for: "Ambitious professionals targeting CFO, Finance Manager, or senior consulting roles across India and UAE",
     modules: [
-      { title: "Complete Manual Accounting", topics: ["Advanced bookkeeping", "IFRS & IndAS basics", "Audit trail"] },
-      { title: "Tally Prime Expert", topics: ["All Tally features", "Customization", "Advanced reporting"] },
-      { title: "Indian GST Complete", topics: ["All GSTR forms", "E-invoicing", "E-way bill", "GST audit"] },
-      { title: "UAE Taxation Complete", topics: ["VAT registration to filing", "Corporate tax end-to-end", "FTA portal mastery"] },
-      { title: "Advanced Excel + Power BI", topics: ["Financial modeling", "Power Query", "Advanced DAX", "Executive dashboards"] },
-      { title: "Triple Software: Zoho + QB + Tally", topics: ["Zoho Books advanced", "QuickBooks Desktop & Online", "Cross-platform workflow"] },
-      { title: "MS Office Complete", topics: ["Excel, Word, PowerPoint for finance professionals"] },
-      { title: "Trading Complete", topics: ["Full trading course", "Portfolio management", "Investment analysis"] }
-    ]
+      { title: "Complete Manual Accounting Mastery", topics: ["Advanced bookkeeping techniques", "IFRS & IndAS comparative overview", "Internal audit trail management"] },
+      { title: "Tally Prime Expert Level", topics: ["All Tally features & customization", "Advanced reporting & data export", "Tally integration with other tools"] },
+      { title: "Indian GST — End to End", topics: ["All GSTR forms mastered", "E-invoicing mandatory compliance", "E-way bill generation & management", "GST audit readiness & documentation"] },
+      { title: "UAE Taxation Complete", topics: ["UAE VAT: registration to annual filing", "UAE Corporate Tax: full filing workflow", "FTA portal complete mastery", "Penalty avoidance strategies"] },
+      { title: "Advanced Analytics Suite", topics: ["Excel financial modeling", "Power Query & Power Pivot", "Advanced DAX functions", "C-suite executive dashboards"] },
+      { title: "Triple Software Mastery", topics: ["Zoho Books: advanced features & automation", "QuickBooks Desktop & QuickBooks Online", "Cross-platform accounting workflows"] },
+      { title: "Complete Trading Program", topics: ["Full technical analysis curriculum", "Options & derivatives fundamentals", "Portfolio management strategies", "Investment analysis & valuation"] }
+    ],
+    is_published: true, sort_order: 4
   }
 ];
 ```
 
 ---
 
-## 🏦 TRADING SECTION — HOW TO PRESENT IT
+## 🎨 COURSES SECTION — LEVEL TIMELINE LAYOUT
 
-### ⚠️ KEY BRAND TRUTH:
-Milestone Academy is ONE brand. It started as a trading academy. It now also offers accounting courses. Trading courses are still very much available. This is an expansion, not a separate entity.
-
-### Trading Highlight Section on Homepage:
+### Design Concept: "Career Progression Journey"
 ```
-Component: <TradingSection />
-Position: After Courses Section, before Why Us
+The 4 diploma levels are shown as a visual progression path — a timeline —
+so visitors immediately understand this is a journey from Level 1 to Level 4.
+Every level feels like an achievement, not just a product.
 
-Design: Dark background (var(--bg-dark))
-Layout: 2-column (left: content, right: visual)
-
-Left Content:
-  [LABEL] "ALSO AT MILESTONE" (JetBrains Mono, mint green)
-  [HEADLINE] "Where It All
-  Began — Trading." (Instrument Serif 52px, text-inverse)
-  [BODY] (Syne 18px, text-inverse/70%)
-  "Milestone began as a trading academy and has trained 
-  10,000+ traders across India. Our trading programs — 
-  stock market, technical analysis, options, and investment 
-  strategies — continue to run alongside our accounting courses.
-  One academy. Complete financial education."
-  
-  [PILL TAGS] (flex wrap, gap 12px)
-  🚀 Stock Market  |  📊 Technical Analysis  |  💰 Options Trading
-  📈 Fundamental Analysis  |  💼 Portfolio Management  |  ₿ Cryptocurrency
-  
-  [CTA] "Explore Trading Programs →" 
-  (outline button, border green-400, text green-300, hover bg green-500)
-  Links to: /trading — a dedicated page with trading course details
-
-Right Content:
-  Trading stats cards (dark glassmorphic):
-  Card 1: "10,000+" | "Traders Trained"
-  Card 2: "8+" | "Trading Programs"  
-  Card 3: "Since 2019" | "Milestone's Legacy"
-  
-  + A subtle animated trading chart line (SVG path, green stroke, 
-    draws itself on scroll using GSAP DrawSVG)
+HOMEPAGE: Timeline/Ladder Layout (vertical, editorial)
+/COURSES PAGE: Grid Layout (2×2, scannable, detailed)
 ```
 
-### /trading Page:
+### Homepage CoursesSection — Timeline Design:
 ```
-Full page dedicated to trading courses.
-Navbar, Hero banner ("Master the Markets"), 
-8 trading course cards (with price on request / contact for details),
-Trading testimonials section,
-CTA to contact/enroll,
-Footer.
+Section header (text-center, mb-20):
+  Label: "DIPLOMA PROGRAMS" (JetBrains Mono 11px, green-600, uppercase, tracking-widest)
+  Headline: "Four Levels. One Complete Career." (Instrument Serif, class="gsap-heading")
+  Sub: "Start where you are. Graduate where you want to be."
 
-Trading courses to show (make these up with reasonable details):
-1. Stock Market Foundation
-2. Technical Analysis Pro
-3. Options & Derivatives
-4. Fundamental Analysis
-5. Intraday & Swing Trading
-6. Cryptocurrency & Blockchain
-7. Forex & Commodity Trading
-8. Investment Portfolio Management
+  Filter Pills (flex justify-center gap-3, mt-8):
+  "All Programs" | "Accounting" | "Taxation" | "Advanced"
+  Active: bg green-500 white text | Inactive: bg green-50 text-secondary
+
+TIMELINE CONTAINER (relative, max-w-[900px], mx-auto):
+
+LEFT RAIL (position absolute, left 30px, top 0, bottom 0):
+  Thin vertical line (width 2px, bg var(--green-500)/15, full height)
+  GSAP DrawSVG: line draws from top to bottom as user scrolls
+
+For EACH LEVEL:
+
+[NODE] (position absolute left 0, 60px circle, z-10):
+  bg var(--gradient-green) for levels 1-3
+  bg linear-gradient(135deg, var(--bg-dark), var(--green-700)) for level 4 (gold border)
+  center: level number, JetBrains Mono 22px bold, white
+  Glow shadow: 0 0 20px rgba(45,158,68,0.4) on hover
+  GSAP entrance: scale 0 → 1 spring bounce when scroll reaches that node
+
+[CONNECTOR LABEL] between nodes:
+  small dashed horizontal line + "↓" icon + "Next Level"
+  JetBrains Mono 10px, text-muted, ml-20
+
+[COURSE CARD] (ml-[88px], bg white, rounded-2xl, border border-[var(--border-light)]):
+  Horizontal layout — image LEFT, content RIGHT
+  No min-height constraint — content drives height
+
+  LEFT: Image area (w-[220px], shrink-0, rounded-l-2xl, overflow-hidden)
+    If image_url: Next.js Image, object-cover, h-full
+    If null: gradient from course.gradient, flex-center Lucide icon (56px white)
+    
+    Level badge overlay (top-left, absolute, m-3):
+      bg var(--bg-dark)/80 backdrop-blur, rounded-full, px-3 py-1
+      "Level 1 · DABS" JetBrains Mono 10px white
+
+  RIGHT: Content (flex-1, p-7)
+    Diploma code chip: "DABS" bg var(--green-50) border var(--green-200) 
+      text-[var(--green-700)] JetBrains Mono 11px rounded-full px-3 py-1
+    
+    Title: Syne SemiBold 18px, text-primary, mt-3, leading-tight
+    Tagline: Syne 13px, text-secondary, mt-1
+
+    Topics (flex wrap gap-2, mt-4):
+      Show first 5 topics as small pills
+      bg var(--green-50), text-[var(--green-700)], JetBrains Mono 10px, rounded-full px-2.5 py-0.5
+      If more: "+N more" pill in text-muted
+
+    Bottom row (flex space-between items-center mt-5 pt-4 border-t border-[var(--border-light)]):
+      Duration: "📅 3 Months" Syne 12px text-secondary
+      Price:
+        If price > 0: "₹{price.toLocaleString('en-IN')}" JetBrains Mono SemiBold 22px green-600
+        If null: "Contact for Pricing" Syne SemiBold 15px green-600
+      "Enroll →" pill button: bg var(--gradient-green), white, Syne 12px, px-4 py-2, rounded-full
+
+  CARD HOVER:
+    translateY(-5px), box-shadow var(--shadow-lift)
+    Left image: scale(1.06) inside overflow-hidden
+    "Enroll →" button: translateX(3px)
+    Transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)
+
+  SCROLL ENTRANCE:
+    Card slides from right: x:70 → 0, opacity 0→1
+    Each card triggers when 75% in viewport
+    GSAP ScrollTrigger, stagger 0.2s between levels
+```
+
+### Course Detail Page — /courses/[slug]:
+```
+HERO BANNER (full-width, h-[320px], relative, overflow-hidden):
+  If image_url: Next.js Image, object-cover, object-center, w-full h-full
+  If null: background: course.gradient
+  
+  Dark overlay: linear-gradient(135deg, rgba(10,26,11,0.92) 40%, rgba(10,26,11,0.5) 100%)
+  
+  Overlay content (absolute z-10, bottom-0, left-0, px-8 py-8, max-w-[1280px] w-full mx-auto):
+    Breadcrumb: "Programs → DABS" (JetBrains Mono 11px, text-inverse/60%)
+    Level badge: "Level 1" (green pill)
+    Diploma code: "DABS" (JetBrains Mono 18px bold, text-[var(--accent-mint)])
+    Title: Instrument Serif 48px, text-inverse, leading-tight
+    Meta row: Duration | Skill Level | Rating | Enrolled count
+
+GALLERY (if gallery_images.length > 0):
+  Horizontal scroll strip: 4 thumbnail images, 160px wide, 100px tall, rounded-xl
+  Click → opens full lightbox modal
+
+REST OF PAGE: Curriculum accordion, faculty cards, sticky enroll sidebar, CTA
+```
+
+### Course Image Upload in Admin:
+```
+/admin/courses/[id] — Image Upload Section:
+
+BANNER IMAGE UPLOAD:
+  react-dropzone zone (dashed border, 300px height, full-width)
+  Text: "Drop course banner image here, or click to browse"
+  Accepts: image/jpeg, image/png, image/webp | Max: 5MB
+  After drop: shows image preview + "Upload" button
+  On upload: POST to /api/upload with formData
+    → upload to Supabase Storage: "courses/{course_id}/banner.jpg"
+    → get public URL → update course.image_url in DB
+  Replace image: shows existing image with "Replace" button overlay
+  Delete: × button → removes from Storage + sets image_url to null
+
+GALLERY IMAGES (optional, up to 5):
+  Small dropzone: "Add gallery images (up to 5)"
+  After upload: horizontal strip of thumbnails, each with × to remove
+  Upload to: "courses/{course_id}/gallery/img_{n}.jpg"
+  Update course.gallery_images array in DB
 ```
 
 ---
 
-## 🔐 ADMIN PANEL — COMPLETE CMS
+## 👨‍🏫 FACULTY SECTION
 
-### Overview:
-A fully functional admin dashboard at `/admin` (protected by Supabase Auth).
-Only admin users can access it. All data (courses, testimonials, leads, notifications) is stored in Supabase.
-
-### Admin Authentication:
+### Initial Faculty Members:
 ```
-URL: /admin/login
-Method: Supabase Auth (email + password)
-Middleware: middleware.ts → protect all /admin/* routes
-Admin email: set as environment variable ADMIN_EMAIL
-On login: redirect to /admin/dashboard
-On logout: redirect to /admin/login
-Session: Supabase session (cookie-based via @supabase/auth-helpers-nextjs)
-```
+1. Name: Shaiha KS
+   Role: Lead Accounting Instructor
+   Specialization: Financial Accounting & Tally Prime
+   Email: shaishaaaa1000@gmail.com (PRIVATE — admin only)
+   Phone: 7994510515 (PRIVATE — admin only)
+   Teaches: DABS, PGDAFA
 
-### Admin Dashboard Layout:
-```
-Component: AdminLayout (wraps all /admin/* pages)
+2. Name: Muhammed Uways
+   Role: Taxation Specialist  
+   Specialization: UAE VAT, Corporate Tax & GST
+   Email: uways.oo@gmail.com (PRIVATE)
+   Phone: 9633866973 (PRIVATE)
+   Teaches: DUTC, EMDAT
 
-Sidebar (fixed left, 260px width, bg var(--bg-dark), border-right 1px rgba(255,255,255,0.08)):
-  Top: Milestone logo (dark version) + "Admin Panel" label
-  
-  Navigation sections:
-  ── MAIN
-     📊 Dashboard          → /admin
-     
-  ── CONTENT
-     📚 Courses            → /admin/courses
-     💬 Testimonials       → /admin/testimonials
-     🔔 Notifications      → /admin/notifications
-     
-  ── LEADS & INQUIRIES
-     📬 Enrollments        → /admin/enrollments
-     
-  ── ACADEMY INFO
-     ℹ️ About Content      → /admin/about
-     📞 Contact Info       → /admin/contact-info
-     🎓 Faculty            → /admin/faculty
-     
-  ── TRADING
-     📈 Trading Courses    → /admin/trading-courses
-  
-  Bottom: User email + Logout button
-
-Top Bar (header, fixed, height 64px):
-  Left: Page title + breadcrumb
-  Right: Notifications bell (count badge) + Admin avatar
-  
-Main content area: scroll, padding 32px
+3. Name: Jinsiya
+   Role: Financial Analytics Instructor
+   Specialization: Power BI, Advanced Excel & Financial Reporting
+   Email: jinsyaboobacker@gmail.com (PRIVATE)
+   Phone: 9744969154 (PRIVATE)
+   Teaches: PGDAFA, EMDAT
 ```
 
-### Dashboard Page (/admin):
+### FacultySection — Homepage Design:
 ```
-Stats row (4 cards):
-  Total Enrollments | Active Courses | Pending Inquiries | Total Reviews
+Component: <FacultySection />
+Background: var(--bg-secondary)
 
-Quick charts (recharts):
-  Line chart: Enrollments over last 30 days
-  Bar chart: Course popularity (enrollments per course)
+Header:
+  Label: "MEET YOUR MENTORS"
+  Headline: "Learn from Those<br>Who Do It Daily."
+  Sub: "Practicing accountants and tax experts — not just teachers."
 
-Recent activity feed:
-  Latest 10 enrollment inquiries (name, course, time)
-  
-Quick action buttons:
-  "+ Add Course" | "+ Add Testimonial" | "View Inquiries"
-```
+3-column grid (max-w-[1100px] mx-auto, gap-8):
 
-### Courses Management (/admin/courses):
-```
-List view: Table of all 4 courses + any added ones
-Columns: Title | Badge | Duration | Price | Status (Published/Draft) | Actions
+Faculty Card (bg white, rounded-3xl, overflow-hidden, border):
 
-Actions per course:
-  ✏️ Edit → opens edit form
-  👁 Preview → opens /courses/[slug] in new tab
-  📌 Toggle Published/Draft
-  🗑 Delete (with confirmation dialog)
+  PHOTO AREA (h-[280px], relative, overflow-hidden):
+    If photo_url: Next.js Image, object-cover, object-top
+    If no photo:
+      bg: linear gradient (green-900 → green-700)
+      Background initial: faculty.name[0], Instrument Serif 200px, white/8%, centered
+      Foreground initial: faculty.name[0], Instrument Serif 80px, white, centered
+    
+    Bottom overlay gradient: to top, rgba(10,26,11,0.85) → transparent (50% height)
+    
+    Absolute bottom content (p-5):
+      Specialization chip: bg var(--green-500)/20 backdrop-blur
+        JetBrains Mono 10px, text-[var(--accent-mint)], rounded-full, px-3 py-1
 
-Add/Edit Course Form (full-page form or slide-in drawer):
-  Fields:
-  - Title (text input)
-  - Slug (auto-generated from title, editable)
-  - Tagline (text input, 1 line)
-  - Description (rich text editor — react-quill)
-  - Badge text (text) + Badge color (select: green/gold/blue/red)
-  - Duration (text: "3 Months", "7 Months", etc.)
-  - Price (number — 0 for "contact for pricing")
-  - Original Price (number — for strikethrough)
-  - Level (select: Beginner / Intermediate / Advanced / All Levels)
-  - Category (select: accounting / taxation / advanced / trading)
-  - Rating (number 0-5)
-  - Topics (tag input — add/remove topics)
-  - Highlights (textarea — one per line)
-  - Who Is It For (text)
-  - Status (toggle: Published / Draft)
-  - Sort Order (number — controls display order)
-  
-  Modules editor (add/remove/reorder modules):
-    Module title + Topics list (add/remove topics per module)
-  
-  Save button → saves to Supabase courses table
-  Cancel → back to list
+  CARD BODY (p-7):
+    Name: Syne SemiBold 22px, text-primary
+    Role: Syne 13px, text-[var(--green-600)], mt-1
+
+    Thin divider, my-4
+
+    Bio: Syne 13px, text-secondary, leading-relaxed, line-clamp-3
+
+    Courses taught (flex wrap gap-2, mt-4):
+      Each diploma code as pill:
+      "DABS" / "DUTC" / "PGDAFA" / "EMDAT"
+      bg var(--green-50), border var(--green-200), text-[var(--green-700)]
+      JetBrains Mono 10px, rounded-full px-3 py-1
+
+    "Connect" button (mt-5):
+      Outline, green-500, Syne 13px, px-5 py-2, rounded-full
+      Links to /contact (NOT revealing private phone/email)
+      Hover: bg green-500, white text
+
+  HOVER: translateY(-8px), shadow-lift, photo scale(1.05)
+  ENTRANCE: stagger x:0 y:60 opacity 0→1, 0.15s stagger, ScrollTrigger
 ```
 
-### Testimonials Management (/admin/testimonials):
+### Faculty Admin (/admin/faculty):
 ```
-Table: Name | Role | Company | Course | Rating | Status | Actions
+LIST: Table with photo thumb | Name | Role | Courses | Active toggle | Actions
 
-Add/Edit Testimonial Form:
-  - Student Name
-  - Role (text: "GST Executive")
-  - Company (text: "Deloitte Kerala")
-  - Course (select from courses list)
-  - Review Text (textarea)
-  - Rating (star selector 1-5)
-  - Avatar (image upload to Supabase Storage, or initial color fallback)
-  - Status (Published / Hidden)
-  - Featured (toggle — featured testimonials appear in homepage)
+ADD/EDIT FORM (/admin/faculty/new, /admin/faculty/[id]):
 
-Display: shows avatar, full review text, rating, dates
-```
+PHOTO UPLOAD (react-dropzone):
+  Drop zone: circular preview (200px circle) when photo selected
+  Accepts: JPEG/PNG/WebP, max 5MB
+  Upload to: Supabase Storage "faculty/{faculty_id}/photo.jpg"
+  Existing: show current photo with "Replace" overlay on hover
+  Remove: × button → delete from Storage, set photo_url null
 
-### Notifications Management (/admin/notifications):
-```
-Purpose: Create banner/popup notifications shown to website visitors
-  (e.g., "New batch starting May 5th!" / "Limited seats for Comprehensive Package!")
+FIELDS:
+  Name* | Role* | Specialization
+  Email (PRIVATE — show lock icon, tooltip "Not shown to public")
+  Phone (PRIVATE — same treatment)
+  Bio (textarea, 4 rows)
+  Courses Taught: multi-select: [DABS] [DUTC] [PGDAFA] [EMDAT]
+  Status (Active / Inactive switch)
+  Sort Order (number)
 
-Table: Message | Type | Status | Start Date | End Date | Actions
+PRIVACY BANNER in form:
+  Yellow info box: "🔒 Email and phone are stored securely and NEVER
+  displayed on the public website. Only visible to admin."
 
-Add Notification Form:
-  - Message (text input, 120 chars max)
-  - Type (select: info / success / warning / promo)
-  - Display Location (select: Top Banner / Hero Popup / All Pages)
-  - Start Date (date picker)
-  - End Date (date picker — auto-expires)
-  - CTA Button Text (optional — e.g., "Enroll Now")
-  - CTA Link (optional URL)
-  - Status (Active / Inactive)
-
-Website display: 
-  Active notifications appear as a dismissable top banner 
-  (JetBrains Mono 13px, green-500 bg, white text, "×" dismiss button)
-  Stored in localStorage so dismissed notification doesn't reappear same session
+SAVE / CANCEL / DELETE
 ```
 
-### Enrollments / Inquiries (/admin/enrollments):
-```
-All contact form submissions and enrollment inquiries from the website.
-
-Table: Name | Phone | Email | Course | Date | Status | Actions
-
-Status options: New → Contacted → Enrolled → Not Interested
-
-Actions:
-  - Mark as Contacted
-  - Change Status (dropdown)
-  - View Full Details (modal with complete form data)
-  - Delete
-
-Filters: By course | By status | By date range
-
-Export: Download as CSV button
-
-Auto-send email notification to admin@milestone.academy on new inquiry (via Resend)
-```
-
-### About Content (/admin/about):
-```
-Editable sections for the /about page:
-  - Hero headline & subtext (text inputs)
-  - Story paragraphs (rich text editor)
-  - Stats (editable key-value pairs: label + value)
-  - Vision/Mission statements
-  - Faculty list (name, title, credentials, photo upload)
-  - Certifications/Awards (add/remove items)
-  
-Save → updates Supabase "content" table → /about page fetches fresh data
-```
-
-### Contact Info (/admin/contact-info):
-```
-Editable contact details shown in footer and contact page:
-  - Phone number(s) (add multiple)
-  - Email address(es)
-  - Physical addresses (add multiple branches)
-  - WhatsApp number
-  - Social media links (Instagram, YouTube, LinkedIn, Facebook)
-  - Office hours
-  
-These update in real-time via Supabase across the entire website.
-```
-
-### Admin UI Design:
-```
-Color scheme: Dark sidebar + light main content area
-Sidebar bg: #0A1A0B
-Main content bg: #F7F9F4 (same as site)
-Cards: white, shadow-card
-Tables: Clean, zebra striping, hover row highlight (green-50)
-Buttons: Primary (green-500), Secondary (outline), Danger (red)
-Typography: Syne throughout (consistent with main site)
-Status badges: Pill chips (green=active, yellow=pending, red=inactive/draft)
-Animations: Subtle — sidebar items fade in on load, table rows stagger
-Forms: shadcn/ui form components
-Toast notifications: react-hot-toast (green for success, red for error)
-```
-
----
-
-## 🗄 SUPABASE DATABASE SCHEMA
-
+### Faculty — Supabase + Privacy:
 ```sql
--- Courses table
-CREATE TABLE courses (
+CREATE TABLE faculty (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL,
+  specialization TEXT,
+  email TEXT,           -- PRIVATE
+  phone TEXT,           -- PRIVATE
+  bio TEXT,
+  courses TEXT[],
+  photo_url TEXT,
+  is_active BOOLEAN DEFAULT true,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Public view: EXCLUDES email and phone
+CREATE VIEW public_faculty AS
+  SELECT id, name, role, specialization, bio, courses, photo_url,
+         is_active, sort_order, created_at
+  FROM faculty
+  WHERE is_active = true
+  ORDER BY sort_order;
+```
+
+In `lib/supabase/faculty.ts`:
+```typescript
+// PUBLIC fetch — uses the VIEW, never exposes email/phone
+export async function getPublicFaculty() {
+  const supabase = createServerComponentClient({ cookies });
+  const { data } = await supabase.from("public_faculty").select("*");
+  return data;
+}
+
+// ADMIN fetch — uses table directly (server-side only, never in client components)
+export async function getAllFaculty() {
+  const supabase = createServerComponentClient({ cookies });
+  const { data } = await supabase.from("faculty").select("*").order("sort_order");
+  return data; // includes email + phone — admin use only
+}
+```
+
+---
+
+## 📰 NEWS & MEDIA SECTION — "Milestone Moments"
+
+### Concept:
+```
+A dynamic, editorial media wall where Milestone Fin Academy posts:
+- Academic announcements and news
+- Student success stories and placement updates
+- Campus moments and event photos
+- Video testimonials and lecture snippets
+- Batch start notifications
+
+DESIGN PHILOSOPHY: VISUALS FIRST — images and videos dominate.
+Text is minimal — caption-style. This is a visual feed, not a blog.
+
+Feel: Instagram-meets-editorial magazine. Masonry layout.
+      Dark accents, green highlights, premium spacing.
+```
+
+### NewsSection — Homepage Teaser (latest 3 posts):
+```
+Component: <NewsSection />
+Background: var(--bg-primary)
+
+Header:
+  Label: "MILESTONE MOMENTS"
+  Headline: "From Our Academy,<br>to Your Screen."
+  Right side: "See All Updates →" link to /news
+
+3-column masonry grid (desktop), 2-col (tablet), 1-col (mobile):
+Cards have ORGANIC heights — not uniform.
+
+NEWS CARD — Image Post (most common):
+  Container: rounded-2xl, overflow-hidden, relative, cursor-pointer
+  
+  IMAGE: Next.js Image, object-cover
+    Portrait photos: aspect-[4/5]
+    Landscape: aspect-[16/9]  
+    Admin can control aspect ratio on upload
+  
+  OVERLAY: absolute inset-0
+    Bottom gradient: linear-gradient(to top, rgba(10,26,11,0.92) 0%, transparent 55%)
+  
+  OVERLAY CONTENT (absolute bottom-0 left-0 right-0, p-5):
+    Category chip: bg var(--green-500), JetBrains Mono 10px, white, px-3 py-1, rounded-full, mb-3
+      "ANNOUNCEMENT" / "STUDENT WIN" / "PLACEMENT" / "CAMPUS" / "EVENT"
+    Title: Syne SemiBold 15px, white, leading-snug, max 2 lines
+    Date: JetBrains Mono 11px, white/50%, mt-2
+
+  HOVER:
+    Image: scale(1.08) (inside overflow-hidden)
+    Overlay: darkens (opacity 0→1 of extra dark layer)
+    "Read More →" button: slides up from bottom (GSAP y:20→0, opacity 0→1)
+    Card: translateY(-4px), shadow-lift
+    Transition: all 0.4s ease
+
+NEWS CARD — Video Post:
+  Same as image but:
+  Thumbnail image (from YouTube or uploaded)
+  Play button overlay (center): 64px circle, white bg/90, green play icon
+    Hover: scale(1.1), glow shadow
+  Small video duration badge: top-right, dark pill "3:42"
+  On click: opens VideoModal (react-player in dark overlay modal)
+
+VideoModal:
+  Fixed overlay: bg-[rgba(0,0,0,0.92)] z-50
+  Centered: max-w-[900px] 16:9 container
+  react-player: width 100%, height 100%
+    supports: YouTube URL, Vimeo URL, direct .mp4 URL
+  Close: × button top-right (or click outside overlay)
+  ESC key closes modal
+  GSAP: modal scales 0.9→1, opacity 0→1 on open; reverse on close
+
+ENTRANCE ANIMATIONS:
+  Cards: y:60→0, opacity 0→1, stagger 0.1s, ScrollTrigger start "top 80%"
+```
+
+### /news Full Page:
+```
+Header: Full-width dark banner
+  "Milestone Moments" Instrument Serif 56px white
+  "Stay updated with everything happening at Milestone Fin Academy"
+
+STICKY FILTER BAR (top 72px — below navbar, bg-primary/95 backdrop-blur):
+  "All" | "Announcements" | "Student Wins" | "Placements" | "Campus" | "Events" | "Videos"
+  Active: green-500 bg, white text
+  Click: filter posts (GSAP Flip for smooth card reflow)
+
+SEARCH INPUT (right side of filter bar):
+  Lucide Search icon, placeholder "Search updates..."
+  Searches titles and excerpts (client-side filter)
+
+MASONRY GRID: CSS columns (3 desktop, 2 tablet, 1 mobile)
+  break-inside: avoid on each card
+
+LOAD MORE button (centered, mt-12):
+  "Load More Updates ↓"
+  Outline, green-500, Syne SemiBold 15px, px-8 py-3, rounded-full
+  On click: fetch next 9 from Supabase (offset pagination)
+  New cards: GSAP stagger entrance
+
+Individual Post /news/[slug]:
+  Full-width header image (h-[420px], object-cover)
+  Dark gradient overlay with title, date, category badge
+  Body: max-w-[720px] mx-auto, Syne 17px text-secondary, leading-relaxed
+  Image gallery (if multiple images): horizontal scroll strip or lightbox grid
+  Video embed (if video post): full-width 16:9 react-player
+  Related posts row (3 cards below)
+  Back button: "← All Updates" link
+```
+
+### News — Supabase Table:
+```sql
+CREATE TABLE news_posts (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   slug TEXT UNIQUE NOT NULL,
   title TEXT NOT NULL,
+  excerpt TEXT,
+  content TEXT,
+  type TEXT DEFAULT 'image',           -- 'image' | 'video' | 'text'
+  category TEXT DEFAULT 'announcement',
+    -- 'announcement' | 'student_win' | 'placement' | 'campus' | 'event' | 'video'
+  cover_image_url TEXT,
+  gallery_images TEXT[],
+  video_url TEXT,
+  video_type TEXT,                     -- 'youtube' | 'vimeo' | 'upload'
+  video_thumbnail_url TEXT,
+  is_featured BOOLEAN DEFAULT false,
+  is_published BOOLEAN DEFAULT false,
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+CREATE INDEX idx_news_pub ON news_posts(is_published, published_at DESC);
+CREATE INDEX idx_news_cat ON news_posts(category);
+```
+
+### News Admin (/admin/news):
+```
+LIST VIEW (table):
+  Thumbnail (60px) | Title | Type icon (📷/🎥/📝) | Category | Status | Date | Actions
+  Featured posts: ★ star indicator in row
+  Filter tabs: All | Published | Drafts | Featured
+
+ADD/EDIT POST FORM — 3-Step Flow:
+
+STEP 1 — POST TYPE (big visual card selector):
+  📷 "Image Post" | 🎥 "Video Post" | 📝 "Text + Image"
+  Active card: border-2 green-500, bg-green-50, checkmark
+  Large icons (64px), title, short description
+
+STEP 2 — MEDIA UPLOAD:
+
+  IF IMAGE TYPE:
+    Cover Image (required):
+      react-dropzone zone (full-width, 280px height, dashed border)
+      Drag here or click → file picker
+      Accepts: JPEG/PNG/WebP, max 10MB
+      Preview: full-width after upload with aspect-ratio maintain
+      Upload to Supabase: "news/{post_id}/cover.{ext}"
+      Public URL saved to cover_image_url
+    
+    Gallery Images (optional, max 8):
+      Smaller dropzone: "Add more images (up to 8)"
+      Horizontal thumbnail strip: 100px × 80px each
+      Drag to reorder (or manual reorder arrows)
+      Each: × to remove
+      Upload to: "news/{post_id}/gallery/{n}.{ext}"
+
+  IF VIDEO TYPE:
+    Tab switcher: "YouTube/Vimeo URL" | "Upload Video"
+    
+    URL Tab:
+      Input: paste YouTube or Vimeo URL
+      Preview: auto-generates embed preview (16:9)
+      Auto-thumbnail: fetch YouTube thumbnail via oembed API
+      
+    Upload Tab:
+      react-dropzone: accepts .mp4 .webm, max 200MB
+      Upload progress bar (determinate)
+      Upload to: "news/{post_id}/video.mp4"
+      Custom Thumbnail: separate small dropzone below
+    
+    Thumbnail Upload (for both tabs):
+      "Set custom thumbnail" small dropzone
+      Preview: 16:9 ratio preview
+
+  IF TEXT TYPE:
+    Cover Image: optional, same dropzone as IMAGE type
+
+STEP 3 — CONTENT:
+  Title* (large text input, 48px text, "Your post title...")
+  Slug (auto from title, JetBrains Mono, editable)
+  Excerpt (textarea, max 160 chars, char counter)
+  Category* (select dropdown with icons)
+  Content Body: react-quill rich text editor
+    Full-width, min-height 300px
+    Toolbar: H1, H2, H3 | Bold, Italic | Bullet, Numbered | Link | Image | Quote | HR
+    Styled to match site design
+
+PUBLISHING PANEL (right sidebar, sticky):
+  Status: Draft / Published (large toggle)
+  Featured: toggle (pin to top)
+  Publish Date: date + time picker (for scheduling)
+  Preview: "Preview Post ↗" (new tab, even draft)
+  Save button: "Save Post" (large green)
+  Delete button (only on existing posts): red outline, AlertDialog confirm
+
+MEDIA MANAGEMENT:
+  /admin/media page: grid of all uploaded files
+  Each file: thumbnail, filename, size, upload date, × to delete
+  Storage usage bar: "Using X MB of Y GB"
+```
+
+---
+
+## 🗄 COMPLETE SUPABASE SCHEMA
+
+```sql
+-- COURSES
+CREATE TABLE courses (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  slug TEXT UNIQUE NOT NULL,
+  level INTEGER,
+  level_label TEXT,
+  diploma_code TEXT,
+  title TEXT NOT NULL,
+  short_title TEXT,
   tagline TEXT,
   description TEXT,
   badge TEXT,
   badge_color TEXT DEFAULT 'green',
   duration TEXT,
-  price INTEGER, -- null = contact for pricing
+  price INTEGER,
   original_price INTEGER,
-  level TEXT,
+  emi TEXT,
+  skill_level TEXT,
   category TEXT,
   icon TEXT,
   gradient TEXT,
   rating DECIMAL(2,1) DEFAULT 4.8,
   review_count INTEGER DEFAULT 0,
   enrolled_count INTEGER DEFAULT 0,
-  topics TEXT[], -- array of topic strings
+  image_url TEXT,
+  gallery_images TEXT[],
+  topics TEXT[],
   highlights TEXT[],
   who_is_it_for TEXT,
-  modules JSONB, -- [{title, topics:[]}]
+  modules JSONB,
   is_published BOOLEAN DEFAULT true,
-  is_trading BOOLEAN DEFAULT false,
   sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Testimonials table
+-- FACULTY
+CREATE TABLE faculty (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL,
+  specialization TEXT,
+  email TEXT,
+  phone TEXT,
+  bio TEXT,
+  courses TEXT[],
+  photo_url TEXT,
+  is_active BOOLEAN DEFAULT true,
+  sort_order INTEGER DEFAULT 0,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE VIEW public_faculty AS
+  SELECT id, name, role, specialization, bio, courses, photo_url, is_active, sort_order
+  FROM faculty WHERE is_active = true ORDER BY sort_order;
+
+-- NEWS POSTS
+CREATE TABLE news_posts (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  slug TEXT UNIQUE NOT NULL,
+  title TEXT NOT NULL,
+  excerpt TEXT,
+  content TEXT,
+  type TEXT DEFAULT 'image',
+  category TEXT DEFAULT 'announcement',
+  cover_image_url TEXT,
+  gallery_images TEXT[],
+  video_url TEXT,
+  video_type TEXT,
+  video_thumbnail_url TEXT,
+  is_featured BOOLEAN DEFAULT false,
+  is_published BOOLEAN DEFAULT false,
+  published_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- TESTIMONIALS
 CREATE TABLE testimonials (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   student_name TEXT NOT NULL,
   role TEXT,
   company TEXT,
-  course_id UUID REFERENCES courses(id),
+  course_diploma_code TEXT,
   review_text TEXT NOT NULL,
   rating INTEGER DEFAULT 5,
-  avatar_url TEXT, -- Supabase Storage URL
+  avatar_url TEXT,
   is_published BOOLEAN DEFAULT false,
   is_featured BOOLEAN DEFAULT false,
   sort_order INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Notifications table
+-- NOTIFICATIONS
 CREATE TABLE notifications (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   message TEXT NOT NULL,
-  type TEXT DEFAULT 'info', -- info/success/warning/promo
+  type TEXT DEFAULT 'info',
   display_location TEXT DEFAULT 'top-banner',
   cta_text TEXT,
   cta_link TEXT,
@@ -782,24 +1048,24 @@ CREATE TABLE notifications (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Enrollments/Inquiries table
+-- ENROLLMENTS
 CREATE TABLE enrollments (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   phone TEXT NOT NULL,
   email TEXT,
-  course_id UUID REFERENCES courses(id),
-  course_name TEXT, -- denormalized for easy display
+  course_diploma_code TEXT,
+  course_name TEXT,
   message TEXT,
-  status TEXT DEFAULT 'new', -- new/contacted/enrolled/not_interested
+  status TEXT DEFAULT 'new',
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Site content table (for editable about/contact content)
+-- SITE CONTENT
 CREATE TABLE site_content (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  section TEXT UNIQUE NOT NULL, -- 'about', 'contact', 'stats', etc.
+  section TEXT UNIQUE NOT NULL,
   content JSONB NOT NULL,
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -807,93 +1073,35 @@ CREATE TABLE site_content (
 
 ---
 
-## 📄 COMPLETE PAGE ARCHITECTURE
+## 📄 PAGE ARCHITECTURE
 
 ```
-/ (Home)
-  LoadingScreen → Navbar → HeroSection → MarqueeBand → StatsSection
-  → CoursesSection → TradingSection → WhyUsSection
+/ (Home) — Section order:
+  LoadingScreen → Navbar → NotificationBanner → HeroSection (SPLINE)
+  → MarqueeBand → StatsSection → CoursesSection (timeline)
+  → FacultySection → TradingSection → NewsSection (teaser)
   → TestimonialsSection → PlacementSection → CtaSection → Footer
 
-/courses
-  Navbar → CoursesBanner → FilterTabs → CourseGrid (4 accounting cards) → Footer
+/courses          Full 4-diploma grid with filters
+/courses/[slug]   Course detail: banner image, curriculum, faculty, enroll sidebar
+/trading          Trading courses page
+/news             Masonry news grid (filterable, load-more)
+/news/[slug]      Full news post
+/about            Academy story, stats, timeline
+/contact          Contact form + map + info
 
-/courses/[slug]
-  Navbar → CourseHero → CourseOverviewBar → CurriculumAccordion
-  → InstructorSection → StickyEnrollSidebar → RelatedCourses → Footer
-
-/trading
-  Navbar → TradingHero → TradingCourseGrid (8 cards) 
-  → TradingTestimonials → TradingCTA → Footer
-
-/about
-  Navbar → AboutHero → StorySection → Stats → Faculty → Certifications → Footer
-
-/contact
-  Navbar → ContactHero → ContactForm + Map + Info → Footer
-
-/admin/login          — Auth page
-/admin                — Dashboard
-/admin/courses        — Courses CMS
-/admin/courses/new    — Add course
-/admin/courses/[id]   — Edit course
-/admin/testimonials   — Testimonials CMS
-/admin/notifications  — Notifications CMS
-/admin/enrollments    — Leads/inquiries
-/admin/about          — About content editor
-/admin/contact-info   — Contact info editor
-/admin/trading-courses — Trading courses CMS
-```
-
----
-
-## 🌐 HOMEPAGE SECTIONS — BRIEF REFERENCE
-
-1. **LoadingScreen** — Dark overlay, SVG logo draws with GSAP DrawSVG, progress bar 0→100, curtain exit
-2. **Navbar** — Glassmorphic sticky, transparent→frosted on scroll, Logo component, magnetic CTA
-3. **HeroSection** — 55/45 split, headline "Master the Language of Business", Spline 3D, floating badge cards
-4. **MarqueeBand** — Dark band, infinite ticker: all topics from all 4 courses
-5. **StatsSection** — Dark section, 4 glassmorphic stat cards, GSAP count-up on scroll
-6. **CoursesSection** — 4 course cards (from PDF data only), filter tabs, 3D tilt hover
-7. **TradingSection** — Dark section: trading legacy story + stats + chart animation
-8. **WhyUsSection** — Split dark/light, 6 USP cards with green accent bars
-9. **TestimonialsSection** — Dark, dual-row infinite marquee, 12 student reviews
-10. **PlacementSection** — Company logos marquee, 96% circle stat
-11. **CtaSection** — Dark, contact form with Supabase submission + Resend email
-12. **Footer** — Dark, 4-col, Logo (dark version), social links, all nav
-
----
-
-## ✅ CODING RULES — ALWAYS FOLLOW
-
-```
-1. TypeScript strict mode — no `any` types ever
-2. All components in proper folders (/sections, /global, /admin, /ui)
-3. All animations: GSAP + ScrollTrigger only (no Framer Motion for page animations)
-4. Framer Motion: only for admin panel micro-interactions if needed
-5. Tailwind classes + CSS variables — zero inline styles
-6. Next.js Image component for ALL images (logos, avatars, course images)
-7. Mobile-first responsive (375px → 768px → 1024px → 1280px)
-8. Keep components under 200 lines — split if larger
-9. All Supabase calls in /lib/supabase/ folder
-10. All environment variables in .env.local (never hardcode)
-11. Error boundaries around 3D components (Spline can fail)
-12. Loading states on all async data fetches
-13. Toast notifications for all form submissions
-14. Admin routes: always check auth in middleware.ts
-```
-
----
-
-## 🔧 ENVIRONMENT VARIABLES (.env.local)
-
-```bash
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-RESEND_API_KEY=your_resend_key
-ADMIN_EMAIL=admin@milestone.academy
-NEXT_PUBLIC_SITE_URL=https://milestone-academy.vercel.app
+/admin/login
+/admin            Dashboard (charts, stats, activity)
+/admin/courses    Courses CMS + image upload
+/admin/faculty    Faculty CMS + photo upload (PRIVATE contact fields)
+/admin/news       News & Media CMS + media upload
+/admin/testimonials
+/admin/notifications
+/admin/enrollments
+/admin/trading-courses
+/admin/about
+/admin/contact-info
+/admin/media      All uploaded files library
 ```
 
 ---
@@ -902,99 +1110,145 @@ NEXT_PUBLIC_SITE_URL=https://milestone-academy.vercel.app
 
 ```
 milestone-academy/
-├── CLAUDE.md                          ← THIS FILE
+├── CLAUDE.md
 ├── .env.local
-├── middleware.ts                      ← Admin route protection
+├── middleware.ts
 ├── app/
-│   ├── layout.tsx                     ← LenisProvider + fonts + metadata
-│   ├── page.tsx                       ← Home
-│   ├── courses/
-│   │   ├── page.tsx
-│   │   └── [slug]/page.tsx
+│   ├── layout.tsx
+│   ├── page.tsx
+│   ├── courses/page.tsx
+│   ├── courses/[slug]/page.tsx
 │   ├── trading/page.tsx
+│   ├── news/page.tsx
+│   ├── news/[slug]/page.tsx
 │   ├── about/page.tsx
 │   ├── contact/page.tsx
+│   ├── api/contact/route.ts
+│   ├── api/upload/route.ts
 │   └── admin/
-│       ├── layout.tsx                 ← AdminLayout (sidebar + topbar)
-│       ├── page.tsx                   ← Dashboard
+│       ├── layout.tsx
+│       ├── page.tsx (Dashboard)
 │       ├── login/page.tsx
-│       ├── courses/
-│       │   ├── page.tsx
-│       │   ├── new/page.tsx
-│       │   └── [id]/page.tsx
+│       ├── courses/page.tsx
+│       ├── courses/new/page.tsx
+│       ├── courses/[id]/page.tsx
+│       ├── faculty/page.tsx
+│       ├── faculty/new/page.tsx
+│       ├── faculty/[id]/page.tsx
+│       ├── news/page.tsx
+│       ├── news/new/page.tsx
+│       ├── news/[id]/page.tsx
 │       ├── testimonials/page.tsx
 │       ├── notifications/page.tsx
 │       ├── enrollments/page.tsx
+│       ├── trading-courses/page.tsx
 │       ├── about/page.tsx
 │       ├── contact-info/page.tsx
-│       └── trading-courses/page.tsx
+│       └── media/page.tsx
 ├── components/
 │   ├── global/
 │   │   ├── Navbar.tsx
 │   │   ├── Footer.tsx
-│   │   ├── Logo.tsx                   ← Smart logo component
+│   │   ├── Logo.tsx
 │   │   ├── CustomCursor.tsx
 │   │   ├── LoadingScreen.tsx
 │   │   ├── PageTransition.tsx
-│   │   └── NotificationBanner.tsx     ← Shows active notifications
+│   │   └── NotificationBanner.tsx
 │   ├── sections/
-│   │   ├── HeroSection.tsx
+│   │   ├── HeroSection.tsx         (Spline version)
+│   │   ├── HeroFallback.tsx        (CSS-only fallback)
 │   │   ├── MarqueeBand.tsx
 │   │   ├── StatsSection.tsx
-│   │   ├── CoursesSection.tsx
-│   │   ├── TradingSection.tsx         ← NEW — trading highlight
-│   │   ├── WhyUsSection.tsx
+│   │   ├── CoursesSection.tsx      (timeline layout)
+│   │   ├── FacultySection.tsx
+│   │   ├── TradingSection.tsx
+│   │   ├── NewsSection.tsx         (homepage teaser)
 │   │   ├── TestimonialsSection.tsx
 │   │   ├── PlacementSection.tsx
-│   │   ├── CtaSection.tsx
-│   │   └── Hero3D.tsx                 ← Spline or Three.js 3D scene
+│   │   └── CtaSection.tsx
+│   ├── news/
+│   │   ├── NewsCard.tsx            (image/video/text variants)
+│   │   ├── NewsGrid.tsx            (masonry layout)
+│   │   ├── VideoModal.tsx          (react-player lightbox)
+│   │   └── NewsFilters.tsx
 │   ├── admin/
 │   │   ├── AdminSidebar.tsx
 │   │   ├── AdminTopBar.tsx
+│   │   ├── ImageUploader.tsx       (react-dropzone, reusable)
+│   │   ├── VideoUploader.tsx
 │   │   ├── CourseForm.tsx
-│   │   ├── TestimonialForm.tsx
-│   │   ├── NotificationForm.tsx
-│   │   ├── DataTable.tsx              ← Reusable admin table component
+│   │   ├── FacultyForm.tsx
+│   │   ├── NewsPostForm.tsx
+│   │   ├── RichTextEditor.tsx      (react-quill wrapper)
+│   │   ├── DataTable.tsx
 │   │   └── StatsCard.tsx
 │   └── ui/
-│       ├── CourseCard.tsx
+│       ├── CourseCard.tsx          (horizontal timeline card)
+│       ├── LevelBadge.tsx          (Level 1/2/3/4)
+│       ├── FacultyCard.tsx
 │       ├── StatCard.tsx
 │       ├── TestimonialCard.tsx
-│       ├── Button.tsx
-│       ├── Badge.tsx
-│       └── ModuleAccordion.tsx
+│       └── Button.tsx
 ├── lib/
-│   ├── courses.ts                     ← Static course data (seed data)
+│   ├── courses.ts                  (4 diploma programs data)
+│   ├── faculty.ts                  (3 faculty seed data)
 │   ├── supabase/
-│   │   ├── client.ts                  ← Browser Supabase client
-│   │   ├── server.ts                  ← Server Supabase client
-│   │   ├── courses.ts                 ← Course CRUD functions
-│   │   ├── testimonials.ts            ← Testimonial CRUD
-│   │   ├── notifications.ts           ← Notification CRUD
-│   │   ├── enrollments.ts             ← Enrollment CRUD
-│   │   └── content.ts                 ← Site content CRUD
-│   └── resend.ts                      ← Email sending functions
-├── providers/
-│   └── LenisProvider.tsx
+│   │   ├── client.ts
+│   │   ├── server.ts
+│   │   ├── courses.ts
+│   │   ├── faculty.ts              (public view only — no phone/email)
+│   │   ├── news.ts
+│   │   ├── testimonials.ts
+│   │   ├── notifications.ts
+│   │   ├── enrollments.ts
+│   │   └── content.ts
+│   ├── storage.ts                  (Supabase Storage upload/getUrl/delete)
+│   └── resend.ts
+├── providers/LenisProvider.tsx
 ├── hooks/
 │   ├── useGsapAnimations.ts
 │   └── useScrollProgress.ts
-├── styles/
-│   └── globals.css
-├── public/
-│   ├── logos/
-│   │   ├── milestone-logo-dark.png    ← Copy from uploaded assets
-│   │   └── milestone-logo-light.png   ← Copy from uploaded assets
-│   └── images/
+├── styles/globals.css
+├── public/logos/
+│   ├── milestone-logo-dark.png
+│   └── milestone-logo-light.png
 └── tailwind.config.ts
 ```
 
 ---
 
-## 🚀 DEPLOY TARGET
+## ✅ CODING RULES
 
-- Platform: Vercel
-- Domain: milestone-academy.vercel.app (then custom domain)
-- Database: Supabase (free tier sufficient to start)
-- Images: Supabase Storage bucket "milestone-assets"
-- Email: Resend (100 emails/day free)
+```
+1. TypeScript strict — no any types, ever
+2. Faculty phone/email: NEVER in public API routes or client components
+3. Public faculty: use public_faculty VIEW only in public-facing pages
+4. Admin: all /admin/* routes protected via middleware.ts
+5. All images: Next.js <Image> with sizes prop, lazy loading
+6. File uploads: validate type + size BEFORE upload
+7. Supabase Storage: public bucket for media, use getPublicUrl()
+8. react-dropzone: show progress bar + error state + success preview
+9. Video URLs: sanitize YouTube/Vimeo before storing
+10. GSAP: register all plugins in lib/gsap.ts — import from there
+11. Lenis: disabled on mobile (ontouchstart check)
+12. CustomCursor: hidden on touch devices (pointer: coarse)
+13. Spline: wrapped in Suspense + ErrorBoundary (can fail)
+14. react-player: wrapped in ErrorBoundary
+15. All async sections: show skeleton while loading
+16. Components: max 200 lines — split if larger
+17. Animations: GSAP only (no Framer Motion for page-level animations)
+```
+
+---
+
+## 🔧 ENVIRONMENT VARIABLES
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+RESEND_API_KEY=
+ADMIN_EMAIL=admin@milestone.academy
+NEXT_PUBLIC_SITE_URL=https://milestone-academy.vercel.app
+NEXT_PUBLIC_SPLINE_SCENE_URL=https://prod.spline.design/REPLACE_WITH_REAL/scene.splinecode
+```
