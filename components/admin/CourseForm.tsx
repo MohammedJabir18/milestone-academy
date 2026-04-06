@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { createBrowserClient } from "@supabase/ssr";
 import { 
+  Loader2, Plus, Trash2, ArrowUp, ArrowDown, X, ChevronDown, ChevronUp, UploadCloud 
 } from "lucide-react";
 import Image from "next/image";
 import { useDropzone } from "react-dropzone";

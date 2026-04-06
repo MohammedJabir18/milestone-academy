@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Link from "next/link";
@@ -39,6 +39,7 @@ type Course = {
   price: number | null;
   is_published: boolean;
   sort_order: number;
+  image_url: string | null;
 };
 
 export default function CoursesTableClient({ initialCourses }: { initialCourses: Course[] }) {
@@ -129,6 +130,7 @@ export default function CoursesTableClient({ initialCourses }: { initialCourses:
       <TableHeader className="bg-neutral-50/50">
         <TableRow>
           <TableHead className="w-[80px] text-center">Sort</TableHead>
+          <TableHead className="w-[100px]">Photo</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Badge</TableHead>
           <TableHead>Duration</TableHead>
@@ -140,7 +142,7 @@ export default function CoursesTableClient({ initialCourses }: { initialCourses:
       <TableBody>
         {courses.length === 0 && (
           <TableRow>
-            <TableCell colSpan={7} className="text-center py-8 text-neutral-500">
+            <TableCell colSpan={8} className="text-center py-8 text-neutral-500">
               No courses found. Add a course to get started.
             </TableCell>
           </TableRow>
@@ -165,6 +167,17 @@ export default function CoursesTableClient({ initialCourses }: { initialCourses:
                   <ArrowDown size={16} />
                 </button>
               </div>
+            </TableCell>
+            <TableCell>
+              {course.image_url ? (
+                <div className="w-16 h-10 relative rounded-md overflow-hidden border">
+                  <img src={course.image_url} alt={course.title} className="object-cover w-full h-full" />
+                </div>
+              ) : (
+                <div className="w-16 h-10 bg-neutral-100 rounded-md flex items-center justify-center border">
+                  <span className="text-[10px] text-neutral-400 font-bold uppercase tracking-tight">No Photo</span>
+                </div>
+              )}
             </TableCell>
             <TableCell className="font-medium text-neutral-900">{course.title}</TableCell>
             <TableCell>
