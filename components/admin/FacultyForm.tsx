@@ -31,10 +31,10 @@ import {
 const facultySchema = z.object({
   name: z.string().min(1, "Name is required"),
   role: z.string().min(1, "Role is required"),
-  specialization: z.string().optional().default(""),
+  specialization: z.string().default(""),
   email: z.string().email("Invalid email").or(z.literal("")).optional(),
-  phone: z.string().optional().default(""),
-  bio: z.string().optional().default(""),
+  phone: z.string().default(""),
+  bio: z.string().default(""),
   courses: z.array(z.string()).default([]),
   status: z.boolean().default(true),
   sort_order: z.number().default(0),
@@ -76,7 +76,7 @@ export default function FacultyForm({ initialData }: { initialData?: any }) {
   };
 
   const form = useForm<FacultyFormValues>({
-    resolver: zodResolver(facultySchema),
+    resolver: zodResolver(facultySchema) as any,
     defaultValues,
   });
 
