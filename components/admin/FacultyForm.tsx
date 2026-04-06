@@ -284,7 +284,7 @@ export default function FacultyForm({ initialData }: { initialData?: any }) {
 
         <div className="space-y-2 relative">
           <Label className="flex items-center gap-1">
-            Email <Lock size={12} className="text-stone-400" title="Private — not shown publicly" />
+            Email <span title="Private — not shown publicly"><Lock size={12} className="text-stone-400" /></span>
           </Label>
           <Input {...register("email")} type="email" placeholder="sarah@milestone.com" />
           {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
@@ -292,7 +292,7 @@ export default function FacultyForm({ initialData }: { initialData?: any }) {
 
         <div className="space-y-2 relative">
           <Label className="flex items-center gap-1">
-            Phone <Lock size={12} className="text-stone-400" title="Private — not shown publicly" />
+            Phone <span title="Private — not shown publicly"><Lock size={12} className="text-stone-400" /></span>
           </Label>
           <Input {...register("phone")} placeholder="+971 50 XXXXXXX" />
         </div>
