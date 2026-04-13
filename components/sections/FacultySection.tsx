@@ -25,8 +25,8 @@ export default function FacultySection() {
         const { data, error } = await supabase
           .from("public_faculty")
           .select("*")
-          // Adjust order as needed, ensuring consistent presentation
-          .order("id");
+          .eq("status", true)
+          .order("sort_order");
         
         if (error || !data || data.length === 0) {
           setFaculty(fallbackFaculty);

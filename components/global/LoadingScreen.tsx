@@ -20,10 +20,11 @@ export default function LoadingScreen() {
       gsap.set(".logo-wrap", { opacity: 0, scale: 0.95 });
       gsap.set(".letter", { opacity: 0, y: 10 });
 
-      tl.to(".progress-bar", { width: "100%", duration: 2, ease: "power1.inOut" }, 0)
+      // Snappier 1.2-second load time
+      tl.to(".progress-bar", { width: "100%", duration: 1.2, ease: "power1.inOut" }, 0)
         .to(".counter", { 
           textContent: 100, 
-          duration: 2, 
+          duration: 1.2, 
           snap: { textContent: 1 }, 
           ease: "power1.inOut",
           onUpdate: function() {
@@ -34,14 +35,16 @@ export default function LoadingScreen() {
              }
           }
         }, 0)
-        .to(".logo-wrap", { opacity: 1, scale: 1, duration: 0.8, ease: "power2.out" }, 0)
-        .to(".letter", { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, ease: "power2.out" }, 0.2)
-        .to(".content-elements", { opacity: 0, duration: 0.3, ease: "power2.inOut" }, 1.8)
+        .to(".logo-wrap", { opacity: 1, scale: 1, duration: 0.6, ease: "power2.out" }, 0)
+        .to(".letter", { opacity: 1, y: 0, duration: 0.3, stagger: 0.03, ease: "power2.out" }, 0.1)
+        // Wait until 1.3s (AFTER 1.2s progress finishes) before fading out elements
+        .to(".content-elements", { opacity: 0, duration: 0.2, ease: "power2.inOut" }, 1.3)
+        // Slide panels away after content fades
         .to([".panel-top", ".panel-bottom"], { 
           yPercent: (i) => i === 0 ? -100 : 100, 
-          duration: 0.7, 
+          duration: 0.5, 
           ease: "power3.inOut"
-        }, 1.9);
+        }, 1.4);
 
     }, containerRef); // Scoped to container
 
@@ -60,12 +63,12 @@ export default function LoadingScreen() {
       <div className="content-elements absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
          {/* Logo */}
          <div className="logo-wrap opacity-0">
-            <Logo variant="dark" width={200} />
+            <Logo variant="light" width={200} />
          </div>
 
          {/* Typography */}
          <div className="mt-6 flex space-x-[2px] font-mono text-[14px] text-[var(--text-inverse)] opacity-60 tracking-[0.4em]">
-             {"MILESTONE ACADEMY".split("").map((char, i) => (
+             {"MILESTONE FIN ACADEMY".split("").map((char, i) => (
                  <span key={i} className="letter inline-block">
                     {char === " " ? "\u00A0" : char}
                  </span>

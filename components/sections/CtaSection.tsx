@@ -216,9 +216,9 @@ export default function CtaSection() {
 
         {/* Below Form Links */}
         <div className="mt-8 flex flex-wrap justify-center gap-8 text-[var(--text-inverse)]/60 font-sans text-[13px]">
-          <a href="tel:+919876543210" className="hover:text-[var(--text-inverse)] transition-colors">📞 +91 98765 43210</a>
-          <a href="mailto:admissions@milestone.academy" className="hover:text-[var(--text-inverse)] transition-colors">📧 admissions@milestone.academy</a>
-          <span>📍 Calicut | Malappuram | Thrissur | Online</span>
+          <a href="tel:+918590737080" className="hover:text-[var(--text-inverse)] transition-colors">📞 +91 85907 37080</a>
+          <a href="mailto:milestone.pni@gmail.com" className="hover:text-[var(--text-inverse)] transition-colors">📧 milestone.pni@gmail.com</a>
+          <span>📍 Ponnani | Malappuram | Online</span>
         </div>
 
       </div>

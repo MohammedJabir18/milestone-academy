@@ -158,7 +158,7 @@ export default function HeroSection() {
             }}
           >
             From Tally to Taxation, GST to Financial Analytics — 
-            Milestone Academy turns ambition into expertise, 
+            Milestone Fin Academy turns ambition into expertise, 
             one certified professional at a time.
           </p>
 

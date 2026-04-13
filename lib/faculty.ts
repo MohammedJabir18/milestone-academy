@@ -22,8 +22,8 @@ export const fallbackFaculty: FacultyMember[] = [
     id: "f2",
     name: "Muhammed Uways",
     role: "Instructor",
-    specialization: "Taxation",
-    bio: "Dedicated mentor focusing on UAE Taxation framework and compliance standards.",
+    specialization: "Trading Analyst",
+    bio: "Expert trading analyst with deep financial market insights and strategic investment knowledge.",
     photo_url: "/faculties/Uwais_milestone.jpeg",
     courses: ["DUTC", "EMDAT"]
   },
@@ -35,5 +35,14 @@ export const fallbackFaculty: FacultyMember[] = [
     bio: "Analytics expert bridging the gap between practical accounting and modern financial toolkits.",
     photo_url: "/faculties/Jinsya_milestone.jpeg",
     courses: ["PGDAFA", "DABS"]
+  },
+  {
+    id: "f4",
+    name: "Thanveera. P. M",
+    role: "Instructor",
+    specialization: "Taxation",
+    bio: "Dedicated mentor focusing on UAE Taxation framework and compliance standards.",
+    photo_url: null,
+    courses: ["EMDAT"]
   }
 ];

@@ -39,30 +39,30 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Milestone Academy | India's Premier Accounting & Finance Courses",
-  description: "Master Tally Prime, GST, Income Tax, SAP FICO at Milestone Academy. Industry-recognized certificates, 100% placement assistance. 4,800+ students in Kerala.",
-  applicationName: "Milestone Academy",
+  title: "Milestone Fin Academy | India's Premier Accounting & Finance Courses",
+  description: "Master Tally Prime, GST, Income Tax, SAP FICO at Milestone Fin Academy. Industry-recognized certificates, 100% placement assistance. 4,800+ students in Kerala.",
+  applicationName: "Milestone Fin Academy",
   keywords: ["Tally Prime", "GST Course", "Accounting Academy", "SAP FICO", "Income Tax", "Corporate Accounting", "Kerala Placement"],
   authors: [{ name: "CA Mohammed Jabir" }],
-  creator: "Milestone Academy",
-  publisher: "Milestone Academy",
+  creator: "Milestone Fin Academy",
+  publisher: "Milestone Fin Academy",
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: "https://milestone-trading-academy.vercel.app/",
-    title: "Milestone Academy | India's Premier Accounting & Finance Courses",
-    description: "Master Tally Prime, GST, Income Tax, SAP FICO at Milestone Academy. Industry-recognized certificates, 100% placement assistance. 4,800+ students in Kerala.",
-    siteName: "Milestone Academy",
+    title: "Milestone Fin Academy | India's Premier Accounting & Finance Courses",
+    description: "Master Tally Prime, GST, Income Tax, SAP FICO at Milestone Fin Academy. Industry-recognized certificates, 100% placement assistance. 4,800+ students in Kerala.",
+    siteName: "Milestone Fin Academy",
     images: [{
       url: "/og-image.webp", // Can refer to a default screenshot
       width: 1200,
       height: 630,
-      alt: "Milestone Academy - Master the Language of Business",
+      alt: "Milestone Fin Academy - Master the Language of Business",
     }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Milestone Academy | Premier Accounting Courses",
+    title: "Milestone Fin Academy | Premier Accounting Courses",
     description: "Master Tally Prime, GST, Income Tax, SAP FICO. 100% placement assistance. India's top finance institute.",
     creator: "@milestone_academy",
     images: ["/og-image.webp"],

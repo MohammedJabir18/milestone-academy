@@ -106,7 +106,7 @@ export default function WhyUsSection() {
             <div className="flex items-center gap-3 mb-8">
               <div className="w-8 h-[1px] bg-[var(--green-500)]" />
               <span className="font-mono text-[13px] text-[var(--green-500)] uppercase tracking-widest font-semibold">
-                Why Milestone Academy
+                Why Milestone Fin Academy
               </span>
             </div>
             

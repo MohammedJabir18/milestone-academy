@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { TransitionLink as Link } from "@/components/global/PageTransition";
 import { usePathname } from "next/navigation";
 import gsap from "gsap";
+import { Logo } from "./Logo";
 
 const navLinks = [
   { name: "Home", path: "/" },
@@ -88,18 +89,10 @@ export default function Navbar() {
         <div className="max-w-[var(--container-max)] mx-auto h-full px-6 flex items-center justify-between">
           
           {/* Left: Logo */}
-          <Link href="/" className="flex items-center gap-2 magnetic clickable z-20 relative">
-            <svg width="28" height="28" viewBox="0 0 100 100" fill="none" className="text-[var(--green-500)] shrink-0">
-              <path 
-                d="M 20 80 L 20 20 L 50 60 L 80 20 L 80 80" 
-                stroke="currentColor" 
-                strokeWidth="8" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-              />
-            </svg>
+          <Link href="/" className="flex items-center gap-3 magnetic clickable z-20 relative">
+            <Logo variant="dark" width={40} className="shrink-0" />
             <span className="font-sans font-semibold text-lg tracking-tight text-[var(--text-primary)] md:block hidden sm:block">
-              Milestone Academy
+              Milestone Fin Academy
             </span>
           </Link>
 
@@ -126,8 +119,8 @@ export default function Navbar() {
 
           {/* Right: CTA + Phone (Desktop) */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="tel:+919876543210" className="font-mono text-[13px] text-[var(--text-secondary)] hover:text-[var(--green-600)] transition-colors clickable">
-              📞 +91 98765 43210
+            <a href="tel:+918590737080" className="font-mono text-[13px] text-[var(--text-secondary)] hover:text-[var(--green-600)] transition-colors clickable">
+              📞 +91 85907 37080
             </a>
             <Link 
               href="/courses" 
@@ -177,8 +170,8 @@ export default function Navbar() {
           })}
           
           <div className="mt-8 flex flex-col items-center gap-6" ref={(el) => { linksRef.current[navLinks.length] = el; }}>
-            <a href="tel:+919876543210" className="font-mono text-[14px] text-[var(--accent-mint)] clickable">
-              📞 +91 98765 43210
+            <a href="tel:+918590737080" className="font-mono text-[14px] text-[var(--accent-mint)] clickable">
+              📞 +91 85907 37080
             </a>
             <Link 
               href="/courses" 

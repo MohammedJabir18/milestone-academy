@@ -23,7 +23,7 @@ export default function AboutPage() {
             Milestone began as a vision — to democratize financial education in India. Starting as Milestone Trading Academy, we've trained over 10,000 traders across the country. Our students demanded more. They wanted accounting. They wanted compliance. They wanted careers in corporate finance.
           </p>
           <p>
-            So we built Milestone Academy.
+            So we built Milestone Fin Academy.
           </p>
           <p>
             Our faculty are practicing Chartered Accountants, SAP-certified consultants, and seasoned tax practitioners — professionals who work in the field every day and teach what the industry actually demands, not what textbooks say.
@@ -61,7 +61,7 @@ export default function AboutPage() {
               <span className="font-mono text-[var(--green-500)] text-[14px]">03 — Kerala's Most Recognized</span>
               <h3 className="font-sans font-bold text-[24px]">Brand Authority</h3>
               <p className="font-sans text-[16px] text-white/70 leading-relaxed">
-                Walk into any accounting firm, CA office, or MNC in Kerala and mention Milestone Academy — they know our rigorous standards.
+                Walk into any accounting firm, CA office, or MNC in Kerala and mention Milestone Fin Academy — they know our rigorous standards.
               </p>
             </div>
             {/* Iteration 04 */}

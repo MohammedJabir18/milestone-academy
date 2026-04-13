@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -50,11 +50,11 @@ export default function ContactInfoForm({ initialData, rowId }: { initialData?: 
   const form = useForm<ContactFormValues>({
     resolver: zodResolver(contactSchema),
     defaultValues: {
-      emails: content.emails || "hello@milestoneacademy.com",
+      emails: content.emails || "milestone.pni@gmail.com",
       whatsapp: content.whatsapp || "",
       office_hours: content.office_hours || "Mon - Sat: 9:30 AM - 6:00 PM",
       phones: content.phones?.length ? content.phones.map((p: string) => ({ number: p })) : [{ number: "" }],
-      branches: content.branches || [{ name: "Kochi Headquarters", address: "", google_maps_url: "" }],
+      branches: content.branches || [{ name: "Ponnani Branch", address: "C V BROTHERS COMPLEX, KUTTIKAD, PONNANI — 679577", google_maps_url: "" }],
       social: {
         instagram: content.social?.instagram || "",
         youtube: content.social?.youtube || "",

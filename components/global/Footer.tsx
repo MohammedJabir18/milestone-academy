@@ -5,6 +5,7 @@ import { TransitionLink as Link } from "@/components/global/PageTransition";
 import gsap from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { Logo } from "./Logo";
 
 export default function Footer() {
   const footerRef = useRef<HTMLElement>(null);
@@ -25,18 +26,10 @@ export default function Footer() {
           
           {/* Column 1: Brand */}
           <div ref={(el) => { colRefs.current[0] = el; }} className="flex flex-col">
-            <Link href="/" className="flex items-center gap-2 mb-6 clickable magnetic self-start">
-              <svg width="32" height="32" viewBox="0 0 100 100" fill="none" className="text-white shrink-0">
-                <path 
-                  d="M 20 80 L 20 20 L 50 60 L 80 20 L 80 80" 
-                  stroke="currentColor" 
-                  strokeWidth="8" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                />
-              </svg>
+            <Link href="/" className="flex items-center gap-3 mb-6 clickable magnetic self-start">
+              <Logo variant="light" width={48} className="shrink-0" />
               <span className="font-sans font-semibold text-xl tracking-tight text-white">
-                Milestone Academy
+                Milestone Fin Academy
               </span>
             </Link>
             
@@ -85,7 +78,7 @@ export default function Footer() {
             </div>
             
             <div className="mt-8 font-mono text-xs opacity-50 uppercase tracking-widest hidden lg:block">
-              © 2025 Milestone Academy. All rights reserved.
+              © 2025 Milestone Fin Academy. All rights reserved.
             </div>
           </div>
 
@@ -142,21 +135,21 @@ export default function Footer() {
               <div className="flex items-start gap-4">
                 <MapPin size={20} className="text-[var(--green-500)] shrink-0 mt-0.5" />
                 <span className="font-sans text-[14px] text-[var(--text-inverse)]/70 leading-relaxed">
-                  1st Floor, Calicut Business Centre, Kozhikode — 673001
+                  C V BROTHERS COMPLEX, KUTTIKAD, PONNANI — 679577
                 </span>
               </div>
               
               <div className="flex items-center gap-4">
                 <Phone size={20} className="text-[var(--green-500)] shrink-0" />
-                <a href="tel:+919876543210" className="font-mono text-[14px] text-[var(--text-inverse)]/70 transition-colors hover:text-[var(--green-400)] clickable inline-flex w-fit">
-                  +91 98765 43210
+                <a href="tel:+918590737080" className="font-mono text-[14px] text-[var(--text-inverse)]/70 transition-colors hover:text-[var(--green-400)] clickable inline-flex w-fit">
+                  +91 85907 37080
                 </a>
               </div>
               
               <div className="flex items-center gap-4">
                 <Mail size={20} className="text-[var(--green-500)] shrink-0" />
-                <a href="mailto:admissions@milestone.academy" className="font-mono text-[14px] text-[var(--text-inverse)]/70 transition-colors hover:text-[var(--green-400)] clickable inline-flex w-fit">
-                  admissions@milestone.academy
+                <a href="mailto:milestone.pni@gmail.com" className="font-mono text-[14px] text-[var(--text-inverse)]/70 transition-colors hover:text-[var(--green-400)] clickable inline-flex w-fit">
+                  milestone.pni@gmail.com
                 </a>
               </div>
               
@@ -190,7 +183,7 @@ export default function Footer() {
           </div>
           
           <div className="font-mono text-xs opacity-50 uppercase tracking-widest md:hidden">
-            © 2025 Milestone Academy
+            © 2025 Milestone Fin Academy
           </div>
         </div>
         

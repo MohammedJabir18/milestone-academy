@@ -11,10 +11,10 @@ export interface LogoProps {
 export function Logo({ variant = "light", width = 180, className = "" }: LogoProps) {
   return (
     <Image
-      src={variant === "dark" ? "/logos/milestone-logo-dark.png" : "/logos/milestone-logo-light.png"}
-      alt="Milestone Academy"
+      src={variant === "dark" ? "/logos/logo-dark.png" : "/logos/logo-light.png"}
+      alt="Milestone Fin Academy"
       width={width}
-      height={Math.round(width * 0.22)}
+      height={width}
       className={className}
       priority
     />
