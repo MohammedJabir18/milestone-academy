@@ -166,30 +166,50 @@ Left-to-right gradient fade: overlays the Spline on the left edge
   This blends Spline seamlessly into the content area
 ```
 
-### Spline Scene — What to Build/Find:
+### Spline Implementation Note:
 ```
-Go to https://app.spline.design/community and search:
-  Keywords: "finance" / "data" / "abstract green" / "crystal" / "sphere gradient"
+Scene URL: https://prod.spline.design/IPatTLqZcSk-SkwY/scene.splinecode
 
-IDEAL SCENE CHARACTERISTICS:
-  ✓ Dark atmospheric environment (#0A1A0B base)
-  ✓ Abstract 3D geometry — NOT a plain box/hexagon
-    Best options: floating polyhedra, abstract curved surfaces, 
-    data visualization shapes, crystal formations, sphere clusters
-  ✓ Green accent lighting: rim light, glow halos in #2D9E44
-  ✓ Animated: slow rotation, particle trails, pulsing glow
-  ✓ Mouse interactivity: follow-cursor or orbit built into Spline
-  ✓ Premium material: metallic, glass, or iridescent surface
+This is a LIVE published Spline scene. Use it directly.
+No placeholder URL needed. No TODO comment needed.
 
-TO USE IN CODE:
-  1. Find/create a Spline scene at spline.design
-  2. Click "Export" → "Viewer" → copy the scene URL
-  3. Use: <Spline scene="https://prod.spline.design/{ID}/scene.splinecode" />
-  4. If no URL available at build time, use placeholder URL + comment:
-     // TODO: Replace SPLINE_SCENE_URL with actual published Milestone scene
+The scene loads real-time 3D from Spline's CDN.
+It will work immediately as long as @splinetool/react-spline is installed.
 
-IMPORTANT: Add error boundary + Suspense around Spline.
-If Spline fails to load → show HeroFallback (CSS animated scene, see below).
+Implementation:
+  const SPLINE_URL = "https://prod.spline.design/IPatTLqZcSk-SkwY/scene.splinecode";
+  
+  <Spline 
+    scene={SPLINE_URL}
+    className="w-full h-full"
+    onLoad={(spline) => {
+      // Optional: access spline object for interactions
+      // spline.setZoom(1.2); // adjust zoom if needed
+    }}
+  />
+
+IMPORTANT INTEGRATION NOTES:
+  1. The Spline scene has its own background — use CSS to override if needed:
+     Add a ::before on the Spline container or wrap in a div with bg override
+  
+  2. Spline loads asynchronously — the Suspense fallback shows during load:
+     <Suspense fallback={<HeroFallback />}>
+       <Spline scene={SPLINE_URL} />
+     </Suspense>
+  
+  3. Mobile performance: on screens < 768px, render HeroFallback instead:
+     {isMobile ? <HeroFallback /> : <Spline scene={SPLINE_URL} />}
+     Detect mobile: window.innerWidth < 768 OR useMediaQuery hook
+  
+  4. Left-side content blending: the gradient overlay (bg-primary → transparent)
+     must be positioned ABOVE the Spline div (z-index) to blend seamlessly:
+     Spline container: z-0
+     Gradient fade div: z-1
+     Hero content: z-10
+     Badge cards: z-20
+  
+  5. Pointer events: Spline needs pointer-events for interactivity on desktop.
+     On mobile: pointer-events-none (prevent blocking scroll)
 ```
 
 ### HeroFallback — CSS-Only Premium Alternative:
@@ -212,79 +232,110 @@ If Spline fails to load → show HeroFallback (CSS animated scene, see below).
 // This fallback must still look IMPRESSIVE — better than current Three.js
 ```
 
-### Hero HTML Content (overlaid on Spline, z-10):
-```
-Container: max-w-[1280px] mx-auto px-6, absolute z-10
-           left-aligned content, max-width 520px on left
+[2] HEADLINE — Mixed typography for maximum editorial impact:
 
-[PILL BADGE] (mb-6):
-  bg var(--green-500)/12, border 1px var(--green-500)/25
-  rounded-full, px-5 py-2, inline-flex gap-2 items-center
-  "✦ India's Premier Accounting Academy"
-  Syne 12px, text-[var(--green-600)], letter-spacing 0.05em
-  Entrance: scale 0→1, spring ease, delay 0.25s
+Container: mt-2 mb-0
 
-[HEADLINE] (Instrument Serif, clamp(58px, 7.5vw, 96px), line-height 1.0):
-  "Master the"    → text-[var(--text-primary)]
-  "Language of"   → text-[var(--text-primary)]
-  "Business."     → text-[var(--green-500)], italic
-                     text-decoration: underline 3px solid var(--green-500)/25
-
-  Each line: wrapped in overflow:hidden div
-  GSAP: y:"110%" → 0, stagger 0.12s, duration 0.9s, power4.out
-  class="gsap-heading"
-
-[SUBTEXT] (mt-6, Syne 18px, text-secondary, max-w-[440px], leading-[1.65]):
-  "From Tally to Taxation, GST to Financial Analytics —
-  Milestone Fin Academy turns ambition into expertise,
-  one certified professional at a time."
-  Entrance: y:30 → 0, opacity 0→1, delay 0.85s
-
-[CTA ROW] (mt-10, flex gap-4):
-  Primary: "Explore Programs →"
-    bg var(--gradient-green), white, Syne SemiBold 15px
-    px-9 py-4, rounded-full, class="magnetic"
-    Hover: translateY(-2px), shadow-[var(--shadow-green)], scale(1.03)
-    Click ripple: expanding ring animation
-
-  Secondary: "Watch Demo ▶"
-    border 1.5px var(--border-medium), bg transparent
-    Syne SemiBold 15px, px-9 py-4, rounded-full, class="magnetic"
-    Play icon: 2 expanding ring CSS pulse (opacity 1→0, scale 1→2.5, 2s loop)
-    Hover: border var(--green-400), text var(--green-600), bg var(--green-50)
-
-[SOCIAL PROOF ROW] (mt-8, flex items-center gap-6):
-  5 colored-initial avatar circles (38px, -10px overlap, border-2 white)
-  "4,800+ Students Enrolled" Syne SemiBold 13px
-  │ 1px vertical line h-5
-  "★★★★★ 4.9/5 Rating" (gold stars, Syne 13px)
-
-[SCROLL INDICATOR] (absolute bottom-8 left-6):
-  "SCROLL" JetBrains Mono 10px, text-muted, tracking-[0.3em], vertical text
-  Thin 40px line below, animated: GSAP y oscillation (0↔12px, 1.5s loop)
-
-[FLOATING BADGE CARDS] (absolute z-20, overlaid on Spline area):
-  3 frosted glass cards floating in the Spline area:
+LINE 1 & 2 — "Master the Language of"
+  Font: Syne Bold (weight 700) — NOT Instrument Serif
+  Size: clamp(56px, 7vw, 88px)
+  Line-height: 1.05
+  Color: var(--text-primary)
+  Letter-spacing: -0.02em (tight, modern)
+  Text-transform: none
   
-  Card style: bg white/88, backdrop-blur-md, border border-[var(--border-light)]
-    rounded-2xl, px-5 py-3, flex items-center gap-3
-    box-shadow: var(--shadow-card)
-  
-  Icon circle: 36px, bg var(--green-50), rounded-full, centered icon 16px green-600
-  Text: Syne SemiBold 13px, text-primary
-  
-  Card 1 (top-right of 3D area): BarChart3 icon | "GST Certification"
-    GSAP float: y 0→-14px→0, 3.2s ease-in-out infinite, yoyo
-  
-  Card 2 (middle area): CheckCircle icon | "Industry Recognized"
-    GSAP float: delay 1.1s, 3.8s duration
-  
-  Card 3 (bottom area): Trophy icon | "Tally Expert Program"
-    GSAP float: delay 0.7s, 4.2s duration
-  
-  All cards entrance: scale 0→1, opacity 0→1, spring ease, stagger 0.9/1.2/1.5s
-```
+  This creates maximum contrast with line 3 below.
+  Syne Bold at this scale is geometric, powerful, unmistakably modern.
+  It reads like a premium brand headline — think Stripe, Linear, Vercel.
 
+  Each word has slight weight variation trick:
+    "Master" — Syne 800 (ExtraBold if available, else 700)
+    "the" — Syne 600 (slightly lighter)
+    "Language" — Syne 800
+    "of" — Syne 600
+  Effect: rhythmic visual weight that draws the eye forward
+
+LINE 3 — "Business."
+  Font: Instrument Serif — italic (weight 400 italic)
+  Size: clamp(60px, 7.5vw, 96px) — SLIGHTLY LARGER than lines 1-2
+  Color: var(--green-500)
+  Font-style: italic
+  Letter-spacing: -0.01em
+  
+  The contrast between Syne Bold (lines 1-2) and 
+  Instrument Serif italic (line 3) creates the "WOW" moment.
+  This typographic collision is the entire personality of the brand.
+  
+  Underline treatment on "Business.":
+    CSS: text-decoration underline
+    text-decoration-color: var(--green-500) at 35% opacity
+    text-decoration-thickness: 3px
+    text-underline-offset: 8px
+    
+  Period after "Business" — same color, same italic
+  Gives editorial confidence — a full stop that demands attention.
+
+IMPLEMENTATION in TSX:
+  <div className="hero-headline">
+    <div className="overflow-hidden">
+      <div className="hero-line hero-line-1" 
+        style={{ 
+          fontFamily: "'Syne', sans-serif",
+          fontWeight: 700,
+          fontSize: "clamp(56px, 7vw, 88px)",
+          lineHeight: 1.05,
+          letterSpacing: "-0.02em",
+          color: "var(--text-primary)"
+        }}>
+        Master the
+      </div>
+    </div>
+    <div className="overflow-hidden">
+      <div className="hero-line hero-line-2"
+        style={{
+          fontFamily: "'Syne', sans-serif",
+          fontWeight: 700,
+          fontSize: "clamp(56px, 7vw, 88px)",
+          lineHeight: 1.05,
+          letterSpacing: "-0.02em",
+          color: "var(--text-primary)"
+        }}>
+        Language of
+      </div>
+    </div>
+    <div className="overflow-hidden">
+      <div className="hero-line hero-line-3"
+        style={{
+          fontFamily: "'Instrument Serif', serif",
+          fontWeight: 400,
+          fontStyle: "italic",
+          fontSize: "clamp(60px, 7.5vw, 96px)",
+          lineHeight: 1.0,
+          letterSpacing: "-0.01em",
+          color: "var(--green-500)",
+          textDecoration: "underline",
+          textDecorationColor: "rgba(45, 158, 68, 0.3)",
+          textDecorationThickness: "3px",
+          textUnderlineOffset: "8px"
+        }}>
+        Business.
+      </div>
+    </div>
+  </div>
+
+GSAP ENTRANCE (unchanged — line reveal from bottom):
+  Each .hero-line: y:"110%" → 0
+  Line 1: duration 0.85s, delay 0.45s, ease power4.out
+  Line 2: duration 0.85s, delay 0.58s, ease power4.out  
+  Line 3: duration 0.90s, delay 0.72s, ease power4.out (slightly slower for drama)
+
+VISUAL RESULT:
+  Master the          ← Syne Bold, dark, geometric, tight
+  Language of         ← Syne Bold, dark, same weight
+  Business.           ← Instrument Serif italic, green, larger, underlined
+  
+  The contrast makes visitors stop and read. The typographic personality IS the brand.
+  "WOW" factor: the font switch on line 3 is unexpected and sophisticated.
 ---
 
 ## 📚 COURSES — 4-LEVEL DIPLOMA SYSTEM
@@ -937,6 +988,79 @@ MEDIA MANAGEMENT:
 
 ---
 
+## 📢 CTA SECTION
+
+```
+CTA SECTION HEADLINE — Same typographic treatment as hero for brand consistency:
+
+COMPONENT: <CtaSection />
+Text: "Ready to Become a Certified Finance Expert?"
+
+SPLIT THE HEADLINE into 2 typographic layers:
+
+Line 1 — "Ready to Become a"
+  Font: Syne Bold (weight 700)
+  Size: clamp(36px, 5vw, 64px)
+  Color: var(--text-inverse) — white (section is on dark bg)
+  Letter-spacing: -0.02em
+  Line-height: 1.05
+  Text-transform: none
+
+Line 2 — "Certified Finance Expert?"
+  Font: Instrument Serif — italic (weight 400)
+  Size: clamp(38px, 5.5vw, 68px) — slightly larger than line 1
+  Color: var(--green-400) — brighter green (more visible on dark bg than green-500)
+  Font-style: italic
+  Letter-spacing: -0.01em
+  Line-height: 1.0
+  
+  The "?" at the end — same italic, same green.
+  It creates an inviting, conversational tone after the bold authority of line 1.
+
+IMPLEMENTATION in TSX:
+  <h2 className="cta-headline text-center">
+    <span className="block"
+      style={{
+        fontFamily: "'Syne', sans-serif",
+        fontWeight: 700,
+        fontSize: "clamp(36px, 5vw, 64px)",
+        lineHeight: 1.05,
+        letterSpacing: "-0.02em",
+        color: "var(--text-inverse)"
+      }}>
+      Ready to Become a
+    </span>
+    <span className="block"
+      style={{
+        fontFamily: "'Instrument Serif', serif",
+        fontWeight: 400,
+        fontStyle: "italic",
+        fontSize: "clamp(38px, 5.5vw, 68px)",
+        lineHeight: 1.0,
+        letterSpacing: "-0.01em",
+        color: "var(--green-400)"
+      }}>
+      Certified Finance Expert?
+    </span>
+  </h2>
+
+SCROLL ENTRANCE (GSAP ScrollTrigger):
+  Line 1: y:50→0, opacity:0→1, duration:0.8s, ease power3.out
+  Line 2: y:50→0, opacity:0→1, duration:0.85s, delay:0.12s, ease power3.out
+  Both trigger when section enters viewport at 75%
+
+VISUAL RESULT (on dark background):
+  Ready to Become a        ← Syne Bold, white, tight, authoritative
+  Certified Finance Expert? ← Instrument Serif italic, green, larger, inviting
+
+  Same typographic DNA as the hero headline.
+  Brand recognition through consistent typographic language.
+  The italic serif on green creates warmth against the dark background.
+  Makes visitors feel invited, not sold to.
+```
+
+---
+
 ## 🗄 COMPLETE SUPABASE SCHEMA
 
 ```sql
@@ -1250,5 +1374,191 @@ SUPABASE_SERVICE_ROLE_KEY=
 RESEND_API_KEY=
 ADMIN_EMAIL=admin@milestone.academy
 NEXT_PUBLIC_SITE_URL=https://milestone-academy.vercel.app
-NEXT_PUBLIC_SPLINE_SCENE_URL=https://prod.spline.design/REPLACE_WITH_REAL/scene.splinecode
+NEXT_PUBLIC_SPLINE_SCENE_URL=https://prod.spline.design/IPatTLqZcSk-SkwY/scene.splinecode
+```
+
+---
+
+## 💻 CLAUDE CODE PROMPTS — THESE 3 CHANGES ONLY
+
+### PROMPT A — Hero Typography Update:
+```
+Update ONLY the headline typography in components/sections/HeroSection.tsx.
+
+DO NOT change any other part of the hero section.
+
+CHANGE: The hero headline currently uses Instrument Serif for all 3 lines.
+UPDATE IT to this exact typography:
+
+Lines 1 and 2 — "Master the" and "Language of":
+  Switch from Instrument Serif to Syne Bold (weight: 700)
+  Size: clamp(56px, 7vw, 88px)
+  Letter-spacing: -0.02em
+  Line-height: 1.05
+  Color: var(--text-primary) — unchanged
+  Keep the same GSAP y:"110%"→0 line reveal animation
+  Keep the overflow:hidden wrapper divs
+
+Line 3 — "Business.":
+  KEEP Instrument Serif italic
+  Make it slightly LARGER than lines 1-2: clamp(60px, 7.5vw, 96px)
+  Keep color var(--green-500)
+  Add these CSS properties:
+    text-decoration: underline
+    text-decoration-color: rgba(45, 158, 68, 0.30)
+    text-decoration-thickness: 3px
+    text-underline-offset: 8px
+
+The visual contrast between Syne Bold (geometric, tight) on lines 1-2
+and Instrument Serif italic (flowing, elegant) on line 3 is the entire 
+personality of the brand. This typographic collision creates the WOW moment.
+
+Apply styles as inline style objects or Tailwind arbitrary values.
+Keep all existing GSAP animations intact — only change the font styles.
+```
+
+### PROMPT B — CTA Section Typography Update:
+```
+Update ONLY the main headline in components/sections/CtaSection.tsx.
+
+DO NOT change layout, form, buttons, background, or any other element.
+
+CURRENT: One block headline — probably using Instrument Serif throughout.
+
+UPDATE: Split into 2 typographic layers:
+
+Line 1 — "Ready to Become a":
+  Font: Syne, weight 700
+  Size: clamp(36px, 5vw, 64px)
+  Letter-spacing: -0.02em
+  Line-height: 1.05
+  Color: var(--text-inverse) — white (on dark background)
+  Display as block element
+
+Line 2 — "Certified Finance Expert?":
+  Font: Instrument Serif, weight 400, font-style italic
+  Size: clamp(38px, 5.5vw, 68px) — slightly larger than line 1
+  Letter-spacing: -0.01em
+  Line-height: 1.0
+  Color: var(--green-400) — bright green, more visible on dark bg
+  Display as block element
+
+Wrap both in a <h2> or heading element, text-center.
+
+Add GSAP ScrollTrigger entrance:
+  Line 1: y:50→0, opacity:0→1, duration 0.8s, ease power3.out
+  Line 2: y:50→0, opacity:0→1, duration 0.85s, delay 0.12s, ease power3.out
+  Both trigger when CTA section enters viewport
+
+This creates typographic consistency with the hero —
+same Syne Bold + Instrument Serif italic contrast = brand signature.
+```
+
+### PROMPT C — Spline Scene Integration:
+```
+Update components/sections/HeroSection.tsx to use the live Spline scene.
+
+REPLACE the placeholder Spline URL (or Three.js/CSS fallback) with this REAL URL:
+  https://prod.spline.design/IPatTLqZcSk-SkwY/scene.splinecode
+
+Also update .env.local:
+  NEXT_PUBLIC_SPLINE_SCENE_URL=https://prod.spline.design/IPatTLqZcSk-SkwY/scene.splinecode
+
+Implementation details:
+
+1. Import: import Spline from "@splinetool/react-spline"
+
+2. Desktop: render the real Spline scene
+   Mobile (< 768px): render <HeroFallback /> instead (performance — Spline is heavy on mobile)
+   
+   Use this detection:
+   const [isMobile, setIsMobile] = useState(false);
+   useEffect(() => {
+     setIsMobile(window.innerWidth < 768);
+     const handler = () => setIsMobile(window.innerWidth < 768);
+     window.addEventListener("resize", handler);
+     return () => window.removeEventListener("resize", handler);
+   }, []);
+
+3. Wrap Spline in Suspense + ErrorBoundary:
+   <ErrorBoundary fallback={<HeroFallback />}>
+     <Suspense fallback={<HeroFallback />}>
+       {isMobile ? <HeroFallback /> : (
+         <Spline 
+           scene="https://prod.spline.design/IPatTLqZcSk-SkwY/scene.splinecode"
+           className="w-full h-full"
+         />
+       )}
+     </Suspense>
+   </ErrorBoundary>
+
+4. Z-index layering (CRITICAL for visual blend):
+   Spline container div: style={{ zIndex: 0 }}
+   Left gradient fade div: style={{ zIndex: 1 }}
+   Main hero content div: style={{ zIndex: 10 }}
+   Floating badge cards: style={{ zIndex: 20 }}
+   
+   The gradient fade (bg-primary → transparent, left to right) at z-1 
+   makes the Spline scene appear to emerge from behind the content naturally.
+
+5. Pointer events:
+   Desktop: pointer-events-auto on Spline container (allows 3D interaction)
+   Mobile: pointer-events-none (prevents blocking scroll/tap)
+
+6. If Spline scene background conflicts with the hero:
+   Override with CSS mix-blend-mode on the Spline container, OR
+   Add a semi-transparent dark overlay on the right side of the Spline:
+   position absolute, right 0, top 0, width 30%, height 100%
+   bg linear-gradient(to right, transparent, rgba(10,26,11,0.15))
+   This adds depth at the right edge without hiding the scene.
+
+DO NOT change anything else in HeroSection — only the Spline integration.
+All existing content, layout, animations, badge cards remain the same.
+```
+
+---
+
+## 📋 SUMMARY OF ALL 3 CHANGES
+
+| What | Where | Change |
+|------|-------|--------|
+| "Master the Language of" | `HeroSection.tsx` — headline lines 1+2 | Syne Bold 700, -0.02em tracking |
+| "Business." | `HeroSection.tsx` — headline line 3 | Instrument Serif italic, larger, underline |
+| "Ready to Become a" | `CtaSection.tsx` — line 1 | Syne Bold 700, white |
+| "Certified Finance Expert?" | `CtaSection.tsx` — line 2 | Instrument Serif italic, green-400 |
+| Spline scene | `HeroSection.tsx` + `.env.local` | Real URL: IPatTLqZcSk-SkwY |
+
+---
+
+## 🎨 TYPOGRAPHIC LOGIC — WHY THIS WORKS
+
+```
+HERO BEFORE:
+  Master the          ← Instrument Serif (elegant but soft)
+  Language of         ← Instrument Serif (same, no contrast)
+  Business.           ← Instrument Serif italic green (nice but expected)
+
+HERO AFTER:
+  Master the          ← SYNE BOLD (geometric, tight, powerful)
+  Language of         ← SYNE BOLD (same — builds momentum)
+  Business.           ← Instrument Serif italic (CONTRAST — surprise, elegance)
+  
+The contrast creates what typographers call a "typographic collision."
+Two opposing font personalities meeting at one point.
+Bold sans-serif = authority, clarity, modernity.
+Italic serif = warmth, aspiration, craft.
+Together = "we are professional AND we care about artistry."
+
+CTA SECTION — SAME LOGIC ON DARK BACKGROUND:
+  Ready to Become a       ← Syne Bold white (confident, clear)
+  Certified Finance Expert? ← Instrument Serif italic green (aspirational, inviting)
+  
+The question mark in italic serif softens the CTA psychologically.
+It's not a command — it's an invitation.
+This increases conversion. People respond to aspiration, not pressure.
+
+BRAND CONSISTENCY:
+  The hero and CTA section now share the same typographic DNA.
+  A visitor who scrolls from hero to CTA subconsciously recognizes the pattern.
+  Brand signature = Syne Bold + Instrument Serif italic, always on key words.
 ```

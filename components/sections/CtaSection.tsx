@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import toast from "react-hot-toast";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 // Schema for form validation
 const formSchema = z.object({
@@ -23,6 +27,44 @@ export default function CtaSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const supabase = createClient();
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // Line 1 animation
+      gsap.fromTo(".cta-line-1", 
+        { y: 50, opacity: 0 },
+        { 
+          y: 0, 
+          opacity: 1, 
+          duration: 0.8, 
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".cta-headline",
+            start: "top 75%",
+          }
+        }
+      );
+      
+      // Line 2 animation
+      gsap.fromTo(".cta-line-2", 
+        { y: 50, opacity: 0 },
+        { 
+          y: 0, 
+          opacity: 1, 
+          duration: 0.85, 
+          delay: 0.12, 
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: ".cta-headline",
+            start: "top 75%",
+          }
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
 
   const { 
     register, 
@@ -75,7 +117,7 @@ export default function CtaSection() {
       
       // Auto-hide success after 5 seconds to allow other submissions
       setTimeout(() => setIsSuccess(false), 5000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Submission failed:", err);
       toast.error("Something went wrong. Please try again.");
     } finally {
@@ -97,9 +139,29 @@ export default function CtaSection() {
           <span className="font-mono text-[13px] text-[var(--accent-mint)] uppercase tracking-[0.15em] font-bold mb-4 block">
             Start Your Journey
           </span>
-          <h2 className="font-serif text-[68px] text-[var(--text-inverse)] leading-[1.05] mb-4">
-            Ready to Become a<br/>
-            Certified Finance Expert?
+          <h2 className="cta-headline text-center mb-6">
+            <span className="block cta-line-1"
+              style={{
+                fontFamily: "var(--font-syne, 'Syne'), sans-serif",
+                fontWeight: 700,
+                fontSize: "clamp(36px, 5vw, 64px)",
+                lineHeight: 1.05,
+                letterSpacing: "-0.04em",
+                color: "white"
+              }}>
+              Ready to Become a
+            </span>
+            <span className="block cta-line-2"
+              style={{
+                fontFamily: "var(--font-instrument-serif, 'Instrument Serif'), serif",
+                fontWeight: 400,
+                fontStyle: "italic",
+                fontSize: "clamp(48px, 6.5vw, 82px)",
+                lineHeight: 0.95,
+                color: "var(--green-400)"
+              }}>
+              Certified Finance Expert?
+            </span>
           </h2>
           <p className="font-sans text-[18px] text-[var(--text-inverse)]/70 max-w-xl mx-auto">
             Fill out the form below and our career counsellors will get back to you with the perfect roadmap for your goals.
@@ -200,7 +262,7 @@ export default function CtaSection() {
                 
                 {isSuccess && !isSubmitting && (
                   <span className="flex items-center gap-2 font-bold transform">
-                    ✓ We'll Call You Within 2 Hours!
+                    ✓ We&apos;ll Call You Within 2 Hours!
                   </span>
                 )}
                 

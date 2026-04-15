@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, Suspense, Component, ErrorInfo, ReactNode } from "react";
+import React, { useEffect, useRef, useState, Suspense, Component, ErrorInfo, ReactNode } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BarChart3, Trophy, CheckCircle, Play } from "lucide-react";
@@ -38,6 +38,14 @@ class ErrorBoundary extends Component<{ children: ReactNode, fallback: ReactNode
 export default function HeroSection() {
   const containerRef = useRef<HTMLElement>(null);
   const initialized = useRef(false);
+  const [isMobile, setIsMobile] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current || initialized.current) return;
@@ -109,16 +117,22 @@ export default function HeroSection() {
     >
       
       {/* SPLINE AREA */}
-      <div className="spline-container absolute inset-0 z-0 overflow-hidden">
+      <div className="spline-container absolute inset-0 z-0 overflow-hidden pointer-events-none md:pointer-events-auto">
         {/* We push the bottom boundary down by 80px to safely hide the watermark off-screen */}
-        <div className="absolute top-0 right-0 left-0 bottom-[-80px]">
-          <Spline scene="https://prod.spline.design/IPatTLqZcSk-SkwY/scene.splinecode" />
-        </div>
+        {isMobile === true ? (
+          <HeroFallback />
+        ) : isMobile === false ? (
+          <div className="absolute top-0 right-0 left-0 bottom-[-80px]">
+            <ErrorBoundary fallback={<HeroFallback />}>
+              <Spline scene="https://prod.spline.design/IPatTLqZcSk-SkwY/scene.splinecode" />
+            </ErrorBoundary>
+          </div>
+        ) : null}
       </div>
 
       {/* LEFT FADE GRADIENT */}
       <div 
-        className="absolute inset-0 pointer-events-none z-[5]"
+        className="absolute inset-0 pointer-events-none z-[1]"
         style={{ background: "linear-gradient(90deg, var(--bg-primary) 38%, rgba(247,249,244,0.85) 55%, transparent 72%)" }}
       />
 
@@ -128,23 +142,50 @@ export default function HeroSection() {
 
           
           {/* HEADLINE */}
-          <h1 
-            className="mb-6" 
-            style={{ 
-              fontFamily: "'Instrument Serif', serif", 
-              fontSize: "clamp(52px, 6.5vw, 84px)", 
-              lineHeight: 0.95 
-            }}
-
-          >
-            <div className="overflow-hidden">
-              <div className="hero-line-1 text-[var(--text-primary)]">Master the</div>
+          <h1 className="mb-6 flex flex-col items-start">
+            <div className="overflow-hidden pb-1 lg:pb-2">
+              <div 
+                className="hero-line-1 text-[var(--text-primary)]"
+                style={{ 
+                  fontFamily: "var(--font-plus-jakarta, 'Syne'), sans-serif",
+                  fontWeight: 800,
+                  letterSpacing: "-0.04em",
+                  fontSize: "clamp(52px, 6.5vw, 84px)",
+                  lineHeight: 0.95
+                }}
+              >
+                Master the
+              </div>
             </div>
-            <div className="overflow-hidden">
-              <div className="hero-line-2 text-[var(--text-primary)]">Language of</div>
+            <div className="overflow-hidden pb-1 lg:pb-2">
+              <div 
+                className="hero-line-2 text-[var(--text-primary)]"
+                style={{ 
+                  fontFamily: "var(--font-plus-jakarta, 'Syne'), sans-serif",
+                  fontWeight: 800,
+                  letterSpacing: "-0.04em",
+                  fontSize: "clamp(52px, 6.5vw, 84px)",
+                  lineHeight: 0.95
+                }}
+              >
+                Language of
+              </div>
             </div>
-            <div className="overflow-hidden">
-              <div className="hero-line-3 text-[var(--green-500)] italic">Business.</div>
+            <div className="overflow-hidden pb-2 pr-4 lg:pt-1">
+              <div 
+                className="hero-line-3 italic"
+                style={{ 
+                  fontFamily: "var(--font-instrument-serif, 'Instrument Serif'), serif", 
+                  fontSize: "clamp(52px, 6.5vw, 84px)", 
+                  lineHeight: 0.95,
+                  background: "var(--gradient-green)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  display: "inline-block"
+                }}
+              >
+                Business.
+              </div>
             </div>
           </h1>
 

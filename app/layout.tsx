@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Syne, JetBrains_Mono } from "next/font/google";
+import { Instrument_Serif, Syne, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { LenisProvider } from "@/providers/LenisProvider";
 import CustomCursor from "@/components/global/CustomCursor";
@@ -21,6 +21,13 @@ const syne = Syne({
   variable: "--font-syne",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  variable: "--font-plus-jakarta",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
 
@@ -88,7 +95,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${instrumentSerif.variable} ${syne.variable} ${jetBrainsMono.variable} antialiased`}
+      className={`${instrumentSerif.variable} ${syne.variable} ${plusJakartaSans.variable} ${jetBrainsMono.variable} antialiased`}
     >
       <body className="min-h-screen flex flex-col font-sans overflow-x-hidden">
         <CustomCursor />
