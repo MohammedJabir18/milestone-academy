@@ -94,7 +94,7 @@ export default function NewsPostForm({ initialData }: { initialData?: NewsPost }
   const isEditing = !!initialData;
 
   const { control, handleSubmit, watch, setValue, register, formState: { errors } } = useForm<NewsFormValues>({
-    resolver: zodResolver(newsSchema),
+    resolver: zodResolver(newsSchema) as any,
     defaultValues: initialData ? {
       ...initialData,
       excerpt: initialData.excerpt || "",

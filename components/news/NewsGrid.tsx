@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+// @ts-ignore - TS sometimes fails to resolve GSAP plugin paths with moduleResolution: bundler
 import { Flip } from 'gsap/Flip';
 import { Search, Calendar, Loader2 } from 'lucide-react';
 import { createClient } from '@/lib/supabase/client';

@@ -48,6 +48,8 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, videoUrl }) =>
     if (e.target === modalRef.current) onClose();
   };
 
+  const Player = ReactPlayer as any;
+
   return (
     <div
       ref={modalRef}
@@ -65,7 +67,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, videoUrl }) =>
         ref={contentRef}
         className="relative aspect-video w-full max-w-[1000px] overflow-hidden rounded-2xl bg-black shadow-2xl"
       >
-        <ReactPlayer
+        <Player
           url={videoUrl}
           width="100%"
           height="100%"
@@ -74,7 +76,7 @@ const VideoModal: React.FC<VideoModalProps> = ({ isOpen, onClose, videoUrl }) =>
           config={{
             youtube: {
               playerVars: { showinfo: 1 }
-            }
+            } as any
           }}
         />
       </div>
