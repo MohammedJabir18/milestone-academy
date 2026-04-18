@@ -250,7 +250,7 @@ export default function CtaSection() {
                 className={`w-full h-[54px] rounded-xl flex items-center justify-center font-sans font-semibold text-[16px] transition-all duration-300 relative overflow-hidden group ${
                   isSuccess 
                     ? "bg-[var(--green-500)] text-white scale-[1.02] animate-in" 
-                    : "bg-[var(--gradient-green)] text-white hover:shadow-[var(--shadow-green)] disabled:opacity-60 disabled:cursor-not-allowed"
+                    : "bg-[image:var(--gradient-green)] text-white hover:shadow-[var(--shadow-green)] disabled:opacity-60 disabled:cursor-not-allowed"
                 }`}
               >
                 {isSubmitting && (

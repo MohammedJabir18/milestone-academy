@@ -1,5 +1,6 @@
 "use client";
 
+import { ImageUploadField } from "./ImageUploadField";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { z } from "zod";
@@ -299,46 +300,11 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
       {/* Course Image Upload */}
       <section className="space-y-4">
         <h3 className="text-lg font-semibold border-b pb-2">Course Image</h3>
-        <div 
-          {...getRootProps()} 
-          className={`
-            relative h-[240px] rounded-xl border-2 border-dashed flex flex-col items-center justify-center transition-all cursor-pointer overflow-hidden
-            ${isDragActive ? 'border-[var(--green-500)] bg-[var(--green-50)]' : 'border-neutral-200 bg-neutral-50 hover:bg-neutral-100 hover:border-neutral-300'}
-          `}
-        >
-          <input {...getInputProps()} />
-          {imageUrl ? (
-            <>
-              <Image src={imageUrl} alt="Course Preview" fill className="object-cover" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white">
-                <UploadCloud size={32} className="mb-2" />
-                <span className="text-sm font-bold">Replace Course Image</span>
-              </div>
-            </>
-          ) : (
-            <div className="text-center">
-              {isUploading ? (
-                <Loader2 className="animate-spin text-neutral-400" size={32} />
-              ) : (
-                <>
-                  <UploadCloud size={32} className="text-neutral-400 mx-auto mb-2" />
-                  <p className="text-sm font-medium text-neutral-600">Drop course header image here or click</p>
-                  <p className="text-xs text-neutral-400 mt-1">Recommended 16:9 aspect ratio (Max 5MB)</p>
-                </>
-              )}
-            </div>
-          )}
-          
-          {imageUrl && !isUploading && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); setValue("image_url", null); }}
-              className="absolute top-3 right-3 bg-red-500 text-white p-1.5 rounded-full hover:bg-red-600 shadow-lg z-20"
-            >
-              <X size={16} />
-            </button>
-          )}
-        </div>
+        <ImageUploadField 
+          label="Course Header Image"
+          value={watch("image_url")}
+          onChange={(url) => setValue("image_url", url, { shouldValidate: true })}
+        />
       </section>
 
       {/* 2. Attributes */}

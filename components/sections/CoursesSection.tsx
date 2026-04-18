@@ -5,9 +5,8 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { Flip } from "gsap/Flip";
 import { type Course } from "@/lib/courses";
 import { createClient } from "@/lib/supabase/client";
-import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { TransitionLink as Link, usePageTransition } from "@/components/global/PageTransition";
 import { ChevronDown, Loader2, BookOpen, ArrowRight } from "lucide-react";
 
 // Register plugins safely
@@ -25,7 +24,7 @@ export default function CoursesSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const lineRef = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+  const { navigateTo } = usePageTransition();
   const supabase = createClient();
 
   useEffect(() => {
@@ -78,11 +77,12 @@ export default function CoursesSection() {
   };
 
   // Entrance and Timeline GSAP animations
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isLoading || dbCourses.length === 0) return;
     
-    // Header
-    if (sectionRef.current) {
+    // Use gsap.context for better cleanup in React
+    const ctx = gsap.context(() => {
+      // Header
       gsap.fromTo(".courses-header-anim", 
         { y: 40, opacity: 0 },
         { 
@@ -93,61 +93,74 @@ export default function CoursesSection() {
           scrollTrigger: {
             trigger: sectionRef.current,
             start: "top 75%",
+            once: true,
           }
         }
       );
-    }
 
-    // Node scaling entrance
-    const nodes = gsap.utils.toArray(".course-node") as HTMLElement[];
-    nodes.forEach(node => {
-      gsap.fromTo(node,
-        { scale: 0 },
-        {
-          scale: 1,
-          ease: "back.out(1.7)",
-          duration: 0.6,
-          scrollTrigger: {
-            trigger: node,
-            start: "top 85%",
-          }
-        }
-      );
-    });
+      // Wrapper-based triggers for node and card components
+      const wrappers = gsap.utils.toArray(".course-wrapper") as HTMLElement[];
+      wrappers.forEach((wrapper) => {
+        const node = wrapper.querySelector(".course-node");
+        const card = wrapper.querySelector(".course-card");
 
-    // Card slide entrance
-    const cards = gsap.utils.toArray(".course-card") as HTMLElement[];
-    cards.forEach((card, i) => {
-      gsap.fromTo(card,
-        { x: 70, opacity: 0 },
-        {
-          x: 0, opacity: 1,
-          duration: 0.8,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: card,
-            start: "top 78%",
-          }
+        if (node) {
+          gsap.fromTo(node,
+            { scale: 0 },
+            {
+              scale: 1,
+              ease: "back.out(1.7)",
+              duration: 0.6,
+              scrollTrigger: {
+                trigger: wrapper,
+                start: "top 85%",
+                once: true,
+              }
+            }
+          );
         }
-      );
-    });
 
-    // Vertical line draw effect
-    if (lineRef.current && containerRef.current) {
-      gsap.fromTo(lineRef.current,
-        { height: "0%" },
-        {
-          height: "100%",
-          ease: "none",
-          scrollTrigger: {
-            trigger: containerRef.current,
-            start: "top 60%",
-            end: "bottom 80%",
-            scrub: true
-          }
+        if (card) {
+          gsap.fromTo(card,
+            { x: 30, opacity: 0 },
+            {
+              x: 0, opacity: 1,
+              duration: 0.8,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: wrapper,
+                start: "top 85%",
+                once: true,
+              }
+            }
+          );
         }
-      );
-    }
+      });
+
+      // Vertical line draw effect
+      if (lineRef.current && containerRef.current) {
+        gsap.fromTo(lineRef.current,
+          { height: "0%" },
+          {
+            height: "100%",
+            ease: "none",
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: "top 60%",
+              end: "bottom 80%",
+              scrub: true
+            }
+          }
+        );
+      }
+
+      // Final refresh to lock in positions after all setup
+      ScrollTrigger.refresh();
+    }, sectionRef);
+
+    return () => {
+      ctx.revert();
+    };
   }, [isLoading, dbCourses.length]);
 
   return (
@@ -197,10 +210,10 @@ export default function CoursesSection() {
           ) : (
             <>
               {/* VERTICAL LINE BACKGROUND */}
-              <div className="absolute left-[29px] top-[30px] bottom-[30px] w-[2px] bg-[var(--green-500)]/20 z-0 hidden md:block" />
+              <div className="absolute left-[35px] top-[30px] bottom-[30px] w-[2px] bg-[var(--green-500)]/20 z-0 hidden md:block" />
               
               {/* VERTICAL SCROLLING LINE */}
-              <div className="absolute left-[29px] top-[30px] bottom-[30px] w-[2px] z-0 hidden md:block">
+              <div className="absolute left-[35px] top-[30px] bottom-[30px] w-[2px] z-0 hidden md:block">
                 <div ref={lineRef} className="w-full bg-[var(--green-500)] origin-top h-[0%]" />
               </div>
 
@@ -212,7 +225,9 @@ export default function CoursesSection() {
                 const isLastVisible = visibleArr[visibleArr.length - 1]?.id === course.id;
                 
                 const levelNum = (course as any).sort_order || index + 1;
-                const shortCode = course.badge || course.title.substring(0, 4).toUpperCase();
+                const acronymMatch = course.title.match(/\(([^)]+)\)/);
+                const parsedAcronym = acronymMatch ? acronymMatch[1] : course.title.substring(0, 4).toUpperCase();
+                const shortCode = course.badge || parsedAcronym;
                 
                 return (
                   <div 
@@ -222,121 +237,135 @@ export default function CoursesSection() {
                     style={{ display: isVisible ? 'block' : 'none' }}
                   >
                     {/* TIMELINE ROW */}
-                    <div className="relative flex flex-col md:flex-row items-start gap-6 md:gap-8 mb-8 z-10 w-full">
+                    <div className="relative flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-10 mb-12 z-10 w-full group/row">
                       
-                      {/* NODE */}
-                      <div className="course-node flex-shrink-0 w-[60px] h-[60px] relative z-20 hidden md:flex items-center justify-center group cursor-default">
-                        <div className={`w-full h-full rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-[1.12] group-hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] ${levelNum === 4 ? "bg-[var(--bg-dark)] border-2 border-[var(--accent-gold)]" : "bg-[var(--gradient-green)]"}`}>
-                          <span className="font-mono text-[22px] font-bold text-white leading-none">
+                      {/* HUGE GLOWING NODE */}
+                      <div className="course-node flex-shrink-0 w-[72px] h-[72px] relative z-20 hidden md:flex items-center justify-center group/node cursor-default mt-2">
+                        {/* Glow Behind */}
+                        <div className="absolute inset-0 rounded-full bg-[var(--green-500)] blur-[16px] opacity-30 transition-opacity duration-500 group-hover/row:opacity-70"></div>
+                        <div className="w-full h-full rounded-full flex items-center justify-center transition-all duration-500 group-hover/row:scale-[1.15] bg-gradient-to-br from-[var(--green-400)] to-[var(--green-600)] shadow-[inset_0_2px_4px_rgba(255,255,255,0.3)] border-[4px] border-white relative z-10">
+                          <span className="font-mono text-[26px] font-black text-white leading-none drop-shadow-sm">
                             {levelNum}
                           </span>
                         </div>
                       </div>
 
-                      {/* CARD */}
-                      <div className="course-card flex-1 bg-white rounded-2xl overflow-hidden border border-[var(--border-light)] flex flex-col md:flex-row group/card transition-all duration-[0.35s] ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:-translate-y-[5px] hover:shadow-[0_12px_40px_-15px_rgba(34,197,94,0.15)] hover:border-[var(--green-300)] w-full">
+                      {/* PREMIUM IMPRESSIVE CARD */}
+                      <div className="course-card flex-1 bg-white rounded-3xl overflow-hidden border border-gray-100 flex flex-col md:flex-row group/card transition-all duration-[0.5s] ease-[cubic-bezier(0.25,1,0.5,1)] hover:-translate-y-[8px] hover:shadow-[0_24px_50px_-12px_rgba(34,197,94,0.25)] hover:border-[var(--green-300)] w-full relative">
                         
+                        {/* Glowing reflection on hover overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white via-transparent to-[var(--green-50)] opacity-0 group-hover/card:opacity-100 transition-opacity duration-[0.6s] z-0 pointer-events-none rounded-3xl" />
+
                         {/* LEFT IMAGE SIDE */}
-                        <div className="w-full md:w-[240px] h-[180px] md:h-auto flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)]">
+                        <div className="w-full md:w-[260px] h-[200px] md:h-auto flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)] z-10">
                           {course.image_url ? (
                             <Image 
                               src={course.image_url} 
                               alt={course.title} 
                               fill 
-                              className="object-cover transition-transform duration-[0.4s] group-hover/card:scale-[1.06]" 
+                              className="object-cover transition-transform duration-[0.7s] ease-out group-hover/card:scale-[1.1]" 
                             />
                           ) : (
                             <div 
-                              className="w-full h-full flex items-center justify-center transition-transform duration-[0.4s] group-hover/card:scale-[1.06]"
+                              className="w-full h-full flex items-center justify-center transition-transform duration-[0.7s] ease-out group-hover/card:scale-[1.1]"
                               style={{ background: course.gradient || "var(--gradient-green)" }}
                             >
-                              <BookOpen size={56} className="text-white opacity-90" />
+                              <BookOpen size={64} className="text-white opacity-95 transition-transform duration-500 group-hover/card:scale-110" />
                             </div>
                           )}
                           
-                          {/* Level badge */}
-                          <div className="absolute top-3 left-3 bg-[rgba(10,26,11,0.78)] backdrop-blur rounded-full px-3 py-1 text-white font-mono text-[10px] uppercase tracking-wide z-10 border border-white/10">
-                            Level {levelNum} · {shortCode}
+                          {/* Premium Glassmorphic Badge */}
+                          <div className="absolute top-4 left-4 bg-[rgba(0,0,0,0.6)] backdrop-blur-md rounded-full px-4 py-1.5 text-white font-mono text-[11px] font-bold uppercase tracking-widest z-10 border border-white/20 shadow-lg">
+                            Level {levelNum}
                           </div>
                         </div>
 
                         {/* RIGHT CONTENT */}
-                        <div className="flex-1 p-6 md:p-7 flex flex-col items-start bg-white z-10">
-                          {/* Diploma code chip */}
-                          <div className="inline-flex items-center bg-[var(--green-50)] border border-[var(--green-100)] text-[var(--green-700)] font-mono text-[11px] rounded-full px-3 py-1 relative leading-[1.2]">
-                            {shortCode}
+                        <div className="flex-1 p-7 md:p-9 flex flex-col items-start bg-transparent z-10 relative">
+                          
+                          {/* Diploma code premium chip */}
+                          <div className="inline-flex items-center bg-[var(--green-50)] border-l-2 border-[var(--green-500)] text-[var(--green-700)] font-sans font-bold tracking-widest text-[11px] px-3 py-1.5 mb-3 uppercase drop-shadow-sm transition-all duration-300 group-hover/card:bg-[var(--green-100)] rounded-r-md">
+                            {shortCode} ACADEMY PROGRAM
                           </div>
                           
-                          <h3 className="font-serif font-semibold text-[18px] text-[var(--text-primary)] mt-3 leading-tight line-clamp-2">
-                            {course.title}
+                          {/* Elegant, Large Typography for WOW factor */}
+                          <h3 className="font-serif font-semibold text-[22px] md:text-[26px] text-[#0A1A0B] mt-1 line-clamp-2 leading-[1.3] group-hover/card:text-[var(--text-primary)] transition-colors duration-300 tracking-tight">
+                            {course.title.replace(/\s*\([^)]*\)/, '')} {/* Strip acronym from visible elegant title */}
                           </h3>
                           
-                          <p className="font-sans text-[13px] text-[var(--text-secondary)] mt-1 line-clamp-2">
+                          <p className="font-sans text-[14px] md:text-[15px] text-[var(--text-secondary)] mt-2 line-clamp-2 font-medium leading-relaxed">
                             {course.tagline}
                           </p>
                           
-                          {/* Topics */}
-                          <div className="flex flex-wrap gap-1.5 mt-4">
-                            {(course.topics || []).slice(0, 5).map((topic, tIndex) => (
-                              <span key={tIndex} className="bg-[var(--green-50)] text-[var(--green-700)] font-mono text-[10px] px-2.5 py-0.5 rounded-full border border-[var(--green-100)]">
+                          {/* High-quality rounded tags */}
+                          <div className="flex flex-wrap gap-2 mt-5">
+                            {(course.topics || []).slice(0, 4).map((topic, tIndex) => (
+                              <span key={tIndex} className="bg-white/80 backdrop-blur-sm shadow-sm text-gray-700 font-sans font-medium text-[11px] px-3 py-1 rounded-full border border-gray-200 transition-colors group-hover/card:border-[var(--green-200)] group-hover/card:bg-[var(--green-50)]">
                                 {topic}
                               </span>
                             ))}
-                            {(course.topics || []).length > 5 && (
-                              <span className="text-[var(--text-muted)] font-mono text-[10px] px-2.5 py-0.5 rounded-full bg-[var(--bg-secondary)] border border-[var(--border-light)]">
-                                +{(course.topics || []).length - 5} more
+                            {(course.topics || []).length > 4 && (
+                              <span className="text-gray-500 font-sans font-medium text-[11px] px-3 py-1 rounded-full bg-gray-50 border border-gray-200">
+                                +{(course.topics || []).length - 4} more
                               </span>
                             )}
                           </div>
                           
-                          {/* Divider */}
-                          <div className="w-full my-4 border-t border-[var(--border-light)]" />
+                          <div className="w-full my-6 border-t border-gray-100 group-hover/card:border-[var(--green-100)] transition-colors duration-300" />
                           
-                          {/* Bottom Row */}
-                          <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full mt-auto pt-1 gap-4 sm:gap-0">
-                            <div className="font-sans text-[12px] text-[var(--text-secondary)] flex items-center gap-1.5 whitespace-nowrap">
-                              📅 {course.duration || "Self-Paced"}
+                          {/* Bottom Row: Duration, Price, Enroll */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between w-full mt-auto gap-5 sm:gap-0">
+                            
+                            <div className="font-sans font-semibold text-[13px] text-gray-500 flex items-center gap-2">
+                               <div className="w-7 h-7 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center shrink-0">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                               </div>
+                               {course.duration || "Self-Paced"}
                             </div>
                             
-                            <div className="flex items-center justify-between sm:justify-end gap-5 w-full sm:w-auto">
-                              {/* Price */}
+                            <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+                              
+                              {/* Prominent Price Display */}
                               <div className="flex flex-col items-start sm:items-end">
                                 {course.price && course.price > 0 ? (
                                   <>
-                                    {course.originalPrice && course.originalPrice > 0 && (
-                                      <span className="text-[var(--text-muted)] line-through text-[13px] font-sans leading-none mb-0.5">
+                                    {course.originalPrice && course.originalPrice > course.price && (
+                                      <span className="text-gray-400 line-through text-[13px] font-mono leading-none mb-1 font-medium">
                                         ₹{course.originalPrice.toLocaleString('en-IN')}
                                       </span>
                                     )}
-                                    <span className="font-mono font-semibold text-[22px] text-[var(--green-600)] leading-none">
+                                    <span className="font-serif font-bold text-[26px] text-[#0A1A0B] leading-none tracking-tight">
                                       ₹{course.price.toLocaleString('en-IN')}
                                     </span>
                                   </>
                                 ) : (
-                                  <span className="font-sans font-semibold text-[15px] text-[var(--green-600)]">Contact</span>
+                                  <span className="font-serif font-bold text-[22px] text-[#0A1A0B]">Contact Us</span>
                                 )}
                               </div>
                               
+                              {/* Premium Sticky Button */}
                               <button 
-                                onClick={() => router.push(`/courses/${course.slug}`)}
-                                className="bg-[var(--gradient-green)] text-white font-sans text-[12px] font-semibold px-4 py-2 rounded-full transition-transform duration-300 hover:scale-[1.05] group-hover/card:scale-[1.06] group-hover/card:translate-x-[3px] shadow-[0_2px_10px_rgba(34,197,94,0.3)] whitespace-nowrap"
+                                onClick={() => navigateTo(`/courses/${course.slug}`)}
+                                className="relative overflow-hidden bg-[#0A1A0B] text-white font-sans text-[13px] font-bold px-6 py-3 rounded-full transition-all duration-[0.4s] hover:bg-[var(--green-600)] hover:shadow-[0_8px_20px_rgba(34,197,94,0.3)] hover:-translate-y-1 hover:scale-[1.02] flex items-center gap-2 whitespace-nowrap"
                               >
-                                Enroll →
+                                View Details 
+                                <ArrowRight size={14} className="transition-transform duration-300 group-hover/card:translate-x-1" />
                               </button>
                             </div>
+                            
                           </div>
                         </div>
                       </div>
                     </div>
                     
-                    {/* CONNECTOR (Hidden after Level 4 or last visible item) */}
-                    {levelNum < 4 && !isLastVisible && (
-                      <div className="connector h-[40px] flex items-center relative mb-8 z-0 hidden md:flex">
-                        <div className="absolute left-[21px] flex items-center justify-center bg-[var(--bg-primary)] w-[16px] h-[16px] z-10 text-[var(--text-muted)]">
-                          <ChevronDown size={16} />
+                    {/* CONNECTOR (Hidden after the last visible item) */}
+                    {!isLastVisible && (
+                      <div className="connector h-[50px] flex items-center relative mb-6 z-0 hidden md:flex">
+                        <div className="absolute left-[28px] flex items-center justify-center bg-white border border-gray-100 rounded-full w-[16px] h-[16px] z-10 text-gray-400">
+                          <ChevronDown size={12} strokeWidth={3} />
                         </div>
-                        <div className="w-[12px] h-[1px] border-b border-dashed border-[var(--border-medium)] absolute left-[45px]" />
-                        <span className="font-mono text-[10px] text-[var(--text-muted)] ml-[88px] uppercase tracking-wider">
+                        <div className="w-[12px] h-[2px] border-b-2 border-dashed border-gray-200 absolute left-[45px]" />
+                        <span className="font-sans font-bold text-[10px] text-gray-400 ml-[68px] uppercase tracking-[0.2em]">
                           Next Level
                         </span>
                       </div>

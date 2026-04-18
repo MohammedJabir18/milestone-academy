@@ -20,7 +20,7 @@ const testimonialSchema = z.object({
   student_name: z.string().min(1, "Student name is required"),
   role: z.string().optional().default(""),
   company: z.string().optional().default(""),
-  course_id: z.string().uuid("Invalid course selection").optional().or(z.literal('')),
+  course_id: z.string().optional().or(z.literal('')),
   review_text: z.string().min(10, "Review must be at least 10 characters"),
   rating: z.number().min(1).max(5).default(5),
   avatar_url: z.string().optional().default(""),
@@ -46,11 +46,20 @@ export default function TestimonialForm({ initialData, courses }: { initialData?
     defaultValues: initialData ? {
       ...initialData,
       course_id: initialData.course_id || '',
+      avatar_url: initialData.avatar_url || '',
+      role: initialData.role || '',
+      company: initialData.company || '',
+      rating: typeof initialData.rating === 'number' ? initialData.rating : 5,
+      is_published: Boolean(initialData.is_published),
+      is_featured: Boolean(initialData.is_featured),
     } : {
       rating: 5,
       is_published: false,
       is_featured: false,
       course_id: '',
+      avatar_url: '',
+      role: '',
+      company: '',
     },
   });
 
@@ -139,8 +148,19 @@ export default function TestimonialForm({ initialData, courses }: { initialData?
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit, (errs) => console.log("Form errors:", errs))} className="space-y-8">
       
+      {Object.keys(errors).length > 0 && (
+        <div className="bg-red-50 p-4 rounded-md border border-red-200">
+          <p className="text-red-500 font-bold mb-2">Please fix the following validation errors:</p>
+          <ul className="list-disc pl-5">
+            {Object.entries(errors).map(([key, err]) => (
+              <li key={key} className="text-red-600 text-sm">{key}: {String((err as any)?.message)}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         
         {/* Left Col - Avatar Upload */}

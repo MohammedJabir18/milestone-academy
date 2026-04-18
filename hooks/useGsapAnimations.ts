@@ -12,53 +12,64 @@ export function useGsapAnimations() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
 
-    // Timeout buffer allows Next.js DOM lifecycle to stabilize fully
-    const t = setTimeout(() => {
-      const headings = document.querySelectorAll<HTMLElement>(".gsap-heading");
-      
-      headings.forEach((heading) => {
-        // Prevent double execution on hot-reloading or sub-route hooks
-        if (heading.dataset.gsapSplitted) return;
-        heading.dataset.gsapSplitted = "true";
-
-        const split = new SplitType(heading, { types: "lines" });
+    let ctx = gsap.context(() => {
+      // Timeout buffer allows Next.js DOM lifecycle to stabilize fully
+      const t = setTimeout(() => {
+        const headings = document.querySelectorAll<HTMLElement>(".gsap-heading");
+        let newlySplitted = false;
         
-        if (!split.lines) return;
+        headings.forEach((heading) => {
+          // Prevent double execution
+          if (heading.dataset.gsapSplitted) return;
+          heading.dataset.gsapSplitted = "true";
+          newlySplitted = true;
 
-        // Wrap each generated line into a strict masking container
-        split.lines.forEach((line) => {
-          const wrapper = document.createElement("div");
-          wrapper.style.overflow = "hidden";
-          wrapper.style.display = "inline-flex";
-          wrapper.style.verticalAlign = "top";
+          const split = new SplitType(heading, { types: "lines" });
           
-          if (line.parentNode) {
-            line.parentNode.insertBefore(wrapper, line);
-            wrapper.appendChild(line);
-          }
-        });
+          if (!split.lines) return;
 
-        // Global animation matrix timeline
-        gsap.from(split.lines, {
-          y: "110%",
-          opacity: 0,
-          duration: 0.9,
-          stagger: 0.08,
-          ease: "power4.out",
-          scrollTrigger: {
-            trigger: heading,
-            start: "top 85%",
-          }
+          // Wrap each generated line into a strict masking container
+          split.lines.forEach((line) => {
+            const wrapper = document.createElement("div");
+            wrapper.style.overflow = "hidden";
+            wrapper.style.display = "inline-flex";
+            wrapper.style.verticalAlign = "top";
+            
+            if (line.parentNode) {
+              line.parentNode.insertBefore(wrapper, line);
+              wrapper.appendChild(line);
+            }
+          });
+
+          // Global animation matrix timeline
+          gsap.from(split.lines, {
+            y: "110%",
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.05,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: heading,
+              start: "top 90%",
+              toggleActions: "play none none none"
+            }
+          });
         });
-      });
-      
-      // Recalculate global document heights once lines are safely injected
-      ScrollTrigger.refresh();
-      
-    }, 150);
+        
+        // ONLY refresh if we actually added new triggers, to save performance
+        if (newlySplitted) {
+          ScrollTrigger.refresh();
+        }
+        
+      }, 100);
+
+      return () => {
+        clearTimeout(t);
+      };
+    });
 
     return () => {
-      clearTimeout(t);
+      ctx.revert();
     };
   }, [pathname]);
 }

@@ -125,138 +125,50 @@ export default function CurriculumSection() {
           </div>
         </div>
 
-        {/* Two-Column Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 relative">
-          
-          {/* Left Column: Accordion Modules */}
-          <div className="lg:col-span-7 flex flex-col" ref={listRef}>
-            <div className="flex items-center justify-between mb-8">
-              <h3 className="font-sans font-bold text-2xl text-[var(--text-primary)]">
-                {curriculumTabs[activeTabIndex]} Curriculum
-              </h3>
-              <span className="font-mono text-sm px-3 py-1 bg-[var(--green-50)] text-[var(--green-700)] rounded-full border border-[var(--green-500)]/20 font-semibold">
-                8 Modules
-              </span>
-            </div>
-            
-            <Accordion.Root type="single" collapsible className="w-full flex flex-col gap-3" defaultValue="item-0">
-              {modules.map((m, i) => (
-                <Accordion.Item 
-                  key={i} 
-                  value={`item-${i}`}
-                  className="group bg-white border border-[var(--border-light)] rounded-[16px] overflow-hidden transition-all duration-300 data-[state=open]:border-[var(--green-500)] data-[state=open]:shadow-[var(--shadow-green)] data-[state=open]:bg-[var(--green-50)]/50 focus-within:ring-2 focus-within:ring-[var(--green-500)]/30"
-                >
-                  <Accordion.Header>
-                    <Accordion.Trigger className="clickable flex items-center justify-between w-full px-6 py-5 cursor-pointer outline-none">
-                       <span className="font-sans font-bold text-[16px] text-[var(--text-primary)] text-left group-data-[state=open]:text-[var(--green-700)] transition-colors">
-                         {m.title}
-                       </span>
-                       <ChevronDown size={20} className="text-[var(--text-secondary)] transition-transform duration-300 ease-[cubic-bezier(0.87,0,0.13,1)] group-data-[state=open]:rotate-180 group-data-[state=open]:text-[var(--green-600)] shrink-0 ml-4" />
-                    </Accordion.Trigger>
-                  </Accordion.Header>
-                  <Accordion.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-6 pb-6 pt-0">
-                    <p className="font-sans text-[15px] text-[var(--text-secondary)] leading-relaxed mb-6">
-                      {m.details}
-                    </p>
-                    
-                    {/* Inner module tags */}
-                    <div className="flex flex-wrap items-center gap-3">
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-md border border-[var(--border-medium)] text-[12px] font-sans font-medium text-[var(--text-secondary)]">
-                        <Video size={14} className="text-[var(--green-500)]" /> 12 Video Lessons
-                      </div>
-                      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-md border border-[var(--border-medium)] text-[12px] font-sans font-medium text-[var(--text-secondary)]">
-                        <FileText size={14} className="text-[var(--accent-mint)]" /> 4 Assignments
-                      </div>
-                    </div>
-                  </Accordion.Content>
-                </Accordion.Item>
-              ))}
-            </Accordion.Root>
-          </div>
-
-          {/* Right Column: Sticky Summary Card */}
-          <div className="lg:col-span-5 relative">
-            <div className="sticky top-[100px] w-full bg-white rounded-[24px] border border-[var(--border-light)] shadow-[var(--shadow-card)] overflow-hidden flex flex-col">
-              
-              {/* Highlight Mockup Area */}
-              <div className="w-full h-[220px] bg-[var(--gradient-hero)] relative overflow-hidden flex items-center justify-center p-6 border-b border-[var(--border-light)] group cursor-default">
-                 {/* Decorative background grid */}
-                 <div className="absolute inset-0 opacity-[0.05] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSc4JyBoZWlnaHQ9JzgnPgo8cmVjdCB3aWR0aD0nOCcgaGVpZ2h0PSc4JyBmaWxsPScjZmZmJy8+CjxwYXRoIGQ9J00wIDBMOCA4Wk04IDBMMCA4Wicgc3Ryb2tlPScjMDAwJyBzdHJva2Utd2lkdGg9JzEnLz4KPC9zdmc+')]" />
-                 
-                 {/* Certificate mockup UI */}
-                 <div className="relative z-10 w-[85%] h-full bg-white border border-[var(--border-light)] shadow-[0_10px_30px_rgba(0,0,0,0.08)] rounded-[12px] flex flex-col items-center justify-center p-4 transform -rotate-2 transition-transform duration-500 group-hover:rotate-0 group-hover:scale-105">
-                    <BadgeCheck size={48} className="text-[var(--green-500)] mb-3" />
-                    <div className="w-3/4 h-2 bg-gray-100 rounded-full mb-2" />
-                    <div className="w-1/2 h-2 bg-gray-100 rounded-full" />
-                    
-                    <div className="absolute -right-4 -bottom-4 w-12 h-12 bg-white rounded-full border border-[var(--border-light)] shadow-md flex items-center justify-center -rotate-[15deg]">
-                       <Target size={20} className="text-[var(--accent-gold)]" />
-                    </div>
-                 </div>
-              </div>
-
-              {/* Course Highlights */}
-              <div className="p-8 flex flex-col bg-white">
-                
-                <div className="grid grid-cols-2 gap-y-5 gap-x-4 mb-8">
-                  <div className="flex items-start gap-3">
-                    <Clock size={18} className="text-[var(--green-600)] mt-0.5 shrink-0" />
-                    <div className="flex flex-col">
-                      <span className="font-sans font-bold text-[14px] text-[var(--text-primary)]">3 Months</span>
-                      <span className="font-sans text-[13px] text-[var(--text-secondary)]">Duration</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <PlayCircle size={18} className="text-[var(--green-600)] mt-0.5 shrink-0" />
-                    <div className="flex flex-col">
-                      <span className="font-sans font-bold text-[14px] text-[var(--text-primary)]">240+ Hours</span>
-                      <span className="font-sans text-[13px] text-[var(--text-secondary)]">Video Sessions</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <BookOpen size={18} className="text-[var(--green-600)] mt-0.5 shrink-0" />
-                    <div className="flex flex-col">
-                      <span className="font-sans font-bold text-[14px] text-[var(--text-primary)]">45+ Tasks</span>
-                      <span className="font-sans text-[13px] text-[var(--text-secondary)]">Live Assignments</span>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Target size={18} className="text-[var(--green-600)] mt-0.5 shrink-0" />
-                    <div className="flex flex-col">
-                      <span className="font-sans font-bold text-[14px] text-[var(--text-primary)]">3 Projects</span>
-                      <span className="font-sans text-[13px] text-[var(--text-secondary)]">Client Simulation</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <hr className="border-[var(--border-light)] mb-8" />
-                
-                {/* Instructor Row */}
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-12 h-12 rounded-full overflow-hidden bg-gray-100 border border-[var(--border-light)] shrink-0">
-                    <Image src="https://i.pravatar.cc/150?img=11" alt="Instructor" width={48} height={48} className="w-full h-full object-cover" loading="lazy" />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="font-sans text-[12px] text-[var(--green-600)] font-bold uppercase tracking-wider mb-0.5">Lead Instructor</span>
-                    <span className="font-sans font-bold text-[15px] text-[var(--text-primary)]">CA Mohammed Jabir</span>
-                    <span className="font-sans text-[13px] text-[var(--text-secondary)]">15+ Years Corporate Finance</span>
-                  </div>
-                </div>
-                
-                {/* Action Row */}
-                <div className="flex flex-col gap-3">
-                  <button className="magnetic clickable w-full py-4 rounded-xl bg-[var(--bg-dark)] text-white font-sans font-bold text-[15px] flex items-center justify-center gap-2 transition-all hover:bg-black hover:shadow-[var(--shadow-card)]">
-                    Enroll in Program
-                  </button>
-                  <button className="magnetic clickable w-full py-4 rounded-xl bg-transparent border-[1.5px] border-[var(--border-medium)] text-[var(--text-primary)] font-sans font-bold text-[15px] flex items-center justify-center gap-2 transition-colors hover:border-[var(--green-500)] hover:text-[var(--green-600)] hover:bg-[var(--green-50)]">
-                    <Download size={18} /> Download Full Syllabus
-                  </button>
-                </div>
-                
-              </div>
-            </div>
+        {/* Modules Section */}
+        <div className="max-w-4xl mx-auto" ref={listRef}>
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-8 gap-4 px-2">
+            <h3 className="font-sans font-bold text-2xl text-[var(--text-primary)]">
+              {curriculumTabs[activeTabIndex]} Curriculum
+            </h3>
+            <span className="font-mono text-sm px-4 py-1.5 bg-[var(--green-50)] text-[var(--green-700)] rounded-full border border-[var(--green-500)]/20 font-semibold shadow-sm">
+              8 Modules
+            </span>
           </div>
           
+          <Accordion.Root type="single" collapsible className="w-full flex flex-col gap-3" defaultValue="item-0">
+            {modules.map((m, i) => (
+              <Accordion.Item 
+                key={i} 
+                value={`item-${i}`}
+                className="group bg-white border border-[var(--border-light)] rounded-[20px] overflow-hidden transition-all duration-300 data-[state=open]:border-[var(--green-500)] data-[state=open]:shadow-[var(--shadow-green)] data-[state=open]:bg-[var(--green-50)]/50 focus-within:ring-2 focus-within:ring-[var(--green-500)]/30"
+              >
+                <Accordion.Header>
+                  <Accordion.Trigger className="clickable flex items-center justify-between w-full px-6 py-5.5 cursor-pointer outline-none">
+                     <span className="font-sans font-bold text-[17px] text-[var(--text-primary)] text-left group-data-[state=open]:text-[var(--green-700)] transition-colors">
+                       {m.title}
+                     </span>
+                     <ChevronDown size={20} className="text-[var(--text-secondary)] transition-transform duration-300 ease-[cubic-bezier(0.87,0,0.13,1)] group-data-[state=open]:rotate-180 group-data-[state=open]:text-[var(--green-600)] shrink-0 ml-4" />
+                  </Accordion.Trigger>
+                </Accordion.Header>
+                <Accordion.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up px-6 pb-6 pt-0">
+                  <p className="font-sans text-[15px] text-[var(--text-secondary)] leading-relaxed mb-6">
+                    {m.details}
+                  </p>
+                  
+                  {/* Inner module tags */}
+                  <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-md border border-[var(--border-medium)] text-[12px] font-sans font-medium text-[var(--text-secondary)]">
+                      <Video size={14} className="text-[var(--green-500)]" /> 12 Video Lessons
+                    </div>
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white rounded-md border border-[var(--border-medium)] text-[12px] font-sans font-medium text-[var(--text-secondary)]">
+                      <FileText size={14} className="text-[var(--green-300)]" /> 4 Assignments
+                    </div>
+                  </div>
+                </Accordion.Content>
+              </Accordion.Item>
+            ))}
+          </Accordion.Root>
         </div>
       </div>
     </section>

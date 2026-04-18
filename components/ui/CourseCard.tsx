@@ -107,7 +107,7 @@ export default function CourseCard({ course }: { course: Course }) {
         <div className="flex flex-col flex-1 p-6 sm:p-8 bg-white z-10 relative">
           
           <h3 className="font-sans font-bold text-[22px] text-[var(--text-primary)] leading-snug mb-3 group-hover:text-[var(--green-600)] transition-colors duration-300">
-            {course.title}
+            {course.title.replace(/\s*\([^)]*\)/, '')}
           </h3>
           
           <p className="font-sans text-[15px] text-[var(--text-secondary)] line-clamp-2 mb-8 leading-relaxed flex-1">

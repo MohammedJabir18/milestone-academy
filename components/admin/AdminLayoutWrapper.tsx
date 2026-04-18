@@ -1,5 +1,7 @@
 "use client";
 
+import { TransitionLink } from "@/components/global/PageTransition";
+
 import { useState, useEffect } from "react";
 import { 
   LayoutDashboard, 
@@ -26,6 +28,7 @@ import {
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import { createBrowserClient } from "@supabase/ssr";
 
 interface AdminLayoutWrapperProps {
   children: React.ReactNode;
@@ -36,10 +39,43 @@ interface AdminLayoutWrapperProps {
 export default function AdminLayoutWrapper({
   children,
   userEmail,
-  leadsCount,
+  leadsCount: initialLeadsCount,
 }: AdminLayoutWrapperProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [leadsCount, setLeadsCount] = useState(initialLeadsCount || 0);
   const pathname = usePathname();
+
+  const supabase = createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  // Fetch leads count on client
+  useEffect(() => {
+    const fetchLeadsCount = async () => {
+      const { count } = await supabase
+        .from("leads")
+        .select("*", { count: "exact", head: true });
+      
+      if (count !== null) setLeadsCount(count);
+    };
+
+    fetchLeadsCount();
+
+    // Set up real-time subscription for new leads
+    const channel = supabase
+      .channel("admin-leads-count")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "leads" },
+        () => fetchLeadsCount()
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase]);
 
   // Close sidebar on navigation change (mobile)
   useEffect(() => {
@@ -136,12 +172,12 @@ export default function AdminLayoutWrapper({
           </div>
 
           <div className="flex items-center gap-2 sm:gap-6">
-            <Link href="/">
+            <TransitionLink href="/">
               <Button variant="ghost" className="font-bold text-stone-600 hover:text-stone-900 rounded-xl px-2 sm:px-4 hover:bg-stone-50 h-10 transition-all">
                 <Globe size={18} className="sm:mr-2" /> 
                 <span className="hidden sm:inline">View Site</span>
               </Button>
-            </Link>
+            </TransitionLink>
             <div className="h-4 w-[1px] bg-stone-200" />
             <button className="relative text-stone-400 hover:text-stone-900 transition-colors p-2">
               <Bell size={22} />

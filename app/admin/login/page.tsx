@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useState } from 'react';
 import { createBrowserClient } from '@supabase/ssr';
@@ -32,7 +32,6 @@ export default function AdminLogin() {
     } else {
       toast.success('Login successful');
       router.push('/admin');
-      router.refresh();
     }
   };
 

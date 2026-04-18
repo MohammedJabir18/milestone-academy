@@ -5,7 +5,9 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { BarChart3, Trophy, CheckCircle, Play } from "lucide-react";
 import HeroFallback from "./HeroFallback";
+import Image from "next/image";
 import dynamic from 'next/dynamic';
+import { createClient } from "@/lib/supabase/client";
 
 const Spline = dynamic(() => import('@splinetool/react-spline'), { 
   ssr: false,
@@ -39,6 +41,8 @@ export default function HeroSection() {
   const containerRef = useRef<HTMLElement>(null);
   const initialized = useRef(false);
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
+  const [studentAvatars, setStudentAvatars] = useState<string[]>([]);
+  const supabase = createClient();
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -48,6 +52,28 @@ export default function HeroSection() {
   }, []);
 
   useEffect(() => {
+    async function fetchAvatars() {
+      try {
+        const { data, error } = await supabase
+          .from("testimonials")
+          .select("avatar_url")
+          .eq("is_published", true)
+          .eq("is_featured", true)
+          .not("avatar_url", "is", null)
+          .order("sort_order", { ascending: true })
+          .limit(5);
+
+        if (data && data.length > 0) {
+          setStudentAvatars(data.map(t => t.avatar_url!));
+        }
+      } catch (err) {
+        console.error("Error fetching hero avatars:", err);
+      }
+    }
+    fetchAvatars();
+  }, [supabase]);
+
+  useEffect(() => {
     if (!containerRef.current || initialized.current) return;
     initialized.current = true;
 
@@ -55,39 +81,39 @@ export default function HeroSection() {
       // BADGE PILL
       gsap.fromTo(".hero-badge", 
         { scale: 0, opacity: 0 }, 
-        { scale: 1, opacity: 1, duration: 1, ease: "back.out(1.7)", delay: 0.3 }
+        { scale: 1, opacity: 1, duration: 0.8, ease: "back.out(1.7)", delay: 0.1 }
       );
 
       // HEADLINE revealed from bottom using clip area
       gsap.fromTo(".hero-line-1", 
         { y: "110%" }, 
-        { y: 0, duration: 0.9, delay: 0.45, ease: "power4.out" }
+        { y: 0, duration: 0.7, delay: 0.2, ease: "power4.out" }
       );
       gsap.fromTo(".hero-line-2", 
         { y: "110%" }, 
-        { y: 0, duration: 0.9, delay: 0.57, ease: "power4.out" }
+        { y: 0, duration: 0.7, delay: 0.3, ease: "power4.out" }
       );
       gsap.fromTo(".hero-line-3", 
         { y: "110%" }, 
-        { y: 0, duration: 0.9, delay: 0.69, ease: "power4.out" }
+        { y: 0, duration: 0.7, delay: 0.4, ease: "power4.out" }
       );
 
       // SUBTEXT
       gsap.fromTo(".hero-sub", 
-        { y: 30, opacity: 0 }, 
-        { y: 0, opacity: 1, duration: 0.8, delay: 0.9 }
+        { y: 20, opacity: 0 }, 
+        { y: 0, opacity: 1, duration: 0.6, delay: 0.5 }
       );
 
       // CTA ROW
       gsap.fromTo(".hero-cta-group",
         { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, delay: 1.0 }
+        { y: 0, opacity: 1, duration: 0.6, delay: 0.6 }
       );
 
       // SOCIAL PROOF
       gsap.fromTo(".social-proof",
         { y: 20, opacity: 0 },
-        { y: 0, opacity: 1, duration: 0.8, delay: 1.1 }
+        { y: 0, opacity: 1, duration: 0.6, delay: 0.7 }
       );
 
 
@@ -260,18 +286,25 @@ export default function HeroSection() {
             `}</style>
           </div>
 
-          {/* SOCIAL PROOF */}
           <div className="social-proof mt-6 flex flex-wrap items-center gap-6">
-            <div className="flex -space-x-[10px]">
-              {['#FEF3C7', '#DBEAFE', '#D1FAE5', '#FCE7F3', '#F3E8FF'].map((bg, i) => (
-                <div 
-                  key={i} 
-                  className="relative z-20 flex h-[38px] w-[38px] items-center justify-center rounded-full border-2 border-white text-xs font-bold shadow-sm" 
-                  style={{ backgroundColor: bg, color: "var(--text-primary)", zIndex: 10 - i }}
-                >
-                  <span className="text-white drop-shadow-sm">{['S', 'M', 'A', 'J', 'R'][i]}</span>
-                </div>
-              ))}
+            <div className="flex -space-x-[12px]">
+              {Array.from({ length: 5 }).map((_, i) => {
+                const avatarSrc = studentAvatars[i] || `/students/student-${i + 1}.png`;
+                return (
+                  <div 
+                    key={i} 
+                    className="relative flex h-[42px] w-[42px] items-center justify-center rounded-full border-2 border-white shadow-md overflow-hidden bg-white hover:scale-110 transition-transform duration-300 pointer-events-auto cursor-pointer" 
+                    style={{ zIndex: 10 - i }}
+                  >
+                    <Image 
+                      src={avatarSrc} 
+                      alt={`Student ${i + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                );
+              })}
             </div>
             <div className="flex items-center gap-4">
               <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 600, fontSize: "13px", color: "var(--text-primary)" }}>

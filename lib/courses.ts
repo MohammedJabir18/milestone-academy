@@ -34,7 +34,7 @@ export const COURSES: Course[] = [
   {
     id: "basic-package",
     slug: "basic-package",
-    title: "Basic Package",
+    title: "Diploma in Accounting & Business Systems (DABS)",
     tagline: "Your first step into professional accounting",
     badge: "STARTER",
     badgeColor: "green",
@@ -76,7 +76,7 @@ export const COURSES: Course[] = [
   {
     id: "short-term-tax",
     slug: "short-term-tax-software-package",
-    title: "Short-Term Tax & Software Package",
+    title: "Diploma in UAE Taxation & Compliance (DUTC)",
     tagline: "Master UAE & Indian taxation fast",
     badge: "FAST-TRACK",
     badgeColor: "gold",
@@ -120,7 +120,7 @@ export const COURSES: Course[] = [
   {
     id: "intermediate-package",
     slug: "intermediate-package",
-    title: "Intermediate Package",
+    title: "Postgraduate Diploma in Accounting & Financial Analytics (PGDAFA)",
     tagline: "Complete accounting + GST + analytics mastery",
     badge: "BESTSELLER",
     badgeColor: "green",
@@ -169,13 +169,13 @@ export const COURSES: Course[] = [
   {
     id: "comprehensive-package",
     slug: "comprehensive-package",
-    title: "Comprehensive Package",
+    title: "Executive Master Diploma in Accounting & Taxation (EMDAT)",
     tagline: "The ultimate accounting & finance mastery program",
     badge: "ULTIMATE",
     badgeColor: "gold",
     duration: "7 Months",
-    price: null,
-    originalPrice: null,
+    price: 60000,
+    originalPrice: 75000,
     emi: null,
     level: "All Levels → Expert",
     category: "advanced",

@@ -11,7 +11,7 @@ export default function CoursesPage() {
 
   const filteredCourses = activeTab === "All" 
     ? courses 
-    : courses.filter(c => c.category === activeTab);
+    : courses.filter(c => c.category?.toLowerCase() === activeTab.toLowerCase());
 
   return (
     <main className="w-full flex flex-col items-center bg-[var(--bg-primary)] pt-32 pb-24 min-h-screen">

@@ -1,13 +1,10 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Serif, Syne, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { LenisProvider } from "@/providers/LenisProvider";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import CustomCursor from "@/components/global/CustomCursor";
-import Navbar from "@/components/global/Navbar";
-import Footer from "@/components/global/Footer";
 import { PageTransitionProvider } from "@/components/global/PageTransition";
 import { GsapInitializer } from "@/hooks/useGsapAnimations";
-import { TooltipProvider } from "@/components/ui/tooltip";
 
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
@@ -61,7 +58,7 @@ export const metadata: Metadata = {
     description: "Master Tally Prime, GST, Income Tax, SAP FICO at Milestone Fin Academy. Industry-recognized certificates, 100% placement assistance. 4,800+ students in Kerala.",
     siteName: "Milestone Fin Academy",
     images: [{
-      url: "/og-image.webp", // Can refer to a default screenshot
+      url: "/og-image.webp",
       width: 1200,
       height: 630,
       alt: "Milestone Fin Academy - Master the Language of Business",
@@ -101,11 +98,9 @@ export default function RootLayout({
         <CustomCursor />
         <GsapInitializer />
         <PageTransitionProvider>
-          <LenisProvider>
-            <TooltipProvider>
-              {children}
-            </TooltipProvider>
-          </LenisProvider>
+          <TooltipProvider>
+            {children}
+          </TooltipProvider>
         </PageTransitionProvider>
       </body>
     </html>
