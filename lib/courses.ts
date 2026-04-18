@@ -28,6 +28,8 @@ export interface Course {
   modules: CourseModule[];
   sort_order?: number;
   image_url?: string | null;
+  imageUrl?: string | null;
+  faculty?: any;
 }
 
 export const COURSES: Course[] = [

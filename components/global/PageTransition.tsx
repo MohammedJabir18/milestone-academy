@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useRef, useEffect, useState } from "react";
+import { createContext, useContext, useRef, useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link, { LinkProps } from "next/link";
 import gsap from "gsap";

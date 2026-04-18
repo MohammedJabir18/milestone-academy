@@ -66,7 +66,7 @@ export default async function AdminDashboard() {
           <CardHeader className="border-b border-stone-100 p-8">
             <div className="flex items-center justify-between">
               <CardTitle className="text-xl font-bold">Latest Student Inquiries</CardTitle>
-              <Link href="/admin/leads">
+              <Link href="/admin/enrollments">
                 <Button variant="ghost" className="text-xs font-bold text-[var(--green-600)]">Manage All Leads <ChevronRight size={14} className="ml-1" /></Button>
               </Link>
             </div>
@@ -105,9 +105,10 @@ export default async function AdminDashboard() {
             <div className="relative z-10">
               <h3 className="text-lg font-bold mb-2 text-white">System Security</h3>
               <p className="text-white/70 text-sm mb-6 leading-relaxed">Lead capture is secured via Row Level Security (RLS). Only authenticated admins can manage student data.</p>
-              <Link href="/admin/settings">
+              {/* Hide broken link for now */}
+              {/* <Link href="/admin/settings">
                 <Button className="w-full bg-white text-stone-900 font-bold rounded-xl hover:bg-white/90">Review Security Policy</Button>
-              </Link>
+              </Link> */}
             </div>
             <ShieldCheck className="absolute -bottom-4 -right-4 w-32 h-32 text-white/5 rotate-12" />
           </Card>

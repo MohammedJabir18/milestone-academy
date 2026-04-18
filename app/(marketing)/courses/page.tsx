@@ -1,17 +1,49 @@
 "use client";
 
-import { useState } from "react";
-import { courses } from "@/lib/courses";
+import { useState, useEffect } from "react";
+import { courses as staticCourses, type Course } from "@/lib/courses";
 import CourseCard from "@/components/ui/CourseCard";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Loader2 } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function CoursesPage() {
   const [activeTab, setActiveTab] = useState<string>("All");
+  const [dbCourses, setDbCourses] = useState<Course[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const categories = ["All", "Accounting", "Taxation", "Compliance", "Advanced"];
+  const supabase = createClient();
+
+  useEffect(() => {
+    async function fetchCourses() {
+      try {
+        const { data, error } = await supabase
+          .from("courses")
+          .select("*")
+          .order("sort_order", { ascending: true });
+
+        if (error) throw error;
+        
+        const mappedData = (data || []).map((course: any) => ({
+          ...course,
+          badgeColor: course.badge_color,
+          originalPrice: course.original_price,
+          whoIsItFor: course.who_is_it_for,
+        }));
+
+        setDbCourses(mappedData);
+      } catch (err) {
+        console.error("Error fetching courses:", err);
+        setDbCourses(staticCourses); // Fallback
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchCourses();
+  }, [supabase]);
 
   const filteredCourses = activeTab === "All" 
-    ? courses 
-    : courses.filter(c => c.category?.toLowerCase() === activeTab.toLowerCase());
+    ? dbCourses 
+    : dbCourses.filter(c => c.category?.toLowerCase() === activeTab.toLowerCase());
 
   return (
     <main className="w-full flex flex-col items-center bg-[var(--bg-primary)] pt-32 pb-24 min-h-screen">
@@ -44,17 +76,25 @@ export default function CoursesPage() {
       </div>
 
       {/* Dynamic Grid Container */}
-      <div className="w-full max-w-[var(--container-max)] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
-        {filteredCourses.map(course => (
-          <div key={`${course.id}-${activeTab}`} className="w-full flex animate-fade-in-up"> 
-             <CourseCard course={course} />
+      <div className="w-full max-w-[var(--container-max)] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20 min-h-[400px]">
+        {isLoading ? (
+          <div className="col-span-full py-20 flex justify-center">
+            <Loader2 size={40} className="animate-spin text-[var(--green-500)] opacity-40" />
           </div>
-        ))}
-        {filteredCourses.length === 0 && (
-          <div className="col-span-full py-20 flex flex-col items-center justify-center opacity-50">
-             <BookOpen size={48} className="text-[var(--text-secondary)] mb-4" />
-             <span className="font-mono tracking-widest text-[var(--text-secondary)]">NO EXPERIENCES FOUND</span>
-          </div>
+        ) : (
+          <>
+            {filteredCourses.map(course => (
+              <div key={`${course.id}-${activeTab}`} className="w-full flex animate-fade-in-up"> 
+                <CourseCard course={course} />
+              </div>
+            ))}
+            {filteredCourses.length === 0 && (
+              <div className="col-span-full py-20 flex flex-col items-center justify-center opacity-50">
+                <BookOpen size={48} className="text-[var(--text-secondary)] mb-4" />
+                <span className="font-mono tracking-widest text-[var(--text-secondary)]">NO EXPERIENCES FOUND</span>
+              </div>
+            )}
+          </>
         )}
       </div>
       

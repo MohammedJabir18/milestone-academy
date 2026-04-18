@@ -31,6 +31,8 @@ export async function upsertCourse(course: Partial<Course>) {
       highlights: course.highlights,
       description: course.description,
       who_is_it_for: course.whoIsItFor,
+      image_url: (course as any).imageUrl,
+      faculty_id: (course as any).facultyId,
       modules: course.modules as any,
     })
     .select()

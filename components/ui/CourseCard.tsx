@@ -73,7 +73,15 @@ export default function CourseCard({ course }: { course: Course }) {
             ref={bgRef}
             className="absolute inset-0 w-full h-full transition-transform duration-[800ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-[1.1] origin-center z-0"
             style={{ background: course.gradient }}
-          />
+          >
+            {course.image_url && (
+              <img 
+                src={course.image_url} 
+                alt={course.title} 
+                className="w-full h-full object-cover opacity-90 transition-opacity duration-300 group-hover:opacity-100" 
+              />
+            )}
+          </div>
 
           {/* Dotted pattern overlay */}
           <div 

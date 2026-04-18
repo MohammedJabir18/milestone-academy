@@ -239,6 +239,15 @@ export default function EnrollmentsTableClient({ initialData }: { initialData: a
                   {(selectedItem.course_slug || 'General Inquiry').replace(/-/g, ' ')}
                 </div>
               </div>
+
+              {selectedItem.message && (
+                <div>
+                  <p className="text-xs text-neutral-500 font-medium uppercase tracking-wider mb-2">Message/Questions</p>
+                  <div className="p-4 bg-white border border-neutral-200 rounded-md text-neutral-700 whitespace-pre-wrap">
+                    {selectedItem.message}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>

@@ -257,7 +257,7 @@ export default function CoursesSection() {
                         <div className="absolute inset-0 bg-gradient-to-br from-white via-transparent to-[var(--green-50)] opacity-0 group-hover/card:opacity-100 transition-opacity duration-[0.6s] z-0 pointer-events-none rounded-3xl" />
 
                         {/* LEFT IMAGE SIDE */}
-                        <div className="w-full md:w-[260px] h-[200px] md:h-auto flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)] z-10">
+                        <div className="w-full md:w-[280px] h-[200px] md:h-full min-h-[220px] flex-shrink-0 relative overflow-hidden bg-[var(--bg-secondary)] z-10">
                           {course.image_url ? (
                             <Image 
                               src={course.image_url} 

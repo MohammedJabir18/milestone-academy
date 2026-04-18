@@ -35,6 +35,7 @@ import { upsertCourse } from "../../../actions/course-actions";
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
 import { Plus, Trash2, X, MoveUp, MoveDown } from "lucide-react";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 const courseSchema = z.object({
   id: z.string().optional(),
@@ -58,6 +59,8 @@ const courseSchema = z.object({
   highlights: z.array(z.string()),
   description: z.string().min(1, "Description is required"),
   whoIsItFor: z.string().min(1, "Who is it for is required"),
+  imageUrl: z.string().nullable().optional(),
+  facultyId: z.string().nullable().optional(),
   modules: z.array(z.object({
     title: z.string().min(1, "Module title is required"),
     topics: z.array(z.string())
@@ -73,8 +76,11 @@ interface CourseFormProps {
   onSuccess: () => void;
 }
 
+import { createBrowserClient } from "@supabase/ssr";
+
 export default function CourseForm({ course, isOpen, onClose, onSuccess }: CourseFormProps) {
   const [isPending, setIsPending] = useState(false);
+  const [facultyList, setFacultyList] = useState<any[]>([]);
 
   const form = useForm<CourseFormValues>({
     resolver: zodResolver(courseSchema) as any,
@@ -99,17 +105,34 @@ export default function CourseForm({ course, isOpen, onClose, onSuccess }: Cours
       highlights: [""],
       description: "",
       whoIsItFor: "",
+      imageUrl: null,
+      facultyId: null,
       modules: [{ title: "", topics: [""] }]
     }
   });
 
   useEffect(() => {
+    // Fetch faculty members when dialog opens
+    if (isOpen) {
+      const fetchFaculty = async () => {
+        const supabase = createBrowserClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        );
+        const { data } = await supabase.from("faculty").select("id, name, role").eq("status", true);
+        if (data) setFacultyList(data);
+      };
+      fetchFaculty();
+    }
+
     if (course) {
       form.reset({
         ...course,
         price: course.price ?? null,
         originalPrice: course.originalPrice ?? null,
         emi: course.emi ?? null,
+        imageUrl: (course as any).image_url ?? (course as any).imageUrl ?? null,
+        facultyId: (course as any).faculty_id ?? (course as any).facultyId ?? null,
       });
     } else {
       form.reset({
@@ -133,6 +156,8 @@ export default function CourseForm({ course, isOpen, onClose, onSuccess }: Cours
         highlights: [""],
         description: "",
         whoIsItFor: "",
+        imageUrl: null,
+        facultyId: null,
         modules: [{ title: "", topics: [""] }]
       });
     }
@@ -156,7 +181,13 @@ export default function CourseForm({ course, isOpen, onClose, onSuccess }: Cours
   async function onSubmit(values: CourseFormValues) {
     setIsPending(true);
     try {
-      const result = await upsertCourse(values as any);
+      // Convert "none" string back to null for DB
+      const submissionData = {
+        ...values,
+        facultyId: values.facultyId === "none" ? null : values.facultyId
+      };
+      
+      const result = await upsertCourse(submissionData as any);
       if (result.success) {
         toast.success(course ? "Course updated successfully" : "Course created successfully");
         onSuccess();
@@ -196,7 +227,10 @@ export default function CourseForm({ course, isOpen, onClose, onSuccess }: Cours
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col flex-1 overflow-hidden">
+          <form onSubmit={form.handleSubmit(onSubmit, (errs) => {
+            console.error("Form validation failed:", errs);
+            toast.error("Please fill all required fields correctly.");
+          })} className="flex flex-col flex-1 overflow-hidden">
             <div className="flex-1 overflow-y-auto p-6 scrollbar-thin scrollbar-thumb-stone-200">
               <div className="space-y-8">
                 {/* Basic Info */}
@@ -370,10 +404,10 @@ export default function CourseForm({ course, isOpen, onClose, onSuccess }: Cours
 
                 <div className="h-px bg-stone-100" />
 
-                {/* Design Tokens */}
+                {/* Design & Identity */}
                 <div className="space-y-4">
                   <h3 className="text-sm font-bold uppercase tracking-wider text-stone-400">Design & Identity</h3>
-                  <div className="grid grid-cols-4 gap-4">
+                  <div className="grid grid-cols-5 gap-4">
                     <FormField
                       control={form.control}
                       name="badge"
@@ -436,7 +470,55 @@ export default function CourseForm({ course, isOpen, onClose, onSuccess }: Cours
                         </FormItem>
                       )}
                     />
+                    <FormField
+                      control={form.control}
+                      name="facultyId"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="font-bold text-stone-700">Lead Instructor</FormLabel>
+                          <Select onValueChange={field.onChange} value={field.value || ""}>
+                            <FormControl>
+                              <SelectTrigger className="rounded-xl border-stone-200">
+                                <SelectValue placeholder="Select Faculty" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent className="rounded-xl border-stone-200 max-h-60">
+                              <SelectItem value="none">None (No Instructor)</SelectItem>
+                              {facultyList.map(faculty => (
+                                <SelectItem key={faculty.id} value={faculty.id}>
+                                  {faculty.name} ({faculty.role})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
+                </div>
+
+                <div className="h-px bg-stone-100" />
+
+                {/* Course Image Upload */}
+                <div className="space-y-4">
+                  <h3 className="text-sm font-bold uppercase tracking-wider text-stone-400">Course Image</h3>
+                  <FormField
+                    control={form.control}
+                    name="imageUrl"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <ImageUploadField
+                            label="Course Header Image"
+                            value={field.value ?? null}
+                            onChange={field.onChange}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
                 </div>
 
                 <div className="h-px bg-stone-100" />

@@ -30,13 +30,13 @@ const courseSchema = z.object({
   badge: z.string().optional().default(""),
   badge_color: z.enum(["green", "gold", "blue", "red"]).default("green"),
   duration: z.string().optional().default(""),
-  price: z.number().nullable().optional(),
-  original_price: z.number().nullable().optional(),
+  price: z.preprocess((val) => (val === "" || Number.isNaN(Number(val))) ? null : Number(val), z.number().nullable().optional()),
+  original_price: z.preprocess((val) => (val === "" || Number.isNaN(Number(val))) ? null : Number(val), z.number().nullable().optional()),
   level: z.string().optional().default(""),
   category: z.string().optional().default(""),
   icon: z.string().optional().default(""),
   gradient: z.string().optional().default(""),
-  rating: z.number().min(0).max(5).default(4.8),
+  rating: z.preprocess((val) => (val === "" || Number.isNaN(Number(val))) ? 4.8 : Number(val), z.number().min(0).max(5).default(4.8)),
   topics: z.array(z.string()).default([]),
   highlights_text: z.string().optional().default(""),
   who_is_it_for: z.string().optional().default(""),
@@ -48,8 +48,9 @@ const courseSchema = z.object({
   ).default([]),
   is_published: z.boolean().default(true),
   is_trading: z.boolean().default(false),
-  sort_order: z.number().default(0),
+  sort_order: z.preprocess((val) => (val === "" || Number.isNaN(Number(val))) ? 0 : Number(val), z.number().default(0)),
   image_url: z.string().nullable().optional(),
+  faculty_id: z.string().nullable().optional(),
 });
 
 type CourseFormValues = z.infer<typeof courseSchema>;
@@ -109,6 +110,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [facultyList, setFacultyList] = useState<any[]>([]);
   const isEditing = !!initialData;
 
   // Transform initial data if editing
@@ -121,6 +123,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
     topics: [],
     modules: [],
     image_url: null,
+    faculty_id: "none",
   };
 
   if (initialData) {
@@ -130,6 +133,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
       highlights_text: (initialData.highlights || []).join("\n"),
       modules: initialData.modules || [],
       topics: initialData.topics || [],
+      faculty_id: initialData.faculty_id || "none",
     };
   }
 
@@ -151,62 +155,21 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
   const imageUrl = watch("image_url");
 
   useEffect(() => {
+    const fetchFaculty = async () => {
+      const { data } = await supabase.from("faculty").select("id, name, role").eq("status", true);
+      if (data) setFacultyList(data);
+    };
+    fetchFaculty();
+  }, [supabase]);
+
+  useEffect(() => {
     if (!isEditing && title) {
       const generatedSlug = title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
       setValue("slug", generatedSlug, { shouldValidate: true });
     }
   }, [title, isEditing, setValue]);
 
-  // Image Upload Logic
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    const file = acceptedFiles[0];
-    if (!file) return;
-
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File is larger than 5MB");
-      return;
-    }
-
-    setIsUploading(true);
-    try {
-      const tempId = isEditing ? initialData.id : crypto.randomUUID();
-      const path = `${tempId}/course-photo-${Date.now()}.jpg`;
-
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("bucket", "courses");
-      formData.append("path", path);
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Upload failed");
-      }
-
-      const { url } = await res.json();
-      setValue("image_url", url, { shouldValidate: true });
-      toast.success("Course photo uploaded");
-    } catch (e: any) {
-      toast.error(e.message || "Failed to upload photo");
-    } finally {
-      setIsUploading(false);
-    }
-  }, [isEditing, initialData, setValue]);
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    accept: {
-      'image/jpeg': ['.jpeg', '.jpg'],
-      'image/png': ['.png'],
-      'image/webp': ['.webp']
-    },
-    maxFiles: 1,
-    multiple: false
-  });
+  // Image Upload is handled by ImageUploadField component
 
   const onSubmit = async (data: CourseFormValues) => {
     setIsSubmitting(true);
@@ -241,6 +204,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
         is_trading: data.is_trading,
         sort_order: Number(data.sort_order),
         image_url: data.image_url,
+        faculty_id: data.faculty_id === "none" ? null : data.faculty_id,
       };
 
       if (isEditing) {
@@ -302,7 +266,7 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
         <h3 className="text-lg font-semibold border-b pb-2">Course Image</h3>
         <ImageUploadField 
           label="Course Header Image"
-          value={watch("image_url")}
+          value={watch("image_url") ?? null}
           onChange={(url) => setValue("image_url", url, { shouldValidate: true })}
         />
       </section>
@@ -367,6 +331,20 @@ export default function CourseForm({ initialData }: { initialData?: any }) {
           <div className="space-y-2">
             <Label>CSS Gradient</Label>
             <Input {...register("gradient")} placeholder="linear-gradient(...)" />
+          </div>
+          <div className="space-y-2">
+            <Label>Lead Instructor</Label>
+            <select 
+              {...register("faculty_id")} 
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="none">None (No Instructor)</option>
+              {facultyList.map(faculty => (
+                <option key={faculty.id} value={faculty.id}>
+                  {faculty.name} ({faculty.role})
+                </option>
+              ))}
+            </select>
           </div>
         </div>
       </section>

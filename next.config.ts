@@ -10,7 +10,11 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "augipesrjjztnzjrojgy.supabase.co",
-      }
+      },
+      {
+        protocol: "https",
+        hostname: "*.supabase.co",
+      },
     ],
   },
   transpilePackages: ['@splinetool/runtime', '@splinetool/react-spline'],

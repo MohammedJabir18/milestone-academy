@@ -26,7 +26,7 @@ import {
   UploadCloud
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { createBrowserClient } from "@supabase/ssr";
 
@@ -44,6 +44,7 @@ export default function AdminLayoutWrapper({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [leadsCount, setLeadsCount] = useState(initialLeadsCount || 0);
   const pathname = usePathname();
+  const router = useRouter();
 
   const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -81,6 +82,18 @@ export default function AdminLayoutWrapper({
   useEffect(() => {
     setIsSidebarOpen(false);
   }, [pathname]);
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!userEmail) {
+      router.push("/admin/login");
+    }
+  }, [userEmail, router]);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.refresh();
+  };
 
   return (
     <div className="min-h-screen bg-[var(--bg-secondary)] flex bg-white font-sans text-stone-900 overflow-x-hidden relative">
@@ -126,8 +139,8 @@ export default function AdminLayoutWrapper({
           <p className="px-4 text-[11px] font-bold text-stone-400 uppercase tracking-widest mt-10 mb-4">Settings</p>
           <NavItem icon={<Phone size={20} />} label="Contact Info" href="/admin/contact-info" active={pathname?.startsWith("/admin/contact-info")} />
           <NavItem icon={<Users size={20} />} label="Faculty Team" href="/admin/faculty" active={pathname?.startsWith("/admin/faculty")} />
-          <NavItem icon={<Settings size={20} />} label="Site Config" href="/admin/settings" active={pathname?.startsWith("/admin/settings")} />
-          <NavItem icon={<ShieldCheck size={20} />} label="Security" href="/admin/security" active={pathname?.startsWith("/admin/security")} />
+          {/* <NavItem icon={<Settings size={20} />} label="Site Config" href="/admin/settings" active={pathname?.startsWith("/admin/settings")} />
+          <NavItem icon={<ShieldCheck size={20} />} label="Security" href="/admin/security" active={pathname?.startsWith("/admin/security")} /> */}
         </nav>
 
         {/* User Info / Logout Section */}
@@ -142,11 +155,13 @@ export default function AdminLayoutWrapper({
             </div>
           </div>
           
-          <form action="/auth/signout" method="post">
-            <Button variant="ghost" className="w-full justify-start text-stone-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all font-medium py-6 px-4">
-              <LogOut size={18} className="mr-3" /> Sign Out
-            </Button>
-          </form>
+          <Button 
+            variant="ghost" 
+            onClick={handleLogout}
+            className="w-full justify-start text-stone-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all font-medium py-6 px-4"
+          >
+            <LogOut size={18} className="mr-3" /> Sign Out
+          </Button>
         </div>
       </aside>
 

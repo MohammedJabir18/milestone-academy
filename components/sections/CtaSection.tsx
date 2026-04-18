@@ -79,14 +79,14 @@ export default function CtaSection() {
     setIsSubmitting(true);
     
     try {
-      // 1. Insert into Supabase enrollments table
+      // 1. Insert into Supabase leads table
       const { error: submitError } = await supabase
-        .from("enrollments")
+        .from("leads")
         .insert([{
-          name: data.fullName,
+          full_name: data.fullName,
           phone: data.phone,
           email: data.email,
-          course_name: data.course, // using course_name string for this dropdown
+          course_slug: data.course, // using slug for better admin integration
           message: data.message || "",
           status: "new"
         }]);
@@ -217,12 +217,12 @@ export default function CtaSection() {
                 defaultValue=""
               >
                 <option value="" disabled className="text-gray-500">Program of Interest</option>
-                <option value="Basic Package">Basic Package</option>
-                <option value="Short-Term Tax & Software Package">Short-Term Tax & Software Package</option>
-                <option value="Intermediate Package">Intermediate Package</option>
-                <option value="Comprehensive Package">Comprehensive Package</option>
-                <option value="Trading Course">Trading Course</option>
-                <option value="Not Sure Yet">Not Sure Yet</option>
+                <option value="basic-package">Diploma in Accounting & Business Systems (DABS)</option>
+                <option value="short-term-tax-software-package">Diploma in UAE Taxation & Compliance (DUTC)</option>
+                <option value="intermediate-package">Postgraduate Diploma in Accounting & Financial Analytics (PGDAFA)</option>
+                <option value="comprehensive-package">Executive Master Diploma in Accounting & Taxation (EMDAT)</option>
+                <option value="trading-course">Trading Course</option>
+                <option value="not-sure">Not Sure Yet</option>
               </select>
               {/* Custom select arrow overlay */}
               <div className="absolute right-5 top-[18px] pointer-events-none opacity-50 text-[var(--text-inverse)]">

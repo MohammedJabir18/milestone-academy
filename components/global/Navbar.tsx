@@ -19,6 +19,9 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const pathname = usePathname();
 
+  // Detect if current page starts with a dark hero or background
+  const isDarkPage = pathname === "/contact";
+
   // Refs for mobile menu animations
   const menuRef = useRef<HTMLDivElement>(null);
   const linksRef = useRef<(HTMLAnchorElement | HTMLDivElement | null)[]>([]);
@@ -77,6 +80,9 @@ export default function Navbar() {
     }
   }, [isMobileMenuOpen]);
 
+  // Determine current theme based on scroll and page
+  const isLightText = isDarkPage && !isScrolled;
+
   return (
     <>
       <nav 
@@ -90,8 +96,8 @@ export default function Navbar() {
           
           {/* Left: Logo */}
           <Link href="/" className="flex items-center gap-3 magnetic clickable z-20 relative">
-            <Logo variant="dark" width={40} className="shrink-0" />
-            <span className="font-sans font-semibold text-lg tracking-tight text-[var(--text-primary)] md:block hidden sm:block">
+            <Logo variant={isLightText ? "light" : "dark"} width={40} className="shrink-0 transition-all duration-300" />
+            <span className={`font-sans font-semibold text-lg tracking-tight md:block hidden sm:block transition-colors duration-300 ${isLightText ? 'text-white' : 'text-[var(--text-primary)]'}`}>
               Milestone Fin Academy
             </span>
           </Link>
@@ -105,7 +111,7 @@ export default function Navbar() {
                   key={link.name} 
                   href={link.path}
                   className="relative font-sans text-[14px] font-medium transition-all duration-300 hover:text-[var(--green-600)] hover:-translate-y-[1px] group clickable"
-                  style={{ color: isActive ? 'var(--green-600)' : 'rgba(13, 26, 14, 0.8)' }}
+                  style={{ color: isActive ? 'var(--green-600)' : (isLightText ? 'rgba(255, 255, 255, 0.9)' : 'rgba(13, 26, 14, 0.8)') }}
                 >
                   {link.name}
                   {/* Active dot indicator */}
@@ -119,7 +125,10 @@ export default function Navbar() {
 
           {/* Right: CTA + Phone (Desktop) */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="tel:+918590737080" className="font-mono text-[13px] text-[var(--text-secondary)] hover:text-[var(--green-600)] transition-colors clickable">
+            <a 
+              href="tel:+918590737080" 
+              className={`font-mono text-[13px] transition-colors duration-300 clickable ${isLightText ? 'text-white/80 hover:text-white' : 'text-[var(--text-secondary)] hover:text-[var(--green-600)]'}`}
+            >
               📞 +91 85907 37080
             </a>
             <Link 
@@ -136,7 +145,7 @@ export default function Navbar() {
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             aria-label="Toggle Menu"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${isMobileMenuOpen ? 'text-white' : 'text-[var(--text-primary)]'} transition-colors duration-300`}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`${isMobileMenuOpen ? 'text-white' : (isLightText ? 'text-white' : 'text-[var(--text-primary)]')} transition-colors duration-300`}>
               <line ref={line1Ref} x1="3" y1="6" x2="21" y2="6" />
               <line ref={line2Ref} x1="3" y1="12" x2="21" y2="12" />
               <line ref={line3Ref} x1="3" y1="18" x2="21" y2="18" />
