@@ -1,8 +1,51 @@
+import type { Metadata } from "next";
 import { courses } from "@/lib/courses";
 import { notFound } from "next/navigation";
 import CourseDetailClient from "./CourseDetailClient";
 import { createServer } from "@/lib/supabase/server";
 export const dynamic = "force-dynamic";
+
+const SITE_URL = "https://milestonefinacademy.info";
+
+const DIPLOMA_CODES: Record<string, string> = {
+  "basic-package": "DABS",
+  "short-term-tax-software-package": "DUTC",
+  "intermediate-package": "PGDAFA",
+  "comprehensive-package": "EMDAT",
+};
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const course = courses.find((c) => c.slug === slug);
+
+  if (!course) {
+    return { title: "Course Not Found" };
+  }
+
+  const code = DIPLOMA_CODES[slug] ?? "";
+  const priceStr = course.price
+    ? `₹${course.price.toLocaleString("en-IN")}`
+    : "";
+  const description = `${course.tagline}. ${code ? `${code} — ` : ""}${course.duration}${priceStr ? ` · ${priceStr}` : ""}. Enroll at Milestone Academy, Kerala.`;
+
+  return {
+    title: course.title,
+    description,
+    alternates: {
+      canonical: `${SITE_URL}/courses/${slug}`,
+    },
+    openGraph: {
+      title: `${course.title} | Milestone Academy`,
+      description,
+      url: `${SITE_URL}/courses/${slug}`,
+      images: [`/courses/${slug}/opengraph-image.png`],
+    },
+  };
+}
 
 // Generate static routes for all 12 courses at build time
 export function generateStaticParams() {

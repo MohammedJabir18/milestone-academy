@@ -2,8 +2,11 @@ import React from 'react';
 import NewsGrid from '@/components/news/NewsGrid';
 
 export const metadata = {
-  title: 'Milestone Moments | Latest News & Academy Updates',
-  description: 'Stay updated with the latest happenings, student successes, and campus moments at Milestone Fin Academy.',
+  title: 'Milestone Moments — News & Updates',
+  description: 'Latest news, student wins, placements, and campus updates from Milestone Academy. Stay connected with Kerala\'s premier accounting & finance academy.',
+  alternates: {
+    canonical: 'https://milestonefinacademy.info/news',
+  },
 };
 
 export default function NewsPage() {

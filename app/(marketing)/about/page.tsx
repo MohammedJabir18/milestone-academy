@@ -1,5 +1,15 @@
 import Image from "next/image";
 import { MoveRight } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About Milestone Academy — Kerala's Premier Finance Academy",
+  description:
+    "Learn how Milestone Academy grew from a trading academy to Kerala's most comprehensive accounting & finance diploma provider. 4,800+ students. 96% placement.",
+  alternates: {
+    canonical: "https://milestonefinacademy.info/about",
+  },
+};
 
 export default function AboutPage() {
   return (
