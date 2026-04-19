@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const GOOGLE_SHEETS_WEBHOOK_URL = process.env.GOOGLE_SHEETS_WEBHOOK_URL;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "milestone.pni@gmail.com";
 
@@ -12,7 +12,7 @@ export async function POST(req: Request) {
 
     // 1. Send Email via Resend
     let emailResult = null;
-    if (process.env.RESEND_API_KEY && process.env.RESEND_API_KEY !== "your_resend_key") {
+    if (resend && process.env.RESEND_API_KEY !== "your_resend_key") {
       try {
         emailResult = await resend.emails.send({
           from: "Milestone Academy <onboarding@resend.dev>", // Replace with verified domain if available
