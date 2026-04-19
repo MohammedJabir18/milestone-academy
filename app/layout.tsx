@@ -44,7 +44,7 @@ export const viewport: Viewport = {
   themeColor: "#22C55E",
 };
 
-const SITE_URL = "https://milestonefinacademy.info";
+const SITE_URL = "https://www.milestonefinacademy.info";
 const SITE_NAME = "Milestone Academy";
 
 export const metadata: Metadata = {
@@ -90,11 +90,16 @@ export const metadata: Metadata = {
       "4 professional diploma programs in Accounting, UAE Taxation & Financial Analytics. 4,800+ students trained. 96% placement rate. Kerala, India.",
     images: [
       {
-        url: "/opengraph-image.png",
+        url: `${SITE_URL}/opengraph-image.png`,
         width: 1200,
         height: 630,
         alt: "Milestone Academy — India's Premier Accounting & Finance Academy",
-        type: "image/png",
+      },
+      {
+        url: `${SITE_URL}/logos/milestone-logo-dark.png`,
+        width: 800,
+        height: 400,
+        alt: "Milestone Academy Logo",
       },
     ],
   },
@@ -106,7 +111,7 @@ export const metadata: Metadata = {
     title: "Milestone Academy | Accounting & Finance Courses Kerala",
     description:
       "4 diploma programs. 4,800+ students. 96% placement. Kerala's most trusted accounting academy.",
-    images: ["/opengraph-image.png"],
+    images: [`${SITE_URL}/opengraph-image.png`, `${SITE_URL}/logos/milestone-logo-dark.png`],
   },
 
   robots: {

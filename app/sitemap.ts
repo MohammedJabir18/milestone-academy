@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { COURSES } from "@/lib/courses";
 
-const SITE_URL = "https://milestonefinacademy.info";
+const SITE_URL = "https://www.milestonefinacademy.info";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static pages
