@@ -5,6 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import CustomCursor from "@/components/global/CustomCursor";
 import { PageTransitionProvider } from "@/components/global/PageTransition";
 import { GsapInitializer } from "@/hooks/useGsapAnimations";
+import { Toaster } from "react-hot-toast";
+
 
 const instrumentSerif = Instrument_Serif({
   variable: "--font-instrument-serif",
@@ -96,7 +98,9 @@ export default function RootLayout({
     >
       <body className="min-h-screen flex flex-col font-sans overflow-x-hidden">
         <CustomCursor />
+        <Toaster position="top-center" reverseOrder={false} />
         <GsapInitializer />
+
         <PageTransitionProvider>
           <TooltipProvider>
             {children}

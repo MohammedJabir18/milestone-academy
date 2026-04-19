@@ -139,8 +139,8 @@ export default function AdminLayoutWrapper({
           <p className="px-4 text-[11px] font-bold text-stone-400 uppercase tracking-widest mt-10 mb-4">Settings</p>
           <NavItem icon={<Phone size={20} />} label="Contact Info" href="/admin/contact-info" active={pathname?.startsWith("/admin/contact-info")} />
           <NavItem icon={<Users size={20} />} label="Faculty Team" href="/admin/faculty" active={pathname?.startsWith("/admin/faculty")} />
-          {/* <NavItem icon={<Settings size={20} />} label="Site Config" href="/admin/settings" active={pathname?.startsWith("/admin/settings")} />
-          <NavItem icon={<ShieldCheck size={20} />} label="Security" href="/admin/security" active={pathname?.startsWith("/admin/security")} /> */}
+          <NavItem icon={<ShieldCheck size={20} />} label="Security" href="/admin/security" active={pathname?.startsWith("/admin/security")} />
+
         </nav>
 
         {/* User Info / Logout Section */}
@@ -150,8 +150,8 @@ export default function AdminLayoutWrapper({
               {userEmail?.charAt(0).toUpperCase() || "A"}
             </div>
             <div className="flex flex-col min-w-0">
-              <span className="text-sm font-bold text-stone-900 truncate">{userEmail?.split("@")[0] || "Admin"}</span>
-              <span className="text-[11px] text-stone-400 truncate font-medium">Administrator</span>
+              <span className="text-sm font-bold text-stone-900 truncate">Admin</span>
+              <span className="text-[11px] text-stone-400 truncate font-medium">{userEmail}</span>
             </div>
           </div>
           

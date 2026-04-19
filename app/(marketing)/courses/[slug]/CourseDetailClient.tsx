@@ -151,7 +151,7 @@ export default function CourseDetailClient({ course }: { course: Course }) {
            <div className="lg:w-[45%] relative">
               <div className="relative z-10 rounded-[32px] overflow-hidden border-[12px] border-white shadow-[var(--shadow-lift)] group transition-transform duration-700 hover:scale-[1.02]">
                 <img 
-                  src={course.image || "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070"} 
+                  src={course.image_url || "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070"} 
                   alt={course.title}
                   className="w-full aspect-[4/3] object-cover transition-transform duration-1000 group-hover:scale-110"
                 />
